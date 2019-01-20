@@ -65,7 +65,7 @@ end
 
 function love.update(dt)
 	-- hot reload code
-	require("rxi.lurker").update()
+	--~ require("rxi.lurker").update()
 
 	world:update(dt)
 	--~ map:update(dt)
