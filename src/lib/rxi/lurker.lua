@@ -18,6 +18,16 @@ local dir = love.filesystem.enumerate or love.filesystem.getDirectoryItems
 local isdir = love.filesystem.isDirectory
 local time = love.timer.getTime or os.time
 local lastmodified = love.filesystem.getLastModified
+if love.filesystem.getInfo then
+  isdir = function(path)
+    local info = love.filesystem.getInfo(path, "directory")
+    return info ~= nil
+  end
+  lastmodified = function(path)
+    local info = love.filesystem.getInfo(path, "directory")
+    return info and info.modtime or nil
+  end
+end
 
 local lovecallbacknames = {
   "update",
