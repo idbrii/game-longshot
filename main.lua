@@ -2,22 +2,35 @@
 -- in src, libraries in src/lib/
 love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?/init.lua")
 -- Monkey patch graphics to auto batch sprites.
-require("rxi.autobatch")
+-- TODO(dbriscoe): Maybe using out-of-date love api, but autobatch fails on
+-- setBufferSize.
+--~ require("rxi.autobatch")
 
 io.stdout:setvbuf("no")
-local sti = require("sti")
-local map
+local TileMap = require("tilemap")
+local gridgen = require("gridgen")
+
+local world_width, world_height = 50, 30
+local tile_size = 32
+
 local world
 local tx, ty
 local points
 
+local grid
+local map
+
 function love.load()
-	-- Load map
-	map = sti("levels/sandbox.lua", { "box2d" })
+    grid = gridgen.generate_grid(world_width, world_height)
+	map = TileMap:new(
+		love.graphics.newImage("assets/textures/Floor.png"),	-- Pure grass tile
+		love.graphics.newImage("assets/textures/Autotile.png"), -- Autotile image
+		tile_size,
+		world_width,
+		world_height
+		)
 
 	-- Print versions
-	print("STI: " .. sti._VERSION)
-	print("Map: " .. map.tiledversion)
 	print("ESCAPE TO QUIT")
 	print("SPACE TO RESET TRANSLATION")
 
@@ -27,7 +40,7 @@ function love.load()
 	-- Prepare physics world
 	love.physics.setMeter(32)
 	world = love.physics.newWorld(0, 0)
-	map:box2d_init(world)
+	--~ map:box2d_init(world)
 
 	-- Drop points on clicked areas
 	points = {
@@ -35,11 +48,12 @@ function love.load()
 		pixel = {}
 	}
 	love.graphics.setPointSize(5)
+	love.window.setMode((world_width+1) * tile_size, (world_height+1) * tile_size)
 end
 
 function love.keypressed(key)
 	-- Exit
-	if key == "escape" then
+	if key == "escape" or key == "q" then
 		love.event.quit()
 	end
 
@@ -54,7 +68,7 @@ function love.update(dt)
 	require("rxi.lurker").update()
 
 	world:update(dt)
-	map:update(dt)
+	--~ map:update(dt)
 
 	-- Move map
 	local kd = love.keyboard.isDown
@@ -72,14 +86,14 @@ end
 function love.draw()
 	-- Draw map
 	love.graphics.setColor(255, 255, 255)
-	map:draw(-tx, -ty)
+	map:draw(grid)
 
 	-- Draw physics objects
 	love.graphics.setColor(255, 0, 255)
 	map:box2d_draw(-tx, -ty)
 
 	-- Draw points
-	love.graphics.translate(-tx, -ty)
+	--~ love.graphics.translate(-tx, -ty)
 
 	love.graphics.setColor(255, 0, 255)
 	for _, point in ipairs(points.mouse) do
@@ -93,7 +107,7 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button)
-	if button == 1 then
+	if false and button == 1 then
 		x = x + tx
 		y = y + ty
 
@@ -109,5 +123,5 @@ function love.mousepressed(x, y, button)
 end
 
 function love.resize(w, h)
-	map:resize(w, h)
+	--~ map:resize(w, h)
 end
