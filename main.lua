@@ -1,6 +1,8 @@
 -- Not sure best way to organize code. For now, main in project root, all code
 -- in src, libraries in src/lib/
 love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?/init.lua")
+-- Monkey patch graphics to auto batch sprites.
+require("rxi.autobatch")
 
 io.stdout:setvbuf("no")
 local sti = require("sti")
@@ -48,6 +50,9 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
+	-- hot reload code
+	require("rxi.lurker").update()
+
 	world:update(dt)
 	map:update(dt)
 
