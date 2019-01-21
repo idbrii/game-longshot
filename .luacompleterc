@@ -1,0 +1,8 @@
+{
+  "global": {
+  },
+  "luaVersion": "5.1",
+  "packagePath": "src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?/init.lua",
+  "cwd": "~/code/game/longshot"
+}
+# vim:set ft=json:
