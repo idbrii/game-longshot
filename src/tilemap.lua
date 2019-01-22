@@ -35,9 +35,10 @@ function TileMap:refresh(grid)
     local size = self.tile_size
 	for x = 0, self.world_width do
 		for y = 0, self.world_height do
-            local col_class = 'Block'
-            if grid[x][y] then
-                col_class = 'Ghost'
+            local col_class = 'Ghost'
+            local has_collision = grid[x][y]
+            if has_collision then
+                col_class = 'Block'
             end
             self.colliders[x][y]:setCollisionClass(col_class)
         end
