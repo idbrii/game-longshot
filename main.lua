@@ -112,7 +112,7 @@ function love.mousepressed(x, y, button)
         local ball = world:newCircleCollider(x, y, r)
         ball:setRestitution(0.8)
         ball:setCollisionClass('Player')
-        ball:applyLinearImpulse(1000, 0)
+        ball:applyLinearImpulse(500, 500)
 
         table.insert(points, {
                 radius = r,
