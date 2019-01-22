@@ -9,6 +9,8 @@ love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?
 io.stdout:setvbuf("no")
 local TileMap = require("tilemap")
 local gridgen = require("gridgen")
+local wf = require("windfield")
+local Input = require('boipushy.Input')
 
 local world_width, world_height = 50, 30
 local tile_size = 32
@@ -17,10 +19,15 @@ local world
 local tx, ty
 local points
 
+local input
 local grid
 local map
 
 function love.load()
+    input = Input()
+    input:bind('q', love.event.quit)
+    input:bind('escape', love.event.quit)
+
     grid = gridgen.generate_grid(world_width, world_height)
 	map = TileMap:new(
 		love.graphics.newImage("assets/textures/Floor.png"),	-- Pure grass tile
@@ -38,25 +45,24 @@ function love.load()
 	tx, ty = 0, 0
 
 	-- Prepare physics world
-	love.physics.setMeter(32)
-	world = love.physics.newWorld(0, 0)
+	--~ love.physics.setMeter(32)
+	--~ world = love.physics.newWorld(0, 0)
+    world = wf.newWorld(0, 0, true)
+    world:setGravity(0, 512)
+    world:addCollisionClass('Player')
+
 	--~ map:box2d_init(world)
 
-	-- Drop points on clicked areas
 	points = {
-		mouse = {},
-		pixel = {}
 	}
 	love.graphics.setPointSize(5)
 	love.window.setMode((world_width+1) * tile_size, (world_height+1) * tile_size)
+
+    map:registerCollision(world, 'Player')
+    map:refresh(grid)
 end
 
 function love.keypressed(key)
-	-- Exit
-	if key == "escape" or key == "q" then
-		love.event.quit()
-	end
-
 	-- Reset translation
 	if key == "space" then
 		tx, ty = 0, 0
@@ -93,32 +99,24 @@ function love.draw()
 	map:box2d_draw(-tx, -ty)
 
 	-- Draw points
-	--~ love.graphics.translate(-tx, -ty)
-
 	love.graphics.setColor(255, 0, 255)
-	for _, point in ipairs(points.mouse) do
-		love.graphics.points(point.x, point.y)
-	end
-
-	love.graphics.setColor(255, 255, 0)
-	for _, point in ipairs(points.pixel) do
-		love.graphics.points(point.x, point.y)
+	for _, point in ipairs(points) do
+        local cx,cy = point.collider:getPosition()
+		love.graphics.circle('fill', cx, cy, point.radius)
 	end
 end
 
 function love.mousepressed(x, y, button)
-	if false and button == 1 then
-		x = x + tx
-		y = y + ty
+	if button == 1 then
+        local r = 10
+        local ball = world:newCircleCollider(x, y, r)
+        ball:setRestitution(0.8)
+        ball:setCollisionClass('Player')
 
-		local tilex, tiley   = map:convertPixelToTile(x, y)
-		local pixelx, pixely = map:convertTileToPixel(tilex, tiley)
-
-		table.insert(points.pixel, { x=pixelx, y=pixely })
-		table.insert(points.mouse, { x=x, y=y })
-
-		print(x, tilex, pixelx)
-		print(y, tiley, pixely)
+        table.insert(points, {
+                radius = r,
+                collider = ball,
+            })
 	end
 end
 
