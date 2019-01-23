@@ -25,11 +25,11 @@ end
 
 
 function GridGen.generate_grid(world_width, world_height)
-    -- TODO(dbriscoe): It seems to generate worlds twice as big as asked, so
-    -- divide by two.
-    local generator = astray.Astray:new( world_width/2, world_height/2, 30, 70, 50, astray.RoomGenerator:new(4, 2, 4, 2, 4) )
+    -- TODO: It seems to generate worlds twice as big as asked, so divide by
+    -- two.
+    local generator = astray.Astray:new( world_width/2, world_height/2, 30, 50, 90, astray.RoomGenerator:new(9, 3, 5, 3, 5) )
     local dungeon = generator:Generate()
-    local symbols = { Wall=true, Empty=false, DoorN=false, DoorS=false, DoorE=false, DoorW=false }
+    local symbols = { Wall=true, Empty=false, DoorN=false, DoorS=true, DoorE=false, DoorW=false }
     local tiles_0_index = generator:CellToTiles(dungeon, symbols)
     --~ _drawdungeon(tiles_0_index, 0, 0, world_width, world_height)
     return tiles_0_index
