@@ -6,8 +6,7 @@ Launcher.collision_class = 'Building'
 
 function Launcher:initialize(gamestate, owner, x, y)
     table.insert(gamestate.entities, self)
-    print("Launcher:", "creating at", x, y)
-    love.window.setTitle(string.format("Launcher: creating at %i,%i", x, y), 10, 10)
+    --~ print("Launcher:", "creating at", x, y)
     self.radius = 10
     self.collider = gamestate.world:newCircleCollider(x, y, self.radius)
     self.collider:setRestitution(0.8)
