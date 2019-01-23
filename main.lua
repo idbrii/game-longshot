@@ -14,7 +14,6 @@ local Input = require('boipushy.Input')
 
 
 local tx, ty
-local points
 
 local gamestate = {}
 gamestate.config = {
@@ -53,7 +52,8 @@ function love.load()
 
 	--~ gamestate.map:box2d_init(gamestate.world)
 
-	points = {}
+	gamestate.entities = {}
+
 	love.graphics.setPointSize(5)
 	love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
 
@@ -97,11 +97,11 @@ function love.draw()
 	love.graphics.setColor(255, 0, 255)
 	gamestate.map:box2d_draw(-tx, -ty)
 
-	-- Draw points
+	-- Draw entities
 	love.graphics.setColor(255, 0, 255)
-	for _, point in ipairs(points) do
-        local cx,cy = point.collider:getPosition()
-		love.graphics.circle('fill', cx, cy, point.radius)
+	for _, ent in ipairs(gamestate.entities) do
+        local cx,cy = ent.collider:getPosition()
+		love.graphics.circle('fill', cx, cy, ent.radius)
 	end
 end
 
@@ -113,7 +113,7 @@ function love.mousepressed(x, y, button)
         ball:setCollisionClass('Player')
         ball:applyLinearImpulse(500, 500)
 
-        table.insert(points, {
+        table.insert(gamestate.entities, {
                 radius = r,
                 collider = ball,
             })
