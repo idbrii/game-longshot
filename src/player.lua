@@ -14,7 +14,7 @@ local k_mouse_player_id = 1
 local k_gamepad_player_id = 2
 local current_gamepad_player_id = nil
 
-local k_launch_offset = 10
+local k_launch_offset = 30
 
 function Player:initialize(gamestate, index)
     table.insert(gamestate.entities, self)
@@ -33,7 +33,7 @@ function Player:initialize(gamestate, index)
             if launch then
                 pos = Vec(launch.collider:getPosition())
             end
-            local dir = pos - Vec(love.mouse.getPosition())
+            local dir = Vec(love.mouse.getPosition()) - pos
             return dir:normalizeInplace()
         end
     else
@@ -138,10 +138,14 @@ function Player:update()
     self.aim_dir = aim
 end
 
+local function _getLaunchStart(launch, aim_dir)
+    return Vec(launch.collider:getPosition()) + aim_dir * k_launch_offset
+end
+
 function Player:_fire()
     local launch = self:_getLauncher()
     if launch then
-        local start = Vec(launch.collider:getPosition()) + self.aim_dir * k_launch_offset
+        local start = _getLaunchStart(launch, self.aim_dir)
         local projectile = Launcher:new(self.gamestate, self, start.x, start.y)
         local impulse = self.aim_dir * self.launch_power
         projectile.collider:applyLinearImpulse(impulse:unpack())
@@ -153,13 +157,15 @@ function Player:_cycleLauncher(direction)
 end
 
 function Player:draw()
-    -- Draw player UI here?
-
     local launch = self:_getLauncher()
     if launch then
-        local start = Vec(launch.collider:getPosition())
+        local centre = Vec(launch.collider:getPosition())
         love.graphics.setColor(self:getColour())
-        love.graphics.circle('line', start.x, start.y, launch.radius * 1.3)
+        love.graphics.circle('line', centre.x, centre.y, launch.radius * 1.3)
+
+        local start = _getLaunchStart(launch, self.aim_dir)
+        local target = start + self.aim_dir * k_launch_offset * 2
+        love.graphics.line(start.x, start.y, target.x, target.y)
     end
 end
 

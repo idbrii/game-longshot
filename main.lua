@@ -73,7 +73,6 @@ function love.load()
 
     -- Print versions
     print("ESCAPE TO QUIT")
-    print("SPACE TO RESET TRANSLATION")
 
     --~ gamestate.map:box2d_init(gamestate.world)
 
