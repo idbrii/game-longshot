@@ -75,6 +75,10 @@ function love.update(dt)
 	gamestate.world:update(dt)
 	--~ gamestate.map:update(dt)
 
+	for _, ent in ipairs(gamestate.entities) do
+		ent:update(dt, gamestate)
+	end
+
 	-- Move map
 	local kd = love.keyboard.isDown
 	local l  = kd("left")  or kd("a")
@@ -100,23 +104,30 @@ function love.draw()
 	-- Draw entities
 	love.graphics.setColor(255, 0, 255)
 	for _, ent in ipairs(gamestate.entities) do
-        local cx,cy = ent.collider:getPosition()
-		love.graphics.circle('fill', cx, cy, ent.radius)
+		ent:draw(gamestate)
 	end
 end
 
 function love.mousepressed(x, y, button)
 	if button == 1 then
-        local r = 10
-        local ball = gamestate.world:newCircleCollider(x, y, r)
-        ball:setRestitution(0.8)
-        ball:setCollisionClass('Player')
-        ball:applyLinearImpulse(500, 500)
+		local r = 10
+		local ball = gamestate.world:newCircleCollider(x, y, r)
+		ball:setRestitution(0.8)
+		ball:setCollisionClass('Player')
+		ball:applyLinearImpulse(500, 500)
 
-        table.insert(gamestate.entities, {
-                radius = r,
-                collider = ball,
-            })
+		local ent = {
+			radius = r,
+			collider = ball,
+		}
+		function ent:update()
+		end
+		function ent:draw()
+			local cx,cy = self.collider:getPosition()
+			love.graphics.circle('fill', cx, cy, self.radius)
+		end
+
+		table.insert(gamestate.entities, ent)
 	end
 end
 
