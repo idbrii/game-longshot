@@ -15,7 +15,13 @@ local Input = require('boipushy.Input')
 
 local tx, ty
 
-local gamestate = {}
+local gamestate = {
+    -- grid: true/false for whether there is collision
+    -- input: boipushy input
+    -- map: tiles
+    -- world: windfield physics world
+    -- entities: objects in the world
+}
 gamestate.config = {
     world_width = 50,
     world_height = 30,
