@@ -1,17 +1,20 @@
+local KillVolume = require('killvolume')
 local autotile = require("autotile.autotile")
-local pl_table = require('pl.tablex')
 local class = require("astray.MiddleClass")
+local pl_table = require('pl.tablex')
 local wf = require("windfield")
 
 local TileMap = class("TileMap")
 
-function TileMap:initialize(floor_image, autotile_image, tile_size, world_width, world_height)
+function TileMap:initialize(gamestate, floor_image, autotile_image, tile_size, world_width, world_height)
     self.floor_image = floor_image
     self.tiler = autotile(autotile_image, tile_size)
     self.world_width = world_width
     self.world_height = world_height
     self.tile_size = tile_size
     self.colliders = {}
+    local size = self.tile_size
+    self.kill_floor = KillVolume:new(gamestate, self.world_width * size/2, self.world_height * size, self.world_width * size, size)
 end
 
 function TileMap:_foreachTile(fn)
@@ -51,6 +54,10 @@ function TileMap:refresh(grid)
     end)
 end
 
+function TileMap:update(gamestate, dt)
+    self.kill_floor:update(gamestate, dt)
+end
+
 function TileMap:draw(grid)
     -- Draw the autotiles
     local size = self.tile_size
@@ -61,6 +68,7 @@ function TileMap:draw(grid)
             love.graphics.draw(self.floor_image, x*size, y*size)
         end
     end)
+    self.kill_floor:draw()
 end
 
 function TileMap:_findEmptyCollision(grid, start_x, start_y, get_x_fn)

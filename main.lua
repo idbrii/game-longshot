@@ -9,6 +9,7 @@ love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?
 io.stdout:setvbuf("no")
 local TileMap = require("tilemap")
 local Player = require('player')
+local KillVolume = require('killvolume')
 local gridgen = require("gridgen")
 local wf = require("windfield")
 local Input = require('boipushy.Input')
@@ -30,20 +31,43 @@ gamestate.config = {
 }
 
 local debug_draw_fn
+local should_draw_physics = false
 
 function love.load()
     gamestate.input = Input()
     gamestate.input:bind('q', love.event.quit)
     gamestate.input:bind('escape', love.event.quit)
+    gamestate.input:bind('backspace', function()
+        should_draw_physics = not should_draw_physics
+    end)
+
+    gamestate.entities = {}
+
+
+    -- Prepare physics world
+    --~ love.physics.setMeter(32)
+    --~ gamestate.world = love.physics.newWorld(0, 0)
+    gamestate.world = wf.newWorld(0, 0, true)
+    gamestate.world:setGravity(0, 512)
+    local mob_collision_classes = {
+        'Soldiers',
+        KillVolume.collision_class,
+        Launcher.collision_class,
+    }
+    for i,col_class in ipairs(mob_collision_classes) do
+        gamestate.world:addCollisionClass(col_class)
+    end
 
     gamestate.grid = gridgen.generate_grid(gamestate.config.world_width, gamestate.config.world_height)
     gamestate.map = TileMap:new(
+        gamestate,
         love.graphics.newImage("assets/textures/Floor.png"),	-- Pure grass tile
         love.graphics.newImage("assets/textures/Autotile.png"), -- Autotile image
         gamestate.config.tile_size,
         gamestate.config.world_width,
         gamestate.config.world_height
         )
+    gamestate.map:registerCollision(gamestate.world, mob_collision_classes)
     
 
 
@@ -51,27 +75,10 @@ function love.load()
     print("ESCAPE TO QUIT")
     print("SPACE TO RESET TRANSLATION")
 
-    -- Prepare physics world
-    --~ love.physics.setMeter(32)
-    --~ gamestate.world = love.physics.newWorld(0, 0)
-    gamestate.world = wf.newWorld(0, 0, true)
-    gamestate.world:setGravity(0, 512)
-
     --~ gamestate.map:box2d_init(gamestate.world)
 
-    gamestate.entities = {}
-
     love.graphics.setPointSize(5)
-    love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
-
-    local mob_collision_classes = {
-        'Soldiers',
-        Launcher.collision_class,
-    }
-    for i,col_class in ipairs(mob_collision_classes) do
-        gamestate.world:addCollisionClass(col_class)
-    end
-    gamestate.map:registerCollision(gamestate.world, mob_collision_classes)
+    love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+10) * gamestate.config.tile_size)
 
     gamestate.players = {
         Player(gamestate, 1),
@@ -124,7 +131,9 @@ function love.draw()
 
     -- Draw physics objects
     love.graphics.setColor(255, 0, 255)
-    gamestate.map:box2d_draw(0,0)
+    if should_draw_physics then
+        gamestate.world:draw()
+    end
 
     -- Draw entities
     love.graphics.setColor(255, 0, 255)
