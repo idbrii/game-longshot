@@ -36,7 +36,6 @@ local should_draw_physics = false
 
 function love.load()
     gamestate.input = Input()
-    gamestate.input:bind('q', love.event.quit)
     gamestate.input:bind('escape', love.event.quit)
     gamestate.input:bind('backspace', function()
         should_draw_physics = not should_draw_physics
