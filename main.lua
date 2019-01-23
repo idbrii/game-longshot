@@ -8,6 +8,7 @@ love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?
 
 io.stdout:setvbuf("no")
 local TileMap = require("tilemap")
+local Vec = require('hump.vector')
 local Player = require('player')
 local KillVolume = require('killvolume')
 local gridgen = require("gridgen")
@@ -78,7 +79,7 @@ function love.load()
     --~ gamestate.map:box2d_init(gamestate.world)
 
     love.graphics.setPointSize(5)
-    love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+10) * gamestate.config.tile_size)
+    love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
 
     gamestate.players = {
         Player(gamestate, 1),
@@ -154,6 +155,11 @@ function love.mousepressed(x, y, button)
 
     if button == 1 or button == 2 then
 		Soldier:new(gamestate, x, y, button == 1 and 1 or -1)
+    elseif button == 3 then
+        -- Remove collision
+        local grid_pos = gamestate.map:toGridPosVector(Vec(x,y))
+        gamestate.grid[grid_pos.x][grid_pos.y] = false
+        gamestate.map:refresh(gamestate.grid)
     end
 end
 

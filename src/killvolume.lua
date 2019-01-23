@@ -7,9 +7,15 @@ local KillVolume = class("KillVolume")
 
 KillVolume.collision_class = 'Kill'
 
+local last_create_pos
+
 function KillVolume:initialize(gamestate, x,y, width,height)
+    self.width = width
+    self.height = height
     table.insert(gamestate.entities, self)
-    self.collider = gamestate.world:newRectangleCollider(0,y, width,height)
+    self.collider = gamestate.world:newRectangleCollider(x,y, width,height)
+    last_create_pos = {x,y, width,height}
+    print(unpack(last_create_pos))
     self.collider:setType('static')
     self.collider:setSensor(true)
     self.collider:setCollisionClass(KillVolume.collision_class)
@@ -29,8 +35,7 @@ function KillVolume:update(gamestate, dt)
 end
 
 function KillVolume:draw(grid)
-    local x,y = self.collider:getPosition()
-    --~ love.graphics.rectangle('line', x, y, 100, 100)
+    --~ love.graphics.rectangle('fill', unpack(last_create_pos))
 end
 
 return KillVolume

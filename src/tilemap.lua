@@ -1,4 +1,5 @@
 local KillVolume = require('killvolume')
+local Vec = require('hump.vector')
 local autotile = require("autotile.autotile")
 local class = require("astray.MiddleClass")
 local pl_table = require('pl.tablex')
@@ -14,7 +15,9 @@ function TileMap:initialize(gamestate, floor_image, autotile_image, tile_size, w
     self.tile_size = tile_size
     self.colliders = {}
     local size = self.tile_size
-    self.kill_floor = KillVolume:new(gamestate, self.world_width * size/2, self.world_height * size, self.world_width * size, size)
+    local bottom = (self.world_height + 1) * size
+    -- Seems like physics is clamped to screen size.
+    self.kill_floor = KillVolume:new(gamestate, 0, bottom, (self.world_width + 1) * size, size)
 end
 
 function TileMap:_foreachTile(fn)
@@ -90,6 +93,17 @@ function TileMap:toScreenPosVector(vector)
     return {
         x = self:toScreenPosSingle(vector.x),
         y = self:toScreenPosSingle(vector.y)
+    }
+end
+
+function TileMap:toGridPosSingle(x)
+    return math.floor(x / self.tile_size)
+end
+
+function TileMap:toGridPosVector(vector)
+    return {
+        x = self:toGridPosSingle(vector.x),
+        y = self:toGridPosSingle(vector.y)
     }
 end
 
