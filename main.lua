@@ -11,6 +11,7 @@ local TileMap = require("tilemap")
 local gridgen = require("gridgen")
 local wf = require("windfield")
 local Input = require('boipushy.Input')
+local Soldier = require("soldier")
 
 
 local tx, ty
@@ -54,7 +55,7 @@ function love.load()
     --~ gamestate.world = love.physics.newWorld(0, 0)
     gamestate.world = wf.newWorld(0, 0, true)
     gamestate.world:setGravity(0, 512)
-    gamestate.world:addCollisionClass('Player')
+    gamestate.world:addCollisionClass('Soldiers')
 
     --~ gamestate.map:box2d_init(gamestate.world)
 
@@ -63,7 +64,7 @@ function love.load()
     love.graphics.setPointSize(5)
     love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
 
-    gamestate.map:registerCollision(gamestate.world, 'Player')
+    gamestate.map:registerCollision(gamestate.world, 'Soldiers')
     gamestate.map:refresh(gamestate.grid)
 end
 
@@ -115,25 +116,9 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button)
-    if button == 1 then
-        local r = 10
-        local ball = gamestate.world:newCircleCollider(x, y, r)
-        ball:setRestitution(0.8)
-        ball:setCollisionClass('Player')
-        ball:applyLinearImpulse(500, 500)
 
-        local ent = {
-            radius = r,
-            collider = ball,
-        }
-        function ent:update()
-        end
-        function ent:draw()
-            local cx,cy = self.collider:getPosition()
-            love.graphics.circle('fill', cx, cy, self.radius)
-        end
-
-        table.insert(gamestate.entities, ent)
+    if button == 1 or button == 2 then
+		Soldier:new(gamestate, x, y, button == 1 and 1 or -1)
     end
 end
 
