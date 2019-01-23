@@ -80,6 +80,8 @@ function love.load()
         Player(gamestate, 2),
     }
 
+    Player.defineInput(gamestate)
+
     local starts = {}
     starts.p1, starts.p2, debug_draw_fn = gamestate.map:buildStartPoints(gamestate.grid)
     local p1 = Launcher:new(gamestate, gamestate.players[1], starts.p1.x,starts.p1.y)
@@ -94,7 +96,7 @@ end
 
 function love.update(dt)
     -- hot reload code
-    --~ require("rxi.lurker").update()
+    require("rxi.lurker").update()
 
     gamestate.world:update(dt)
     --~ gamestate.map:update(dt)

@@ -91,6 +91,16 @@ function Input:pressed(action)
     end
 end
 
+function Input:held(action)
+    if action then
+        for _, key in ipairs(self.binds[action]) do
+            if self.state[key] then
+                return true
+            end
+        end
+    end
+end
+
 function Input:released(action)
     for _, key in ipairs(self.binds[action]) do
         if self.prev_state[key] and not self.state[key] then
