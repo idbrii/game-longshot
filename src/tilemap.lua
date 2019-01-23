@@ -85,6 +85,13 @@ function TileMap:toScreenPosVector(vector)
     }
 end
 
+local function makeSpace(grid, x, y)
+    grid[x-1][y] = false
+    grid[x+1][y] = false
+    grid[x][y-1] = false
+    grid[x][y+1] = false
+end
+
 function TileMap:buildStartPoints(grid)
     local start_radius = 2
     local start_indent = start_radius+1
@@ -92,10 +99,14 @@ function TileMap:buildStartPoints(grid)
     p1_grid.x, p1_grid.y = self:_findEmptyCollision(grid, start_indent, start_indent, function(x_iterator)
         return x_iterator
     end)
+    makeSpace(grid, p1_grid.x, p1_grid.y)
+
     local p2_grid = {}
     p2_grid.x,p2_grid.y = self:_findEmptyCollision(grid, start_indent, start_indent, function(x_iterator)
         return self.world_width - x_iterator
     end)
+    makeSpace(grid, p2_grid.x, p2_grid.y)
+
     local p1_screen,p2_screen = self:toScreenPosVector(p1_grid), self:toScreenPosVector(p2_grid)
     return p1_screen,p2_screen
     --~ function()

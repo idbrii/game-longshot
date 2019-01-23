@@ -72,8 +72,6 @@ function love.load()
         gamestate.world:addCollisionClass(col_class)
     end
     gamestate.map:registerCollision(gamestate.world, mob_collision_classes)
-    gamestate.map:refresh(gamestate.grid)
-
 
     gamestate.players = {
         Player(gamestate, 1),
@@ -84,8 +82,9 @@ function love.load()
 
     local starts = {}
     starts.p1, starts.p2, debug_draw_fn = gamestate.map:buildStartPoints(gamestate.grid)
-    local p1 = Launcher:new(gamestate, gamestate.players[1], starts.p1.x,starts.p1.y)
-    local p2 = Launcher:new(gamestate, gamestate.players[2], starts.p2.x,starts.p2.y)
+    Launcher:new(gamestate, gamestate.players[1], starts.p1.x,starts.p1.y)
+    Launcher:new(gamestate, gamestate.players[2], starts.p2.x,starts.p2.y)
+    gamestate.map:refresh(gamestate.grid)
 end
 
 function love.keypressed(key)
