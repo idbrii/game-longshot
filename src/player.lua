@@ -1,3 +1,4 @@
+local Launcher = require('launcher')
 local Vec = require('hump.vector')
 local class = require('astray.MiddleClass')
 local lume = require('rxi.lume')
@@ -11,6 +12,8 @@ local Player = class('Player')
 local k_mouse_player_id = 1
 local k_gamepad_player_id = 2
 
+local k_launch_offset = 10
+
 function Player:initialize(gamestate, index)
     table.insert(gamestate.entities, self)
     self.index = index
@@ -19,6 +22,7 @@ function Player:initialize(gamestate, index)
     self.selected_launcher_idx = nil
     self.gamestate = gamestate
     self.aim_dir = Vec()
+    self.launch_power = 50
 
     if self:_isMouseUser() then
         self.getAim = function(this)
@@ -103,7 +107,7 @@ function Player:update()
     end
 
     if     self:_isPressed('fire') then
-        print('fire', self.index)
+        self:_fire()
     elseif self:_isPressed('cycle_launcher_left') then
     elseif self:_isPressed('cycle_launcher_right') then
     elseif self:_isPressed('mod_normal') then
@@ -122,6 +126,17 @@ function Player:update()
 
     self.aim_dir = aim
 end
+
+function Player:_fire()
+    local launch = self:_getLauncher()
+    if launch then
+        local start = Vec(launch.collider:getPosition()) + self.aim_dir * k_launch_offset
+        local projectile = Launcher:new(self.gamestate, self, start.x, start.y)
+        local impulse = self.aim_dir * self.launch_power
+        projectile.collider:applyLinearImpulse(impulse:unpack())
+    end
+end
+
 function Player:draw()
     -- Draw player UI here?
 end
