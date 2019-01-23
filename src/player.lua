@@ -49,7 +49,7 @@ function Player:_isMouseUser()
     return self.index == k_mouse_player_id
 end
 
-function Player.defineInput(gamestate)
+function Player.defineKeyboardInput(gamestate)
     local inp = gamestate.input
     inp:bind('space', 'p1_fire')
     inp:bind('w',     'p1_up')
@@ -63,6 +63,21 @@ function Player.defineInput(gamestate)
     inp:bind('3',     'p1_mod_boosty')
     inp:bind('4',     'p1_mod_sticky')
 
+    inp:bind('rctrl', 'p2_fire')
+    inp:bind('up',    'p2_up')
+    inp:bind('left',  'p2_left')
+    inp:bind('down',  'p2_down')
+    inp:bind('right', 'p2_right')
+    inp:bind('[',     'p2_cycle_launcher_left')
+    inp:bind(']',     'p2_cycle_launcher_right')
+    inp:bind('7',     'p2_mod_normal')
+    inp:bind('8',     'p2_mod_bouncy')
+    inp:bind('9',     'p2_mod_boosty')
+    inp:bind('0',     'p2_mod_sticky')
+end
+
+function Player.defineGamepadInput(gamestate)
+    local inp = gamestate.input
     local gamepad_player = string.format('p%i', k_gamepad_player_id)
     inp:bind('fdown',         gamepad_player ..'_fire')
     inp:bind('dpup',          gamepad_player ..'_up')
@@ -75,19 +90,6 @@ function Player.defineInput(gamestate)
     inp:bind('fleft',         gamepad_player ..'_mod_bouncy')
     inp:bind('fup',           gamepad_player ..'_mod_boosty')
     inp:bind('fright',        gamepad_player ..'_mod_sticky')
-
-
-    inp:bind('rctrl', 'p2_fire')
-    inp:bind('up',    'p2_up')
-    inp:bind('left',  'p2_left')
-    inp:bind('down',  'p2_down')
-    inp:bind('right', 'p2_right')
-    inp:bind('[',     'p2_cycle_launcher_left')
-    inp:bind(']',     'p2_cycle_launcher_right')
-    inp:bind('7',     'p2_mod_normal')
-    inp:bind('8',     'p2_mod_bouncy')
-    inp:bind('9',     'p2_mod_boosty')
-    inp:bind('0',     'p2_mod_sticky')
 end
 
 function Player:_isPressed(cmd)

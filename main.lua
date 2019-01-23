@@ -85,13 +85,17 @@ function love.load()
         Player(gamestate, 2),
     }
 
-    Player.defineInput(gamestate)
+    Player.defineKeyboardInput(gamestate)
 
     local starts = {}
     starts.p1, starts.p2, debug_draw_fn = gamestate.map:buildStartPoints(gamestate.grid)
     Launcher:new(gamestate, gamestate.players[1], starts.p1.x,starts.p1.y)
     Launcher:new(gamestate, gamestate.players[2], starts.p2.x,starts.p2.y)
     gamestate.map:refresh(gamestate.grid)
+end
+
+function love.joystickadded(joystick)
+    Player.defineGamepadInput(gamestate)
 end
 
 function love.keypressed(key)
