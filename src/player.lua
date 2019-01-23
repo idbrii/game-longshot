@@ -11,6 +11,7 @@ local Player = class('Player')
 
 local k_mouse_player_id = 1
 local k_gamepad_player_id = 2
+local current_gamepad_player_id = nil
 
 local k_launch_offset = 10
 
@@ -37,10 +38,13 @@ function Player:initialize(gamestate, index)
     else
         assert(self.index == k_gamepad_player_id)
         self.getAim = function(this)
-            --~ gamestate.input.joysticks[1]:getGamepadAxis
-            local x = self.gamestate.input.joysticks[1]:getGamepadAxis('leftx')
-            local y = self.gamestate.input.joysticks[1]:getGamepadAxis('lefty')
-            return Vec(x,y)
+            if self.index == current_gamepad_player_id then
+                local x = self.gamestate.input.joysticks[1]:getGamepadAxis('leftx')
+                local y = self.gamestate.input.joysticks[1]:getGamepadAxis('lefty')
+                return Vec(x,y)
+            else 
+                return Vec()
+            end
         end
     end
 end
@@ -77,6 +81,8 @@ function Player.defineKeyboardInput(gamestate)
 end
 
 function Player.defineGamepadInput(gamestate)
+    current_gamepad_player_id = k_gamepad_player_id
+
     local inp = gamestate.input
     local gamepad_player = string.format('p%i', k_gamepad_player_id)
     inp:bind('fdown',         gamepad_player ..'_fire')
