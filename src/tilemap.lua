@@ -13,50 +13,52 @@ function TileMap:initialize(floor_image, autotile_image, tile_size, world_width,
     self.colliders = {}
 end
 
-function TileMap:registerCollision(world, player_class)
-    world:addCollisionClass('Block')
-    world:addCollisionClass('Ghost', {ignores = { player_class, 'Block' }})
-
-    local size = self.tile_size
+function TileMap:_foreachTile(fn)
     for x = 0, self.world_width do
         if self.colliders[x] == nil then
             self.colliders[x] = {}
         end
         for y = 0, self.world_height do
-            local c = world:newRectangleCollider(x*size, y*size, size, size)
-            c:setType('static')
-            c:setCollisionClass('Block')
-            self.colliders[x][y] = c
+            fn(x,y)
         end
     end
 end
 
+function TileMap:registerCollision(world, player_class)
+    world:addCollisionClass('Block')
+    world:addCollisionClass('Ghost', {ignores = { player_class, 'Block' }})
+
+    local size = self.tile_size
+    self:_foreachTile(function(x,y)
+        local c = world:newRectangleCollider(x*size, y*size, size, size)
+        c:setType('static')
+        c:setCollisionClass('Block')
+        self.colliders[x][y] = c
+    end)
+end
+
 function TileMap:refresh(grid)
     local size = self.tile_size
-    for x = 0, self.world_width do
-        for y = 0, self.world_height do
-            local col_class = 'Ghost'
-            local has_collision = grid[x][y]
-            if has_collision then
-                col_class = 'Block'
-            end
-            self.colliders[x][y]:setCollisionClass(col_class)
+    self:_foreachTile(function(x,y)
+        local col_class = 'Ghost'
+        local has_collision = grid[x][y]
+        if has_collision then
+            col_class = 'Block'
         end
-    end
+        self.colliders[x][y]:setCollisionClass(col_class)
+    end)
 end
 
 function TileMap:draw(grid)
     -- Draw the autotiles
     local size = self.tile_size
-    for x = 0, self.world_width do
-        for y = 0, self.world_height do
-            if grid[x] and grid[x][y] then
-                self.tiler:drawAutotile(grid,x,y)
-            else
-                love.graphics.draw(self.floor_image, x*size, y*size)
-            end
+    self:_foreachTile(function(x,y)
+        if grid[x] and grid[x][y] then
+            self.tiler:drawAutotile(grid,x,y)
+        else
+            love.graphics.draw(self.floor_image, x*size, y*size)
         end
-    end
+    end)
 end
 
 function TileMap:box2d_draw(tx,ty)
