@@ -55,7 +55,6 @@ function love.load()
     --~ gamestate.world = love.physics.newWorld(0, 0)
     gamestate.world = wf.newWorld(0, 0, true)
     gamestate.world:setGravity(0, 512)
-    gamestate.world:addCollisionClass('Soldiers')
 
     --~ gamestate.map:box2d_init(gamestate.world)
 
@@ -64,7 +63,14 @@ function love.load()
     love.graphics.setPointSize(5)
     love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
 
-    gamestate.map:registerCollision(gamestate.world, 'Soldiers')
+    local mob_collision_classes = {
+        'Soldiers',
+        Launcher.collision_class,
+    }
+    for i,col_class in ipairs(mob_collision_classes) do
+        gamestate.world:addCollisionClass(col_class)
+    end
+    gamestate.map:registerCollision(gamestate.world, mob_collision_classes)
     gamestate.map:refresh(gamestate.grid)
 
 

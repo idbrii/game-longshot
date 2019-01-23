@@ -1,4 +1,5 @@
 local autotile = require("autotile.autotile")
+local pl_table = require('pl.tablex')
 local class = require("astray.MiddleClass")
 local wf = require("windfield")
 
@@ -24,9 +25,11 @@ function TileMap:_foreachTile(fn)
     end
 end
 
-function TileMap:registerCollision(world, player_class)
+function TileMap:registerCollision(world, mob_collision_classes)
     world:addCollisionClass('Block')
-    world:addCollisionClass('Ghost', {ignores = { player_class, 'Block' }})
+    local ignore_classes = pl_table.copy(mob_collision_classes)
+    table.insert(ignore_classes, 'Block')
+    world:addCollisionClass('Ghost', {ignores = ignore_classes})
 
     local size = self.tile_size
     self:_foreachTile(function(x,y)

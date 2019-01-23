@@ -2,6 +2,8 @@ local class = require("astray.MiddleClass")
 
 local Launcher = class('Launcher')
 
+Launcher.collision_class = 'Building'
+
 function Launcher:initialize(gamestate, x, y)
         table.insert(gamestate.entities, self)
         print("Launcher:", "creating at", x, y)
@@ -9,7 +11,7 @@ function Launcher:initialize(gamestate, x, y)
         self.radius = 10
         self.collider = gamestate.world:newCircleCollider(x, y, self.radius)
         self.collider:setRestitution(0.8)
-        self.collider:setCollisionClass('Player')
+        self.collider:setCollisionClass(Launcher.collision_class)
         self.collider:applyLinearImpulse(500, 500)
 end
 
