@@ -3,6 +3,7 @@ local Vec = require('hump.vector')
 local class = require('astray.MiddleClass')
 local lume = require('rxi.lume')
 local moremath = require('moremath')
+local moretable = require('moretable')
 local pl_table = require('pl.tablex')
 local wf = require('windfield')
 
@@ -117,7 +118,9 @@ function Player:update()
     if     self:_isPressed('fire') then
         self:_fire()
     elseif self:_isPressed('cycle_launcher_left') then
+        self:_cycleLauncher(-1)
     elseif self:_isPressed('cycle_launcher_right') then
+        self:_cycleLauncher(1)
     elseif self:_isPressed('mod_normal') then
     elseif self:_isPressed('mod_bouncy') then
     elseif self:_isPressed('mod_boosty') then
@@ -145,8 +148,19 @@ function Player:_fire()
     end
 end
 
+function Player:_cycleLauncher(direction)
+    self.selected_launcher_idx = moretable.circular_index_number(#self.launchers, self.selected_launcher_idx + direction)
+end
+
 function Player:draw()
     -- Draw player UI here?
+
+    local launch = self:_getLauncher()
+    if launch then
+        local start = Vec(launch.collider:getPosition())
+        love.graphics.setColor(self:getColour())
+        love.graphics.circle('line', start.x, start.y, launch.radius * 1.3)
+    end
 end
 
 
