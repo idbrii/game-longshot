@@ -28,109 +28,109 @@ function love.load()
     gamestate.input:bind('escape', love.event.quit)
 
     gamestate.grid = gridgen.generate_grid(gamestate.config.world_width, gamestate.config.world_height)
-	gamestate.map = TileMap:new(
-		love.graphics.newImage("assets/textures/Floor.png"),	-- Pure grass tile
-		love.graphics.newImage("assets/textures/Autotile.png"), -- Autotile image
-		gamestate.config.tile_size,
-		gamestate.config.world_width,
-		gamestate.config.world_height
-		)
+    gamestate.map = TileMap:new(
+        love.graphics.newImage("assets/textures/Floor.png"),	-- Pure grass tile
+        love.graphics.newImage("assets/textures/Autotile.png"), -- Autotile image
+        gamestate.config.tile_size,
+        gamestate.config.world_width,
+        gamestate.config.world_height
+        )
 
-	-- Print versions
-	print("ESCAPE TO QUIT")
-	print("SPACE TO RESET TRANSLATION")
+    -- Print versions
+    print("ESCAPE TO QUIT")
+    print("SPACE TO RESET TRANSLATION")
 
-	-- Prepare translations
-	tx, ty = 0, 0
+    -- Prepare translations
+    tx, ty = 0, 0
 
-	-- Prepare physics world
-	--~ love.physics.setMeter(32)
-	--~ gamestate.world = love.physics.newWorld(0, 0)
+    -- Prepare physics world
+    --~ love.physics.setMeter(32)
+    --~ gamestate.world = love.physics.newWorld(0, 0)
     gamestate.world = wf.newWorld(0, 0, true)
     gamestate.world:setGravity(0, 512)
     gamestate.world:addCollisionClass('Player')
 
-	--~ gamestate.map:box2d_init(gamestate.world)
+    --~ gamestate.map:box2d_init(gamestate.world)
 
-	gamestate.entities = {}
+    gamestate.entities = {}
 
-	love.graphics.setPointSize(5)
-	love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
+    love.graphics.setPointSize(5)
+    love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
 
     gamestate.map:registerCollision(gamestate.world, 'Player')
     gamestate.map:refresh(gamestate.grid)
 end
 
 function love.keypressed(key)
-	-- Reset translation
-	if key == "space" then
-		tx, ty = 0, 0
-	end
+    -- Reset translation
+    if key == "space" then
+        tx, ty = 0, 0
+    end
 end
 
 function love.update(dt)
-	-- hot reload code
-	--~ require("rxi.lurker").update()
+    -- hot reload code
+    --~ require("rxi.lurker").update()
 
-	gamestate.world:update(dt)
-	--~ gamestate.map:update(dt)
+    gamestate.world:update(dt)
+    --~ gamestate.map:update(dt)
 
-	for _, ent in ipairs(gamestate.entities) do
-		ent:update(dt, gamestate)
-	end
+    for _, ent in ipairs(gamestate.entities) do
+        ent:update(dt, gamestate)
+    end
 
-	-- Move map
-	local kd = love.keyboard.isDown
-	local l  = kd("left")  or kd("a")
-	local r  = kd("right") or kd("d")
-	local u  = kd("up")    or kd("w")
-	local d  = kd("down")  or kd("s")
+    -- Move map
+    local kd = love.keyboard.isDown
+    local l  = kd("left")  or kd("a")
+    local r  = kd("right") or kd("d")
+    local u  = kd("up")    or kd("w")
+    local d  = kd("down")  or kd("s")
 
-	tx = l and tx - 128 * dt or tx
-	tx = r and tx + 128 * dt or tx
-	ty = u and ty - 128 * dt or ty
-	ty = d and ty + 128 * dt or ty
+    tx = l and tx - 128 * dt or tx
+    tx = r and tx + 128 * dt or tx
+    ty = u and ty - 128 * dt or ty
+    ty = d and ty + 128 * dt or ty
 end
 
 function love.draw()
-	-- Draw map
-	love.graphics.setColor(255, 255, 255)
-	gamestate.map:draw(gamestate.grid)
+    -- Draw map
+    love.graphics.setColor(255, 255, 255)
+    gamestate.map:draw(gamestate.grid)
 
-	-- Draw physics objects
-	love.graphics.setColor(255, 0, 255)
-	gamestate.map:box2d_draw(-tx, -ty)
+    -- Draw physics objects
+    love.graphics.setColor(255, 0, 255)
+    gamestate.map:box2d_draw(-tx, -ty)
 
-	-- Draw entities
-	love.graphics.setColor(255, 0, 255)
-	for _, ent in ipairs(gamestate.entities) do
-		ent:draw(gamestate)
-	end
+    -- Draw entities
+    love.graphics.setColor(255, 0, 255)
+    for _, ent in ipairs(gamestate.entities) do
+        ent:draw(gamestate)
+    end
 end
 
 function love.mousepressed(x, y, button)
-	if button == 1 then
-		local r = 10
-		local ball = gamestate.world:newCircleCollider(x, y, r)
-		ball:setRestitution(0.8)
-		ball:setCollisionClass('Player')
-		ball:applyLinearImpulse(500, 500)
+    if button == 1 then
+        local r = 10
+        local ball = gamestate.world:newCircleCollider(x, y, r)
+        ball:setRestitution(0.8)
+        ball:setCollisionClass('Player')
+        ball:applyLinearImpulse(500, 500)
 
-		local ent = {
-			radius = r,
-			collider = ball,
-		}
-		function ent:update()
-		end
-		function ent:draw()
-			local cx,cy = self.collider:getPosition()
-			love.graphics.circle('fill', cx, cy, self.radius)
-		end
+        local ent = {
+            radius = r,
+            collider = ball,
+        }
+        function ent:update()
+        end
+        function ent:draw()
+            local cx,cy = self.collider:getPosition()
+            love.graphics.circle('fill', cx, cy, self.radius)
+        end
 
-		table.insert(gamestate.entities, ent)
-	end
+        table.insert(gamestate.entities, ent)
+    end
 end
 
 function love.resize(w, h)
-	--~ gamestate.map:resize(w, h)
+    --~ gamestate.map:resize(w, h)
 end
