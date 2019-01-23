@@ -14,8 +14,6 @@ local Input = require('boipushy.Input')
 local Soldier = require("soldier")
 
 
-local tx, ty
-
 local gamestate = {
     -- grid: true/false for whether there is collision
     -- input: boipushy input
@@ -47,9 +45,6 @@ function love.load()
     print("ESCAPE TO QUIT")
     print("SPACE TO RESET TRANSLATION")
 
-    -- Prepare translations
-    tx, ty = 0, 0
-
     -- Prepare physics world
     --~ love.physics.setMeter(32)
     --~ gamestate.world = love.physics.newWorld(0, 0)
@@ -71,7 +66,6 @@ end
 function love.keypressed(key)
     -- Reset translation
     if key == "space" then
-        tx, ty = 0, 0
     end
 end
 
@@ -93,10 +87,10 @@ function love.update(dt)
     local u  = kd("up")    or kd("w")
     local d  = kd("down")  or kd("s")
 
-    tx = l and tx - 128 * dt or tx
-    tx = r and tx + 128 * dt or tx
-    ty = u and ty - 128 * dt or ty
-    ty = d and ty + 128 * dt or ty
+    --~ tx = l and tx - 128 * dt or tx
+    --~ tx = r and tx + 128 * dt or tx
+    --~ ty = u and ty - 128 * dt or ty
+    --~ ty = d and ty + 128 * dt or ty
 end
 
 function love.draw()
@@ -106,7 +100,7 @@ function love.draw()
 
     -- Draw physics objects
     love.graphics.setColor(255, 0, 255)
-    gamestate.map:box2d_draw(-tx, -ty)
+    gamestate.map:box2d_draw(0,0)
 
     -- Draw entities
     love.graphics.setColor(255, 0, 255)
