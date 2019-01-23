@@ -12,10 +12,11 @@ local gridgen = require("gridgen")
 local wf = require("windfield")
 local Input = require('boipushy.Input')
 local Soldier = require("soldier")
+local Launcher = require('launcher')
 
 
 local gamestate = {
-    -- grid: true/false for whether there is collision
+    -- grid: true if tile is solid. false if empty.
     -- input: boipushy input
     -- map: tiles
     -- world: windfield physics world
@@ -26,6 +27,8 @@ gamestate.config = {
     world_height = 30,
     tile_size = 32,
 }
+
+local debug_draw_fn
 
 function love.load()
     gamestate.input = Input()
@@ -40,6 +43,8 @@ function love.load()
         gamestate.config.world_width,
         gamestate.config.world_height
         )
+    
+
 
     -- Print versions
     print("ESCAPE TO QUIT")
@@ -61,6 +66,12 @@ function love.load()
 
     gamestate.map:registerCollision(gamestate.world, 'Soldiers')
     gamestate.map:refresh(gamestate.grid)
+
+
+    local starts = {}
+    starts.p1, starts.p2, debug_draw_fn = gamestate.map:buildStartPoints(gamestate.grid)
+    local p1 = Launcher:new(gamestate, starts.p1.x,starts.p1.y)
+    local p2 = Launcher:new(gamestate, starts.p2.x,starts.p2.y)
 end
 
 function love.keypressed(key)
@@ -106,6 +117,10 @@ function love.draw()
     love.graphics.setColor(255, 0, 255)
     for _, ent in ipairs(gamestate.entities) do
         ent:draw(gamestate)
+    end
+
+    if debug_draw_fn then
+        debug_draw_fn()
     end
 end
 
