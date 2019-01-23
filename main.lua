@@ -8,6 +8,7 @@ love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?
 
 io.stdout:setvbuf("no")
 local TileMap = require("tilemap")
+local Player = require('player')
 local gridgen = require("gridgen")
 local wf = require("windfield")
 local Input = require('boipushy.Input')
@@ -74,10 +75,15 @@ function love.load()
     gamestate.map:refresh(gamestate.grid)
 
 
+    gamestate.players = {
+        Player(gamestate, 1),
+        Player(gamestate, 2),
+    }
+
     local starts = {}
     starts.p1, starts.p2, debug_draw_fn = gamestate.map:buildStartPoints(gamestate.grid)
-    local p1 = Launcher:new(gamestate, starts.p1.x,starts.p1.y)
-    local p2 = Launcher:new(gamestate, starts.p2.x,starts.p2.y)
+    local p1 = Launcher:new(gamestate, gamestate.players[1], starts.p1.x,starts.p1.y)
+    local p2 = Launcher:new(gamestate, gamestate.players[2], starts.p2.x,starts.p2.y)
 end
 
 function love.keypressed(key)
