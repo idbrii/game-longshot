@@ -12,29 +12,29 @@ local gridgen = require("gridgen")
 local wf = require("windfield")
 local Input = require('boipushy.Input')
 
-local world_width, world_height = 50, 30
-local tile_size = 32
 
-local world
 local tx, ty
 local points
 
-local input
-local grid
-local map
+local gamestate = {}
+gamestate.config = {
+    world_width = 50,
+    world_height = 30,
+    tile_size = 32,
+}
 
 function love.load()
-    input = Input()
-    input:bind('q', love.event.quit)
-    input:bind('escape', love.event.quit)
+    gamestate.input = Input()
+    gamestate.input:bind('q', love.event.quit)
+    gamestate.input:bind('escape', love.event.quit)
 
-    grid = gridgen.generate_grid(world_width, world_height)
-	map = TileMap:new(
+    gamestate.grid = gridgen.generate_grid(gamestate.config.world_width, gamestate.config.world_height)
+	gamestate.map = TileMap:new(
 		love.graphics.newImage("assets/textures/Floor.png"),	-- Pure grass tile
 		love.graphics.newImage("assets/textures/Autotile.png"), -- Autotile image
-		tile_size,
-		world_width,
-		world_height
+		gamestate.config.tile_size,
+		gamestate.config.world_width,
+		gamestate.config.world_height
 		)
 
 	-- Print versions
@@ -46,20 +46,19 @@ function love.load()
 
 	-- Prepare physics world
 	--~ love.physics.setMeter(32)
-	--~ world = love.physics.newWorld(0, 0)
-    world = wf.newWorld(0, 0, true)
-    world:setGravity(0, 512)
-    world:addCollisionClass('Player')
+	--~ gamestate.world = love.physics.newWorld(0, 0)
+    gamestate.world = wf.newWorld(0, 0, true)
+    gamestate.world:setGravity(0, 512)
+    gamestate.world:addCollisionClass('Player')
 
-	--~ map:box2d_init(world)
+	--~ gamestate.map:box2d_init(gamestate.world)
 
-	points = {
-	}
+	points = {}
 	love.graphics.setPointSize(5)
-	love.window.setMode((world_width+1) * tile_size, (world_height+1) * tile_size)
+	love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
 
-    map:registerCollision(world, 'Player')
-    map:refresh(grid)
+    gamestate.map:registerCollision(gamestate.world, 'Player')
+    gamestate.map:refresh(gamestate.grid)
 end
 
 function love.keypressed(key)
@@ -73,8 +72,8 @@ function love.update(dt)
 	-- hot reload code
 	--~ require("rxi.lurker").update()
 
-	world:update(dt)
-	--~ map:update(dt)
+	gamestate.world:update(dt)
+	--~ gamestate.map:update(dt)
 
 	-- Move map
 	local kd = love.keyboard.isDown
@@ -92,11 +91,11 @@ end
 function love.draw()
 	-- Draw map
 	love.graphics.setColor(255, 255, 255)
-	map:draw(grid)
+	gamestate.map:draw(gamestate.grid)
 
 	-- Draw physics objects
 	love.graphics.setColor(255, 0, 255)
-	map:box2d_draw(-tx, -ty)
+	gamestate.map:box2d_draw(-tx, -ty)
 
 	-- Draw points
 	love.graphics.setColor(255, 0, 255)
@@ -109,7 +108,7 @@ end
 function love.mousepressed(x, y, button)
 	if button == 1 then
         local r = 10
-        local ball = world:newCircleCollider(x, y, r)
+        local ball = gamestate.world:newCircleCollider(x, y, r)
         ball:setRestitution(0.8)
         ball:setCollisionClass('Player')
         ball:applyLinearImpulse(500, 500)
@@ -122,5 +121,5 @@ function love.mousepressed(x, y, button)
 end
 
 function love.resize(w, h)
-	--~ map:resize(w, h)
+	--~ gamestate.map:resize(w, h)
 end
