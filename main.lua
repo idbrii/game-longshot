@@ -58,7 +58,7 @@ function love.load()
         'Soldiers',
         KillVolume.collision_class,
         Launcher.collision_class,
-        Resourcer.collision_class,
+        --Resourcer.collision_class,
     }
     for i,col_class in ipairs(mob_collision_classes) do
         if col_class == "Soldiers" then
@@ -95,8 +95,6 @@ function love.load()
     --~ gamestate.map:box2d_init(gamestate.world)
 
     love.graphics.setPointSize(5)
-    love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
-
     gamestate.players = {
         Player(gamestate, 1),
         Player(gamestate, 2),
