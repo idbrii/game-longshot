@@ -19,10 +19,9 @@ function Resourcer:initialize(gamestate, owner, x, y, launch_params)
     --~ table.insert(self.projectile.onHitWall_cb, function(...)
     --~     self:onHitWall(...)
     --~ end)
-    self.collider = self.projectile.collider
+    self:setCollider(self.projectile.collider)
     self.radius = self.projectile.radius
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
-    self.collider:setObject(self)
     self.lastExpansion = love.timer.getTime()
     self.generation = 1
 end

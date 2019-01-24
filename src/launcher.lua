@@ -22,8 +22,7 @@ function Launcher:initialize(gamestate, owner, x, y)
     table.insert(self.projectile.onHitWall_cb, function(...)
         self:onHitWall(...)
     end)
-    self.collider = self.projectile.collider
-    self.collider:setObject(self)
+    self:setCollider(self.projectile.collider)
     self.collider:applyLinearImpulse(500, 500)
     self.projectile.tint = 0.1
     self.radius = self.projectile.radius

@@ -27,11 +27,10 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
     --~ table.insert(self.projectile.onHitWall_cb, function(...)
     --~     self:onHitWall(...)
     --~ end)
-    self.collider = self.projectile.collider
+    self:setCollider(self.projectile.collider)
     self.radius = self.projectile.radius
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
     self.direction = launch_params.direction
-    self.collider:setObject(self)
     self.deployed = false
     self.lastSpawnAt = love.timer.getTime()
     self.tint = 1

@@ -10,6 +10,11 @@ function Entity:initialize(gamestate, owner)
     self.ondraw_cb = {}
 end
 
+function Entity:setCollider(collider)
+    self.collider = collider
+    self.collider:setObject(self)
+end
+
 function Entity:die()
     self.gamestate:removeEntity(self)
 end
