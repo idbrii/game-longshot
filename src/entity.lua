@@ -17,6 +17,9 @@ end
 
 function Entity:die()
     self.gamestate:removeEntity(self)
+    for i,listener in ipairs(self.gamestate.onDie_cb) do
+        listener(self)
+    end
 end
 
 function Entity:update(...)

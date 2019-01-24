@@ -57,6 +57,7 @@ function love.load()
         local idx = pl_table.find(gamestate.entities, ent)
         table.remove(gamestate.entities, idx)
     end
+    gamestate.onDie_cb = {} -- function(victim)
 
 
     -- Prepare physics world
