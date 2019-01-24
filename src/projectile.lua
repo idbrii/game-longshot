@@ -11,7 +11,7 @@ function Projectile:initialize(gamestate, owner, x, y)
     self.owner = owner
     self.radius = 10
     self.collider = gamestate.world:newCircleCollider(x, y, self.radius)
-    self.collider:setRestitution(0.8)
+    self.collider:setRestitution(0.1)
 end
 
 function Projectile:update()
