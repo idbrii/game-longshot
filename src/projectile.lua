@@ -41,11 +41,18 @@ function Projectile:draw()
     love.graphics.circle(style, cx, cy, self.radius)
 end
 
+function Projectile:_checkForGround()
+    local offset = 10 + self.radius
+    local x,y = self.collider:getPosition()
+    local hits = self.gamestate.world:queryLine(x, y, x, y + offset, { 'Block' })
+    return #hits > 0
+end
+
 function Projectile:onHitWall(collision_data)
     self.has_stabilized = true
     local pos = Vec(self.collider:getPosition())
     local x,y = collision_data.collider:getPosition()
-    local hit_ground = y > pos.y
+    local hit_ground = y > pos.y and self:_checkForGround()
     if hit_ground then
         self.collider:setLinearVelocity(0, 0)
         self.collider:setType('static')
