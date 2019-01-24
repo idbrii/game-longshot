@@ -6,9 +6,14 @@ local tablex = require("pl.tablex")
 local Damagable = require("damagable")
 local class = require('astray.MiddleClass')
 
-local Launcher = class('Launcher')
+local Launcher = Entity:subclass('Launcher')
 
 Launcher.collision_class = 'Building'
+
+function Launcher.load()
+    Launcher.sprite_body = love.graphics.newImage("assets/textures/launcher.png")
+    Launcher.sprite_arm = love.graphics.newImage("assets/textures/launcher_aimer.png")
+end
 
 function Launcher:initialize(gamestate, owner, x, y)
     self.gamestate = gamestate
@@ -32,6 +37,7 @@ function Launcher:update(dt, gamestate)
 end
 function Launcher:draw()
     self.projectile.draw()
+    love.graphics.draw(Launcher.sprite_body, self.x, self.y)
 end
 
 function Launcher:onHitWall(collision_data)

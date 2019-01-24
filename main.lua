@@ -98,6 +98,7 @@ function love.load()
     ClaimsManager:new(gamestate)
     
     Vfx.load()
+    Launcher.load()
 
 
     -- Print versions
