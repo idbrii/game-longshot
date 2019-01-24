@@ -181,18 +181,13 @@ end
 function Soldier:draw()
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
-    love.graphics.setColor(r, g, b)
     --debug
     --if self.lastCollision then
     --    local x, y = self.lastCollision.collider:getPosition()
     --    love.graphics.circle('fill', x, y, 3)
     --end
-    local hp = self.damagable:percentHp()
-    if hp < 1 then
-        love.graphics.setLineWidth(5)
-        love.graphics.line(cx - (self:radius()), cy - 20, cx + (self:radius() * hp), cy - 20 )
-    end
-    love.graphics.setLineWidth(1)
+    self.damagable:drawHpBar(5, cx - self:radius(), cy - 20, self:radius() * 2, r, g, b)
+
     if self.owner.index == 1 then
         love.graphics.setColor(0, 255, 0)
     else

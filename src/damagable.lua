@@ -15,6 +15,15 @@ function Damagable:takeDamage(damage)
     end
 end
 
+function Damagable:drawHpBar(thickness, x, y, width, r, g, b)
+    love.graphics.setColor(r, g, b)
+    local hp = self:percentHp()
+    if hp < 1 then
+        love.graphics.setLineWidth(thickness)
+        love.graphics.line(x, y, x + width, y )
+    end
+end
+
 function Damagable:percentHp()
     return self.hp / self.startingHealth
 end

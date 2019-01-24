@@ -71,12 +71,7 @@ function Barracks:draw()
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
     love.graphics.setColor(r, g, b)
-
-    local hp = self.damagable:percentHp()
-    if hp < 1 then
-        love.graphics.setLineWidth(8)
-        love.graphics.line(cx - (self.radius), cy - 32, cx + (self.radius * hp), cy - 32 )
-    end
+    self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
     if self.owner.index == 1 then
         love.graphics.setColor(0, 255, 0)
     else
