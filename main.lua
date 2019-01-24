@@ -55,7 +55,12 @@ function love.load()
         Launcher.collision_class,
     }
     for i,col_class in ipairs(mob_collision_classes) do
+        if col_class == "Soldiers" then
+            gamestate.world:addCollisionClass(col_class, {ignores={col_class}})
+        else
         gamestate.world:addCollisionClass(col_class)
+        end
+
     end
 
     gamestate.grid = gridgen.generate_grid(gamestate.config.world_width, gamestate.config.world_height)
