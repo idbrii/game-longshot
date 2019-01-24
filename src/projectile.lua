@@ -44,9 +44,8 @@ end
 function Projectile:onHitWall(collision_data)
     self.has_stabilized = true
     local pos = Vec(self.collider:getPosition())
-    local hit_points = {collision_data.contact:getPositions()}
-    local lowest = M.min(M.select(hit_points, M.isNumber))
-    local hit_ground = lowest < pos.y
+    local x,y = collision_data.collider:getPosition()
+    local hit_ground = y > pos.y
     if hit_ground then
         self.collider:setLinearVelocity(0, 0)
         self.collider:setType('static')
