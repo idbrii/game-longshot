@@ -8,7 +8,9 @@ love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?
 
 io.stdout:setvbuf("no")
 local TileMap = require("tilemap")
+local pl_table = require('pl.tablex')
 local Vec = require('hump.vector')
+local Vfx = require('vfx')
 local Player = require('player')
 local moretable = require('moretable')
 local KillVolume = require('killvolume')
@@ -47,6 +49,13 @@ function love.load()
     end)
 
     gamestate.entities = {}
+    gamestate.addEntity = function(state, ent)
+        table.insert(gamestate.entities, ent)
+    end
+    gamestate.removeEntity = function(state, ent)
+        local idx = pl_table.find(gamestate.entities, ent)
+        table.remove(gamestate.entities, idx)
+    end
 
 
     -- Prepare physics world
@@ -88,6 +97,7 @@ function love.load()
 
     ClaimsManager:new(gamestate)
     
+    Vfx.load()
 
 
     -- Print versions

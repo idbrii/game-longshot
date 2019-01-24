@@ -1,6 +1,7 @@
 local M = require("moses.moses")
 local Projectile = require('projectile')
 local Vec = require('hump.vector')
+local Vfx = require('vfx')
 
 local Bomb = Projectile:subclass('Bomb')
 
@@ -20,7 +21,28 @@ function Bomb:draw()
 end
 
 function Bomb:onHitWall(collision_data)
-    Projectile.onHitWall(self, collision_data)
+    -- ignore Projectile behavior
+    self:_explode()
+end
+
+local function tryDestroyTile(grid, x, y)
+    if grid[x] and grid[x][y] then
+        grid[x][y] = false
+    end
+end
+
+function Bomb:_explode()
+    local screen_pos = Vec(self.collider:getPosition())
+    local grid_pos = self.gamestate.map:toGridPosVector(screen_pos)
+    local grid = self.gamestate.grid
+    tryDestroyTile(grid, grid_pos.x, grid_pos.y)
+    tryDestroyTile(grid, grid_pos.x-1, grid_pos.y)
+    tryDestroyTile(grid, grid_pos.x+1, grid_pos.y)
+    tryDestroyTile(grid, grid_pos.x, grid_pos.y-1)
+    tryDestroyTile(grid, grid_pos.x, grid_pos.y+1)
+    self.gamestate.map:refresh(grid)
+    self:die()
+    Vfx:new(self.gamestate, screen_pos.x, screen_pos.y, 'poof', 3)
 end
 
 return Bomb

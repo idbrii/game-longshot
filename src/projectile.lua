@@ -1,6 +1,7 @@
 local M = require("moses.moses")
 local Vec = require('hump.vector')
 local class = require("astray.MiddleClass")
+local pl_table = require('pl.tablex')
 
 -- A thing that might be launched out of a Launcher.
 local Projectile = class('Projectile')
@@ -18,6 +19,11 @@ function Projectile:initialize(gamestate, owner, x, y, radius)
     self.collider:setCollisionClass(Projectile.collision_class)
     self.has_stabilized = false
     self.tint = 1
+end
+
+function Projectile:die()
+    self.gamestate:removeEntity(self)
+    self.collider:destroy()
 end
 
 function Projectile:update()
