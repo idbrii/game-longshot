@@ -1,5 +1,8 @@
 local Projectile = require('projectile')
 local Soldier = require("soldier")
+local utils = require("pl.utils")
+local tablex = require("pl.tablex")
+local Damagable = require("damagable")
 
 local Barracks = Projectile:subclass('Barracks')
 
@@ -16,8 +19,10 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
         end
     end
     Projectile.initialize(self, gamestate, owner, x, y, 32)
+    self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
     self.direction = launch_params.direction
     self.collider:setCollisionClass(Barracks.collision_class)
+    self.collider:setObject(self)
     self.deployed = false
     self.lastSpawnAt = love.timer.getTime()
     self.tint = 1
@@ -48,10 +53,15 @@ function Barracks:update()
 end
 function Barracks:draw()
     local cx,cy = self.collider:getPosition()
-    love.graphics.setColor(self.owner:getColour())
+    local r, g, b = self.owner:getColour()
+    love.graphics.setColor(r, g, b, self.damagable:percentHp())
     love.graphics.circle('line', cx, cy, self.radius)
 end
 
-
+function Barracks:die()
+    local idx = tablex.find(self.gamestate.entities, self)
+    table.remove(self.gamestate.entities, idx)
+    self.collider:destroy()
+end
 
 return Barracks

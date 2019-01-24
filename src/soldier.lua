@@ -1,6 +1,8 @@
 local class = require("astray.MiddleClass")
 local pretty = require("pl.pretty")
 local tablex = require("pl.tablex")
+local utils = require("pl.utils")
+local Damagable = require("damagable")
 
 local states = {
     walking=1,
@@ -19,8 +21,8 @@ function Soldier:initialize(gamestate, owner, x, y, direction)
     self.ledgeVaultTimeout = 0.1
     self.stuckTimeout = 2.5
     self.attackDamage = 25
-    self.startingHp = 100
-    self.hp = self.startingHp
+    self.stepRate = 0.75
+    self.damagable = Damagable:new(100, utils.bind1(self.die, self))
     self.gamestate = gamestate
     self.owner = owner
     self.direction = direction
@@ -66,13 +68,6 @@ function Soldier:reverseDirection()
     --print("REVERSE")
 end
 
-function Soldier:takeDamage(damage)
-    self.hp = self.hp - damage
-    if self.hp <= 0 then
-        self:die()
-    end
-end
-
 function Soldier:die()
     local idx = tablex.find(self.gamestate.entities, self)
     table.remove(self.gamestate.entities, idx)
@@ -80,7 +75,8 @@ function Soldier:die()
 end
 
 function Soldier:attack(other)
-    other:takeDamage(self.attackDamage)
+    self.collider:applyLinearImpulse(-20 * self.direction, -20)
+    other.damagable:takeDamage(self.attackDamage)
 end
 
 function Soldier:update()
@@ -116,26 +112,35 @@ function Soldier:update()
             self:climb()
         elseif self.state == states.climbing and not didCollideOutsideHrzBounds then
             if didCollideBelowCeiling then
+                self.lastWalkBounce = nil
                 self:reverseDirection()
             end
         elseif self.state == states.walking or self.state == states.falling and didCollideAboveFloor then
+            self.lastWalkBounce = ts
             self:walkBounce()
         end
     end
-
+    if self.state == states.walking and self.lastWalkBounce and (ts - self.lastWalkBounce) > self.stepRate  then
+        self.lastWalkBounce = ts
+        self:walkBounce()
+    end
     if self.lastCollisionTs and (ts - self.lastCollisionTs) > self.stuckTimeout then
         self:reverseDirection()
         self:walkBounce()
     end
 
     if self.collider:enter('SoldiersP1')
-            or self.collider:enter('SoldiersP2') then
-        local collision = self.collider:getEnterCollisionData('SoldiersP1') or
-            self.collider:getEnterCollisionData('SoldiersP2')
-        local soldier = collision.collider:getObject()
+            or self.collider:enter('SoldiersP2')
+            or self.collider:enter('Building') then
+        local collision = self.collider:getEnterCollisionData('SoldiersP1')
+                or self.collider:getEnterCollisionData('SoldiersP2')
+                or self.collider:getEnterCollisionData('Building')
+        self.lastCollisionTs = ts
+        self.state = states.walking
+        local target = collision.collider:getObject()
         -- no idea why we sometimes get collision data without the attached objec
-        if soldier then
-            self:attack(soldier)
+        if target and collision.collider.collision_class ~= self.collider.collision_class then
+            self:attack(target)
         --else
         --    print(self.collider.collision_class .. "->" .. collision.collider.collision_class)
         end
@@ -144,10 +149,9 @@ function Soldier:update()
 
 end
 function Soldier:draw()
-    love.graphics.setColor(255, 0, 255)
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
-    love.graphics.setColor(r, g, b, self.hp / self.startingHp)
+    love.graphics.setColor(r, g, b, self.damagable:percentHp())
     love.graphics.circle('fill', cx, cy, 10)
 
     --debug
@@ -156,7 +160,14 @@ function Soldier:draw()
         love.graphics.circle('fill', x, y, 3)
     end
 
-
+    love.graphics.setColor(0, 0, 0)
+    local statesSymbol = {
+        "W",
+        "F",
+        "C",
+        "A"
+    }
+    love.graphics.print(statesSymbol[self.state], cx-5, cy-5)
 
 
 end

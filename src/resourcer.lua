@@ -1,6 +1,9 @@
 local Projectile = require('projectile')
 local Vec = require('hump.vector')
 local pretty = require("pl.pretty")
+local utils = require("pl.utils")
+local tablex = require("pl.tablex")
+local Damagable = require("damagable")
 
 
 local Resourcer = Projectile:subclass('Resourcer')
@@ -9,7 +12,9 @@ local MAX_RESOURCER_TICK = 30
 local MAX_TICK_IN_GENERATIONS = 60
 function Resourcer:initialize(gamestate, owner, x, y, launch_params)
     Projectile.initialize(self, gamestate, owner, x, y, 32)
+    self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
     self.collider:setCollisionClass(Resourcer.collision_class)
+    self.collider:setObject(self)
     self.lastExpansion = love.timer.getTime()
     self.generation = 1
 end
@@ -35,8 +40,14 @@ function Resourcer:update()
 end
 function Resourcer:draw()
     local cx,cy = self.collider:getPosition()
-    love.graphics.setColor(self.owner:getColour())
+    local r, g, b = self.owner:getColour()
+    love.graphics.setColor(r, g, b, self.damagable:percentHp())
     love.graphics.circle('fill', cx, cy, self.radius)
+end
+function Resourcer:die()
+    local idx = tablex.find(self.gamestate.entities, self)
+    table.remove(self.gamestate.entities, idx)
+    self.collider:destroy()
 end
 
 return Resourcer
