@@ -33,7 +33,7 @@ gamestate.config = {
     world_width = 50,
     world_height = 30,
     tile_size = 32,
-    foreground_blend_index = 1,
+    foreground_blend_index = 6,
 }
 
 local debug_draw_fn
@@ -147,14 +147,19 @@ end
 
 function love.draw()
     local blendmodes = {
-        'alpha',
-        'replace',
-        'screen',
-        'add',
-        'subtract',
-        'multiply',
-        'lighten',
-        'darken',
+        { 'alpha', 'alphamultiply' },
+        { 'alpha', 'premultiplied' },
+        { 'replace', 'alphamultiply' },
+        { 'replace', 'premultiplied' },
+        { 'screen', 'alphamultiply' },
+        { 'screen', 'premultiplied' },
+        { 'add', 'alphamultiply' },
+        { 'add', 'premultiplied' },
+        { 'subtract', 'alphamultiply' },
+        { 'subtract', 'premultiplied' },
+        { 'multiply', 'premultiplied' },
+        { 'lighten', 'premultiplied' },
+        { 'darken', 'premultiplied' },
         false, -- don't draw at all
     }
 
@@ -166,7 +171,7 @@ function love.draw()
 
     local mode = blendmodes[gamestate.config.foreground_blend_index]
     if mode then
-        love.graphics.setBlendMode(mode, 'premultiplied')
+        love.graphics.setBlendMode(unpack(mode))
         love.graphics.draw(gamestate.plates.foreground, 0, 0)
     end
     -- restore default
@@ -182,6 +187,11 @@ function love.draw()
     love.graphics.setColor(255, 0, 255)
     for _, ent in ipairs(gamestate.entities) do
         ent:draw(gamestate)
+    end
+
+    if mode then
+        love.graphics.setColor(0, 100, 100)
+        love.graphics.print(mode[1] ..' '.. mode[2], 10,10)
     end
 
     if debug_draw_fn then
