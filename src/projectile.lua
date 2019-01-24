@@ -15,7 +15,9 @@ function Projectile:initialize(gamestate, owner, x, y, radius)
     self.radius = radius or 10
     self.collider = gamestate.world:newCircleCollider(x, y, self.radius)
     self.collider:setRestitution(0.1)
+    self.collider:setCollisionClass(Projectile.collision_class)
     self.has_stabilized = false
+    self.tint = 1
 end
 
 function Projectile:update()

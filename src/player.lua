@@ -261,7 +261,7 @@ end
 
 function Player:_getLauncher()
     local launch = self.launchers[self.selected_launcher_idx]
-    if launch and launch.has_stabilized then
+    if launch and launch:hasStabilized() then
         return launch
     end
 end
