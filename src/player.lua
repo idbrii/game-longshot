@@ -19,6 +19,14 @@ local k_launch_offset = 15
 local k_launch_minimum_held_seconds = 0.3
 local k_launch_maximum_held_seconds = 4
 
+local k_projectile_id_to_name = {
+    'launcher',
+    'barracks',
+    'harvester',
+    'bomb',
+}
+local k_projectile_id = pl_table.index_map(k_projectile_id_to_name)
+
 
 local function snapToDeadzone(input)
     local deadzone = 0.2
@@ -38,6 +46,7 @@ function Player:initialize(gamestate, index)
     self.aim_dir = Vec(0,1)
     self.launch_held_seconds = 0
     self.launch_power_per_second = 10
+    self.selected_projectile_id = k_projectile_id.launcher
 
     if self:_isMouseUser() then
         self.getAim = function(this)
@@ -72,9 +81,9 @@ end
 function Player.defineKeyboardInput(gamestate)
     local inp = gamestate.input
     inp:bind('space', 'p1_fire')
-    inp:bind('w',     'p1_up')
+    inp:bind('w',     'p1_cycle_projectile_prev')
     inp:bind('a',     'p1_left')
-    inp:bind('s',     'p1_down')
+    inp:bind('s',     'p1_cycle_projectile_next')
     inp:bind('d',     'p1_right')
     inp:bind('q',     'p1_cycle_launcher_left')
     inp:bind('e',     'p1_cycle_launcher_right')
@@ -84,9 +93,9 @@ function Player.defineKeyboardInput(gamestate)
     inp:bind('4',     'p1_mod_sticky')
 
     inp:bind('rctrl', 'p2_fire')
-    inp:bind('up',    'p2_up')
+    inp:bind('up',    'p2_cycle_projectile_prev')
     inp:bind('left',  'p2_left')
-    inp:bind('down',  'p2_down')
+    inp:bind('down',  'p2_cycle_projectile_next')
     inp:bind('right', 'p2_right')
     inp:bind('[',     'p2_cycle_launcher_left')
     inp:bind(']',     'p2_cycle_launcher_right')
@@ -102,9 +111,9 @@ function Player.defineGamepadInput(gamestate)
     local inp = gamestate.input
     local gamepad_player = string.format('p%i', k_gamepad_player_id)
     inp:bind('fdown',         gamepad_player ..'_fire')
-    inp:bind('dpup',          gamepad_player ..'_up')
+    inp:bind('dpup',          gamepad_player ..'_cycle_projectile_prev')
     inp:bind('dpleft',        gamepad_player ..'_left')
-    inp:bind('dpdown',        gamepad_player ..'_down')
+    inp:bind('dpdown',        gamepad_player ..'_cycle_projectile_next')
     inp:bind('dpright',       gamepad_player ..'_right')
     inp:bind('leftshoulder',  gamepad_player ..'_cycle_launcher_left')
     inp:bind('rightshoulder', gamepad_player ..'_cycle_launcher_right')
@@ -149,12 +158,14 @@ function Player:update(dt, gamestate)
         self:_cycleLauncher(-1)
     elseif self:_isPressed('cycle_launcher_right') then
         self:_cycleLauncher(1)
+    elseif self:_isPressed('cycle_projectile_prev') then
+        self:_cycleProjectile(-1)
+    elseif self:_isPressed('cycle_projectile_next') then
+        self:_cycleProjectile(1)
     elseif self:_isPressed('mod_normal') then
     elseif self:_isPressed('mod_bouncy') then
     elseif self:_isPressed('mod_boosty') then
     elseif self:_isPressed('mod_sticky') then
-    elseif self:_isPressed('up') then
-    elseif self:_isPressed('down') then
     elseif self:_isHeld('left') then
         aim = _rotateAim(dt, aim, -1)
     elseif self:_isHeld('right') then
@@ -190,13 +201,37 @@ function Player:_cycleLauncher(direction)
     self.selected_launcher_idx = moretable.circular_index_number(#self.launchers, self.selected_launcher_idx + direction)
 end
 
+function Player:_cycleProjectile(direction)
+    local idx = self.selected_projectile_id
+    self.selected_projectile_id = moretable.circular_index_number(#k_projectile_id_to_name, idx + direction)
+    print("switched to", k_projectile_id_to_name[self.selected_projectile_id])
+end
+
 function Player:draw()
     local launch = self:_getLauncher()
     if launch then
+        local w, h = love.graphics.getWidth(), love.graphics.getHeight()
+
+        local pad = 50
+        local bottom = h - pad
+        local text_x
+        if self.index == 1 then
+            text_x = pad
+        else
+            text_x = w - (100 + pad)
+        end
+
+        -- Current projectile
+        love.graphics.setColor(0, 100, 100)
+        love.graphics.print('selected: '.. k_projectile_id_to_name[self.selected_projectile_id], text_x, bottom)
+
+
+        -- Launcher selection
         local centre = Vec(launch.collider:getPosition())
         love.graphics.setColor(self:getColour())
         love.graphics.circle('line', centre.x, centre.y, launch.radius * 1.3)
 
+        -- Launcher power
         local power,intensity = self:_calcLaunchPower()
         local tinted = {255, power, 0}
         love.graphics.setColor(unpack(tinted))
