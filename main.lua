@@ -10,6 +10,7 @@ io.stdout:setvbuf("no")
 local TileMap = require("tilemap")
 local pl_table = require('pl.tablex')
 local Vec = require('hump.vector')
+local Sound = require('sound')
 local Vfx = require('vfx')
 local Player = require('player')
 local Projectile = require('projectile')
@@ -96,6 +97,7 @@ function love.load()
     
     Vfx.load()
     Launcher.load()
+    Sound.load()
 
 
     -- Print versions
@@ -129,12 +131,16 @@ end
 function love.keypressed(key)
     if key == 'b' then
         gamestate.config.foreground_blend_index = moretable.circular_index_number(8, gamestate.config.foreground_blend_index + 1)
+    elseif key == 'v' then
+        Sound.setDanger()
     end
 end
 
 function love.update(dt)
     -- hot reload code
     --~ require("rxi.lurker").update()
+
+    Sound.update(dt)
 
     gamestate.world:update(dt)
     --~ gamestate.map:update(dt)
