@@ -1,5 +1,6 @@
 local class = require("astray.MiddleClass")
 local pretty = require("pl.pretty")
+local tablex = require("pl.tablex")
 
 local states = {
     walking=1,
@@ -17,10 +18,14 @@ function Soldier:initialize(gamestate, owner, x, y, direction)
     self.climbLedgeVault = 100
     self.ledgeVaultTimeout = 0.1
     self.stuckTimeout = 2.5
+    self.attackDamage = 25
+    self.startingHp = 100
+    self.hp = self.startingHp
     self.gamestate = gamestate
     self.owner = owner
     self.direction = direction
     self.collider = gamestate.world:newCircleCollider(x, y, 10)
+    self.collider:setObject(self)
     self.collider:setRestitution(0.1)
     self.collider:setCollisionClass("SoldiersP" .. self.owner.index)
     table.insert(gamestate.entities, self)
@@ -59,6 +64,23 @@ function Soldier:reverseDirection()
     self.direction = self.direction * -1
     self.state = states.falling
     --print("REVERSE")
+end
+
+function Soldier:takeDamage(damage)
+    self.hp = self.hp - damage
+    if self.hp <= 0 then
+        self:die()
+    end
+end
+
+function Soldier:die()
+    local idx = tablex.find(self.gamestate.entities, self)
+    table.remove(self.gamestate.entities, idx)
+    self.collider:destroy()
+end
+
+function Soldier:attack(other)
+    other:takeDamage(self.attackDamage)
 end
 
 function Soldier:update()
@@ -106,12 +128,27 @@ function Soldier:update()
         self:walkBounce()
     end
 
+    if self.collider:enter('SoldiersP1')
+            or self.collider:enter('SoldiersP2') then
+        local collision = self.collider:getEnterCollisionData('SoldiersP1') or
+            self.collider:getEnterCollisionData('SoldiersP2')
+        local soldier = collision.collider:getObject()
+        -- no idea why we sometimes get collision data without the attached objec
+        if soldier then
+            self:attack(soldier)
+        --else
+        --    print(self.collider.collision_class .. "->" .. collision.collider.collision_class)
+        end
+
+    end
+
 end
 function Soldier:draw()
     love.graphics.setColor(255, 0, 255)
     local cx,cy = self.collider:getPosition()
-    love.graphics.setColor(self.owner:getColour())
-    love.graphics.circle('line', cx, cy, 10)
+    local r, g, b = self.owner:getColour()
+    love.graphics.setColor(r, g, b, self.hp / self.startingHp)
+    love.graphics.circle('fill', cx, cy, 10)
 
     --debug
     if self.lastCollision then
