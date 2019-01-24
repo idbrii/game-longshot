@@ -1,4 +1,5 @@
 local M = require("moses.moses")
+local Vec = require('hump.vector')
 local class = require("astray.MiddleClass")
 
 -- A thing that might be launched out of a Launcher.
@@ -38,6 +39,18 @@ function Projectile:draw()
 end
 
 function Projectile:onHitWall(collision_data)
+    self.has_stabilized = true
+    local pos = Vec(self.collider:getPosition())
+    local hit_points = {collision_data.contact:getPositions()}
+    local lowest = M.min(M.select(hit_points, M.isNumber))
+    local hit_ground = lowest < pos.y
+    if hit_ground then
+        self.collider:setLinearVelocity(0, 0)
+        self.collider:setType('static')
+        self.collider:setLinearDamping(0.1)
+        self.has_stabilized = true
+        self.tint = 1
+    end
 end
 
 return Projectile
