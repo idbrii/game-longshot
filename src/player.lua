@@ -151,9 +151,8 @@ function Player:update(dt, gamestate)
     elseif self:_isPressed('fire') then
         self.launch_held_seconds = 0
     elseif self.launch_held_seconds > k_launch_minimum_held_seconds then
-        local sec = self.launch_held_seconds
+        self:_fire()
         self.launch_held_seconds = 0
-        self:_fire(pow)
     elseif self:_isPressed('cycle_launcher_left') then
         self:_cycleLauncher(-1)
     elseif self:_isPressed('cycle_launcher_right') then
@@ -186,7 +185,7 @@ function Player:_calcLaunchPower()
     return pow, intensity
 end
 
-function Player:_fire(launch_power)
+function Player:_fire()
     local launch = self:_getLauncher()
     if launch then
         local start = _getLaunchStart(launch, self.aim_dir)
