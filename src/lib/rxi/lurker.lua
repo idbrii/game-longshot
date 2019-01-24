@@ -14,20 +14,13 @@ local lume = rawget(_G, "lume") or require((...):gsub("[^/.\\]+$", "lume"))
 local lurker = { _version = "1.0.1" }
 
 
+local major, minor, revision, codename = love.getVersion()
 local dir = love.filesystem.enumerate or love.filesystem.getDirectoryItems
-local isdir = love.filesystem.isDirectory
 local time = love.timer.getTime or os.time
-local lastmodified = love.filesystem.getLastModified
-if love.filesystem.getInfo then
-  isdir = function(path)
-    local info = love.filesystem.getInfo(path, "directory")
-    return info ~= nil
-  end
-  lastmodified = function(path)
-    local info = love.filesystem.getInfo(path, "directory")
-    return info and info.modtime or nil
-  end
-end
+local isdir = (major < 11) and love.filesystem.isDirectory or
+    function(item) return love.filesystem.getInfo(item).type == "directory" end
+local lastmodified = (major < 11) and love.filesystem.getLastModified or
+    function(item) return love.filesystem.getInfo(item).modtime end
 
 local lovecallbacknames = {
   "update",
