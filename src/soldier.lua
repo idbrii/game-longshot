@@ -13,11 +13,24 @@ local images = {
     attack1=love.graphics.newImage("assets/sprites/soldier/attack1.png"),
     attack2=love.graphics.newImage("assets/sprites/soldier/attack2.png")
 }
+local imgAnim1= {
+    images.walk1,
+    images.fall1,
+    images.climb1,
+    images.attack1
+}
+
+local imgAnim2= {
+    images.walk2,
+    images.fall1,
+    images.climb2,
+    images.attack2
+}
 local states = {
     walking=1,
     falling=2,
     climbing=3,
-    combat=4,
+    combat=4, -- ONLY used for animation, self.state will never equal this!
 }
 
 local Soldier = class("Soldier")
@@ -31,6 +44,7 @@ function Soldier:initialize(gamestate, owner, x, y, direction)
     self.stuckTimeout = 2.5
     self.attackDamage = 25
     self.stepRate = 0.75
+    self.combatPoseTime = 0.4
     self.damagable = Damagable:new(100, utils.bind1(self.die, self))
     self.gamestate = gamestate
     self.owner = owner
@@ -43,6 +57,8 @@ function Soldier:initialize(gamestate, owner, x, y, direction)
     self.state = states.falling
     self.scheduleFall = nil
     self.lastCollision = nil
+    self.spawnedAt = love.timer.getTime()
+    self.showCombatPoseUntil = nil
 end
 
 function Soldier:shape()
@@ -85,6 +101,7 @@ end
 
 function Soldier:attack(other)
     self.collider:applyLinearImpulse(self.walkBounceImpulse * self.direction, self.walkBounceImpulse)
+    self.showCombatPoseUntil = love.timer.getTime() + self.combatPoseTime
     other.damagable:takeDamage(self.attackDamage)
 end
 
@@ -156,35 +173,43 @@ function Soldier:update()
 
     end
 
+    if self.showCombatPoseUntil and ts > self.showCombatPoseUntil then
+        self.showCombatPoseUntil = nil
+    end
+
 end
 function Soldier:draw()
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
-    love.graphics.setColor(r, g, b, self.damagable:percentHp())
+    love.graphics.setColor(r, g, b)
     --debug
-    if self.lastCollision then
-        local x, y = self.lastCollision.collider:getPosition()
-        love.graphics.circle('fill', x, y, 3)
+    --if self.lastCollision then
+    --    local x, y = self.lastCollision.collider:getPosition()
+    --    love.graphics.circle('fill', x, y, 3)
+    --end
+    local hp = self.damagable:percentHp()
+    if hp < 1 then
+        love.graphics.setLineWidth(5)
+        love.graphics.line(cx - (self:radius()), cy - 20, cx + (self:radius() * hp), cy - 20 )
+    end
+    love.graphics.setLineWidth(1)
+    if self.owner.index == 1 then
+        love.graphics.setColor(0, 0, 255)
+    else
+        love.graphics.setColor(255, 0, 0)
     end
 
-    love.graphics.setColor(255, 255, 255, self.damagable:percentHp())
-    local stateImages= {
-        images.walk1,
-        images.fall1,
-        images.climb1,
-        images.attack1
-    }
+    local age = love.timer.getTime() - self.spawnedAt
+    local imageMap = (math.floor(age * 5) % 2) == 0 and imgAnim1 or imgAnim2
     local px
     if self.direction == 1 then
         px = cx - 8
     else
         px = cx + 8
     end
-    love.graphics.draw(stateImages[self.state],
+    local state = self.showCombatPoseUntil and states.combat or self.state
+    love.graphics.draw(imageMap[state],
             px, cy-18, 0, self.direction, 1)
-
-
-
 end
 
 return Soldier
