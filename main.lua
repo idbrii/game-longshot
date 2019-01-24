@@ -152,7 +152,7 @@ function love.draw()
     gamestate.map:draw(gamestate.grid)
 
     love.graphics.setBlendMode('subtract', 'premultiplied')
-    love.graphics.draw(gamestate.plates.foreground, 0, 0)
+    --~ love.graphics.draw(gamestate.plates.foreground, 0, 0)
     -- restore default
     love.graphics.setBlendMode('alpha', 'alphamultiply')
 
