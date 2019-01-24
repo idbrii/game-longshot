@@ -18,6 +18,7 @@ function Projectile:initialize(gamestate, owner, x, y, radius)
     self.collider:setCollisionClass(Projectile.collision_class)
     self.has_stabilized = false
     self.tint = 1
+    self.onHitWall_cb = {}
 end
 
 function Projectile:die()
@@ -70,6 +71,10 @@ function Projectile:onHitWall(collision_data)
         self.collider:setLinearDamping(0.1)
         self.has_stabilized = true
         self.tint = 1
+    end
+
+    for i,listener in ipairs(self.onHitWall_cb) do
+        listener(self, collision_data)
     end
 end
 

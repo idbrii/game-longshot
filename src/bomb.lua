@@ -2,22 +2,34 @@ local M = require("moses.moses")
 local Projectile = require('projectile')
 local Vec = require('hump.vector')
 local Vfx = require('vfx')
+local Entity = require('entity')
 
-local Bomb = Projectile:subclass('Bomb')
+local Bomb = Entity:subclass('Bomb')
 
 Bomb.collision_class = 'Building'
 
 function Bomb:initialize(gamestate, owner, x, y, launch_params)
-    Projectile.initialize(self, gamestate, owner, x, y)
+    Entity.initialize(self, gamestate, owner)
+    self.projectile = Projectile:new(gamestate, owner, x, y)
+    self.collider = self.projectile.collider
     self.collider:setCollisionClass(Bomb.collision_class)
     self.tint = 1
+    table.insert(self.projectile.onHitWall_cb, function(...)
+        self:onHitWall(...)
+    end)
 end
 
 function Bomb:update()
-    Projectile.update(self)
+    self.projectile:update(self)
 end
 function Bomb:draw()
-    Projectile.draw(self)
+    self.projectile:draw(self)
+end
+
+
+function Bomb:die()
+    Entity.die(self)
+    self.projectile:die(self)
 end
 
 function Bomb:onHitWall(collision_data)

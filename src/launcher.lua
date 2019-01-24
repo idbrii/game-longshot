@@ -21,9 +21,9 @@ function Launcher:initialize(gamestate, owner, x, y)
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
     self.owner:addLauncher(self)
     self.projectile = Projectile:new(gamestate, owner, x, y)
-    self.projectile.onHitWall_cb = function(collision_data)
-        self:onHitWall(collision_data)
-    end
+    table.insert(self.projectile.onHitWall_cb, function(...)
+        self:onHitWall(...)
+    end)
     self.collider = self.projectile.collider
     self.collider:setObject(self)
     self.collider:setCollisionClass(Launcher.collision_class)
