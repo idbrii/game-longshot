@@ -5,6 +5,7 @@ local utils = require("pl.utils")
 local tablex = require("pl.tablex")
 local Damagable = require("damagable")
 local class = require('astray.MiddleClass')
+local Entity = require('entity')
 
 local Launcher = Entity:subclass('Launcher')
 
@@ -16,9 +17,8 @@ function Launcher.load()
 end
 
 function Launcher:initialize(gamestate, owner, x, y)
-    self.gamestate = gamestate
+    Entity.initialize(self, gamestate, owner, x, y)
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
-    self.owner = owner
     self.owner:addLauncher(self)
     self.projectile = Projectile:new(gamestate, owner, x, y)
     self.projectile.onHitWall_cb = function(collision_data)
@@ -33,10 +33,13 @@ function Launcher:initialize(gamestate, owner, x, y)
 end
 
 function Launcher:update(dt, gamestate)
-    self.projectile.update(dt, gamestate)
+    Entity.update(self)
+    self.projectile:update(dt, gamestate)
 end
 function Launcher:draw()
-    self.projectile.draw()
+    Entity.draw(self)
+    self.projectile:draw()
+    
     love.graphics.draw(Launcher.sprite_body, self.x, self.y)
 end
 
@@ -48,9 +51,8 @@ function Launcher:hasStabilized()
 end
 
 function Launcher:die()
-    local idx = tablex.find(self.gamestate.entities, self)
-    table.remove(self.gamestate.entities, idx)
-    self.collider:destroy()
+    Entity.die(self)
+    self.projectile:die()
 end
 
 return Launcher

@@ -9,7 +9,6 @@ local Projectile = class('Projectile')
 Projectile.collision_class = 'Building'
 
 function Projectile:initialize(gamestate, owner, x, y, radius)
-    table.insert(gamestate.entities, self)
     self.gamestate = gamestate
     --~ print("Projectile:", "creating at", x, y)
     self.owner = owner
@@ -22,7 +21,6 @@ function Projectile:initialize(gamestate, owner, x, y, radius)
 end
 
 function Projectile:die()
-    self.gamestate:removeEntity(self)
     self.collider:destroy()
     self.collider = nil
 end
