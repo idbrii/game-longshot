@@ -63,21 +63,17 @@ function love.load()
     --~ gamestate.world = love.physics.newWorld(0, 0)
     gamestate.world = wf.newWorld(0, 0, true)
     gamestate.world:setGravity(0, 512)
-    local mob_collision_classes = {
+    local nonblock_collision_classes = {
         'SoldiersP1',
         'SoldiersP2',
         KillVolume.collision_class,
         Launcher.collision_class,
-        --Resourcer.collision_class,
+        --~ Resourcer.collision_class,
     }
-    for i,col_class in ipairs(mob_collision_classes) do
-        if col_class == "SoldiersP1" or col_class == "SoldiersP2" then
-            gamestate.world:addCollisionClass(col_class, {ignores={col_class}})
-        else
-        gamestate.world:addCollisionClass(col_class)
-        end
-
-    end
+    gamestate.world:addCollisionClass('SoldiersP1',               {ignores={'SoldiersP1'}})
+    gamestate.world:addCollisionClass('SoldiersP2',               {ignores={'SoldiersP2'}})
+    gamestate.world:addCollisionClass(KillVolume.collision_class)
+    gamestate.world:addCollisionClass(Launcher.collision_class)
 
 
     gamestate.plates = {}
@@ -93,7 +89,7 @@ function love.load()
         gamestate.config.world_width,
         gamestate.config.world_height
         )
-    gamestate.map:registerCollision(gamestate.world, mob_collision_classes)
+    gamestate.map:registerCollision(gamestate.world, nonblock_collision_classes)
 
     ClaimsManager:new(gamestate)
     
