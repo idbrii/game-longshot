@@ -10,7 +10,7 @@ function ClaimsManager:initialize(gamestate)
     self.gamestate = gamestate
     self.generation = 0
     self.grid = {}
-    for x = 1, gamestate.config.world_width do
+    for x = 0, gamestate.config.world_width do
         self.grid[x] = {}
         for y = 1, gamestate.config.world_height do
             self.grid[x][y] = false
@@ -22,10 +22,10 @@ function ClaimsManager:initialize(gamestate)
 end
 
 function ClaimsManager:isUnclaimed(x, y)
-    if x > table.getn(self.grid) then
+    if x > table.getn(self.grid) or x < 0 then
         return false
     end
-    if y > table.getn(self.grid[x]) then
+    if y > table.getn(self.grid[x]) or y < 0 then
         return false
     end
     return self.gamestate.grid[x][y] and not self.grid[x][y]
