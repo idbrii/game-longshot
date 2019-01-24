@@ -157,9 +157,9 @@ end
 
 function Player:_calcLaunchPower()
     local sec = self.launch_held_seconds - k_launch_minimum_held_seconds
-    local pow = sec / (k_launch_maximum_held_seconds - k_launch_minimum_held_seconds)
-    pow = sec * self.launch_power_per_second
-    return pow
+    local intensity = sec / (k_launch_maximum_held_seconds - k_launch_minimum_held_seconds)
+    local pow = intensity * self.launch_power_per_second
+    return pow, intensity
 end
 
 function Player:_fire(launch_power)
@@ -167,7 +167,8 @@ function Player:_fire(launch_power)
     if launch then
         local start = _getLaunchStart(launch, self.aim_dir)
         local projectile = Launcher:new(self.gamestate, self, start.x, start.y)
-        local impulse = self.aim_dir * self:_calcLaunchPower()
+        local power = self:_calcLaunchPower()
+        local impulse = self.aim_dir * power
         projectile.collider:applyLinearImpulse(impulse:unpack())
     end
 end
@@ -183,8 +184,8 @@ function Player:draw()
         love.graphics.setColor(self:getColour())
         love.graphics.circle('line', centre.x, centre.y, launch.radius * 1.3)
 
-        local intensity = self:_calcLaunchPower()
-        local tinted = {255, intensity, 0}
+        local power,intensity = self:_calcLaunchPower()
+        local tinted = {255, power, 0}
         love.graphics.setColor(unpack(tinted))
         local start = _getLaunchStart(launch, self.aim_dir)
         local target = start + self.aim_dir * k_launch_offset * 2
