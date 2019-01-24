@@ -54,6 +54,7 @@ function Resourcer:draw()
 end
 function Resourcer:die()
     Entity.die(self)
+    self.gamestate.claims:declaimResourcer(self)
     self.projectile:die()
 end
 

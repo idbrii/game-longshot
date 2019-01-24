@@ -1,6 +1,6 @@
 local class = require("astray.MiddleClass")
 local pretty = require("pl.pretty")
-local Entity = require('Entity')
+local Entity = require('entity')
 
 
 local Claim = Entity:subclass("Claim")

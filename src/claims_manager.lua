@@ -80,6 +80,14 @@ function ClaimsManager:expandClaim(claim)
         end
     end
 end
+function ClaimsManager:declaimResourcer(resourcer)
+    local claims = self.resourcerClaims[resourcer]
+    for i, claim in ipairs(claims) do
+        self.grid[claim.x][claim.y] = false
+        claim:die()
+    end
+    self.resourcerClaims[resourcer] = nil
+end
 
 function ClaimsManager:update(dt)
     Entity.update(self, dt)
