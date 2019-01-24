@@ -110,7 +110,7 @@ end
 
 function love.update(dt)
     -- hot reload code
-    require("rxi.lurker").update()
+    --~ require("rxi.lurker").update()
 
     gamestate.world:update(dt)
     --~ gamestate.map:update(dt)
