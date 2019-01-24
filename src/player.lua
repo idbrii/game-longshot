@@ -264,6 +264,17 @@ function Player:addLauncher(launcher)
     self.selected_launcher_idx = #self.launchers
 end
 
+function Player:removeLauncher(launcher)
+    local idx = pl_table.find(self.launchers, launcher)
+    table.remove(self.launchers, idx)
+    if idx == self.selected_launcher_idx then
+        self.selected_launcher_idx = 1
+    elseif idx < self.selected_launcher_idx then
+        -- We removed one before, so move up to keep the same one selected.
+        self.selected_launcher_idx = self.selected_launcher_idx + 1
+    end
+end
+
 function Player:_getLauncher()
     local launch = self.launchers[self.selected_launcher_idx]
     if launch and launch:hasStabilized() then
