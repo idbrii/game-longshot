@@ -108,10 +108,16 @@ function TileMap:toGridPosVector(vector)
 end
 
 local function makeSpace(grid, x, y)
-    grid[x-1][y] = false
-    grid[x+1][y] = false
-    grid[x][y-1] = false
-    grid[x][y+1] = false
+    for delta=1,3 do
+        grid[x - delta][y] = false
+        grid[x + delta][y] = false
+        grid[x][y - delta] = false
+        grid[x][y + delta] = false
+        grid[x + delta][y + delta] = false
+        grid[x + delta][y - delta] = false
+        grid[x - delta][y + delta] = false
+        grid[x - delta][y - delta] = false
+    end
 end
 
 function TileMap:buildStartPoints(grid)
