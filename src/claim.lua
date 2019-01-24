@@ -1,16 +1,16 @@
 local class = require("astray.MiddleClass")
 local pretty = require("pl.pretty")
+local Entity = class('Entity')
 
 
-local Claim = class("Claim")
+local Claim = Entity:subclass("Claim")
 
 function Claim:initialize(gamestate, x, y, resourcer, generation)
-    self.gamestate = gamestate
+    Entity.initialize(self, gamestate, resourcer.owner)
     self.x = x
     self.y = y
     self.resourcer = resourcer
     self.generation = generation
-    table.insert(gamestate.entities, self)
 end
 
 function Claim:owner()
@@ -18,10 +18,12 @@ function Claim:owner()
 end
 
 
-function Claim:update()
+function Claim:update(dt)
+    Entity.update(self, dt)
 end
 
 function Claim:draw()
+    Entity.draw(self)
     local size = self.gamestate.map.tile_size;
     local x = self.gamestate.map:toScreenPosSingle(self.x)
     local y = self.gamestate.map:toScreenPosSingle(self.y)

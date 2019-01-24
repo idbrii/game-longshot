@@ -2,10 +2,11 @@ local class = require("astray.MiddleClass")
 local gridgen = require("gridgen")
 local Claim = require("claim")
 local Vec = require('hump.vector')
+local Entity = require('entity')
 
-local ClaimsManager = class("ClaimsManager")
+local ClaimsManager = Entity:subclass("ClaimsManager")
 function ClaimsManager:initialize(gamestate)
-    self.gamestate = gamestate
+    Entity.initialize(self, gamestate) -- has no owner
     self.generation = 0
     self.grid = {}
     for x = 0, gamestate.config.world_width do
@@ -15,7 +16,6 @@ function ClaimsManager:initialize(gamestate)
         end
     end
     gamestate.claims = self
-    table.insert(gamestate.entities, self)
     self.resourcerClaims = {}
 end
 
@@ -81,7 +81,8 @@ function ClaimsManager:expandClaim(claim)
     end
 end
 
-function ClaimsManager:update()
+function ClaimsManager:update(dt)
+    Entity.update(self, dt)
     local ts = love.timer.getTime()
     --for resourcer, claims in pairs(self.resourcerClaims) do
     for resourcer in pairs(self.resourcerClaims) do
@@ -95,6 +96,7 @@ function ClaimsManager:update()
 end
 
 function ClaimsManager:draw()
+    Entity.draw(self)
     -- nothing to draw
 end
 

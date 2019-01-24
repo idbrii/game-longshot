@@ -1,5 +1,6 @@
 local class = require("astray.MiddleClass")
 local pretty = require("pl.pretty")
+local Entity = require('entity')
 local tablex = require("pl.tablex")
 local utils = require("pl.utils")
 local Damagable = require("damagable")
@@ -33,9 +34,10 @@ local states = {
     combat=4, -- ONLY used for animation, self.state will never equal this!
 }
 
-local Soldier = class("Soldier")
+local Soldier = Entity:subclass("Soldier")
 
 function Soldier:initialize(gamestate, owner, x, y, direction)
+    Entity.initialize(self, gamestate, owner)
     self.targetWalkSpeed = 80
     self.walkBounceImpulse = -40
     self.climbSpeed = 50
@@ -46,14 +48,12 @@ function Soldier:initialize(gamestate, owner, x, y, direction)
     self.stepRate = 0.75
     self.combatPoseTime = 0.4
     self.damagable = Damagable:new(100, utils.bind1(self.die, self))
-    self.gamestate = gamestate
     self.owner = owner
     self.direction = direction
     self.collider = gamestate.world:newCircleCollider(x, y, 10)
     self.collider:setObject(self)
     self.collider:setRestitution(0.1)
     self.collider:setCollisionClass("SoldiersP" .. self.owner.index)
-    table.insert(gamestate.entities, self)
     self.state = states.falling
     self.scheduleFall = nil
     self.lastCollision = nil
@@ -94,9 +94,9 @@ function Soldier:reverseDirection()
 end
 
 function Soldier:die()
-    local idx = tablex.find(self.gamestate.entities, self)
-    table.remove(self.gamestate.entities, idx)
+    Entity.die(self)
     self.collider:destroy()
+    self.collider = nil
 end
 
 function Soldier:attack(other)
@@ -105,7 +105,8 @@ function Soldier:attack(other)
     other.damagable:takeDamage(self.attackDamage)
 end
 
-function Soldier:update()
+function Soldier:update(dt)
+    Entity.update(self, dt)
     local ts = love.timer.getTime()
     if self.state == states.climbing then
         if self.lastTouchedClimbingBlock and (ts - self.lastTouchedClimbingBlock) > self.ledgeVaultTimeout then
@@ -179,6 +180,7 @@ function Soldier:update()
 
 end
 function Soldier:draw()
+    Entity.draw(self)
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
     --debug
