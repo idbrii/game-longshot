@@ -10,6 +10,7 @@ local moremath = require('moremath')
 local moretable = require('moretable')
 local pl_table = require('pl.tablex')
 local wf = require('windfield')
+local Tech = require('tech')
 
 
 local Player = class('Player')
@@ -51,6 +52,7 @@ end
 function Player:initialize(gamestate, index)
     table.insert(gamestate.entities, self)
     self.index = index
+    self.tech = Tech:new(self)
     self.input_prefix = string.format('p%i_', index)
     self.launchers = {}
     self.selected_launcher_idx = nil
@@ -265,8 +267,8 @@ function Player:draw()
         local target = start + self.aim_dir * k_launch_offset * 2
         love.graphics.line(start.x, start.y, target.x, target.y)
     end
+    self.tech:drawResourceUI()
 end
-
 
 function Player:addLauncher(launcher)
     table.insert(self.launchers, launcher)

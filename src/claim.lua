@@ -11,6 +11,11 @@ function Claim:initialize(gamestate, x, y, resourcer, generation)
     self.y = y
     self.resourcer = resourcer
     self.generation = generation
+    self.owner.tech:addResource(10)
+end
+function Claim:die()
+    Entity.die(self)
+    self.owner.tech:deductResource(10)
 end
 
 function Claim:update(dt)
