@@ -103,6 +103,10 @@ function love.load()
 
     --~ gamestate.map:box2d_init(gamestate.world)
 
+    -- If we want to change grid size, we'll need to get the numbers.
+    --~ love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
+    --~ print((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
+
     love.graphics.setPointSize(5)
     gamestate.players = {
         Player(gamestate, 1),
