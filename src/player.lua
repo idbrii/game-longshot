@@ -233,7 +233,7 @@ function Player:draw()
         end
 
         -- Current projectile
-        love.graphics.setColor(0, 100, 100)
+        love.graphics.setColor(0, 0, 0)
         love.graphics.print('selected: '.. k_projectile_id_to_name[self.selected_projectile_id], text_x, bottom)
 
 
