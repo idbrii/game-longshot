@@ -49,7 +49,7 @@ function Launcher:hasStabilized()
 end
 
 function Launcher:die()
-    self.player:removeLauncher(self)
+    self.owner:removeLauncher(self)
     self.projectile:die()
     Entity.die(self)
 end
