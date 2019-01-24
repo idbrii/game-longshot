@@ -32,7 +32,6 @@ end
 function Resourcer:deploy(projectile, collision_data)
     local x, y = collision_data.collider:getPosition()
     local tilePos = self.gamestate.map:toGridPosVector(Vec(x,y))
-    pretty.dump({"dbriscoe:", x, y, tilePos})
     self.gamestate.claims:claimFromResourcer(self, tilePos.x, tilePos.y)
 end
 function Resourcer:update(dt)
