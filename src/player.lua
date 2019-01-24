@@ -20,7 +20,8 @@ local current_gamepad_player_id = nil
 
 local k_launch_offset = 15
 local k_launch_minimum_held_seconds = 0.3
-local k_launch_maximum_held_seconds = 4
+local k_launch_maximum_held_seconds = 2
+local k_launch_default_power = 500
 
 local k_projectile_id_to_name = {
     'launcher',
@@ -56,7 +57,7 @@ function Player:initialize(gamestate, index)
     self.gamestate = gamestate
     self.aim_dir = Vec(0,1)
     self.launch_held_seconds = 0
-    self.launch_power_per_second = 10
+    self.launch_power_per_second = k_launch_default_power
     self.selected_projectile_id = k_projectile_id.launcher
 
     if self:_isMouseUser() then
