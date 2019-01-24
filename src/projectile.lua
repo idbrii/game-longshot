@@ -7,11 +7,12 @@ local Projectile = class('Projectile')
 
 Projectile.collision_class = 'Building'
 
-function Projectile:initialize(gamestate, owner, x, y)
+function Projectile:initialize(gamestate, owner, x, y, radius)
     table.insert(gamestate.entities, self)
+    self.gamestate = gamestate
     --~ print("Projectile:", "creating at", x, y)
     self.owner = owner
-    self.radius = 10
+    self.radius = radius or 10
     self.collider = gamestate.world:newCircleCollider(x, y, self.radius)
     self.collider:setRestitution(0.1)
     self.has_stabilized = false

@@ -60,7 +60,6 @@ end
 function ClaimsManager:expandResourcer(resourcer)
     local claims = self.resourcerClaims[resourcer]
     resourcer.generation = resourcer.generation + 1
-    print(resourcer:expandInterval())
     for i, claim in ipairs(claims) do
         if claim.generation < resourcer.generation then
             self:expandClaim(claim)

@@ -1,28 +1,22 @@
-local class = require("astray.MiddleClass")
+local Projectile = require('projectile')
 local Vec = require('hump.vector')
 local pretty = require("pl.pretty")
 
 
-local Resourcer = class("Resourcer")
+local Resourcer = Projectile:subclass('Resourcer')
 Resourcer.collision_class = 'Building'
 local MAX_RESOURCER_TICK = 30
 local MAX_TICK_IN_GENERATIONS = 60
-function Resourcer:initialize(gamestate, x, y, player)
-    self.gamestate = gamestate
+function Resourcer:initialize(gamestate, owner, x, y)
+    Projectile.initialize(self, gamestate, owner, x, y, 32)
     self.lastExpansion = love.timer.getTime()
-    self.radius = 32
-    self.collider = gamestate.world:newCircleCollider(x, y, self.radius)
-    self.owner = player
-    self.collider:setCollisionClass(Resourcer.collision_class)
     self.generation = 1
-    table.insert(gamestate.entities, self)
 end
 function Resourcer:expandInterval()
     return MAX_RESOURCER_TICK * (math.min(self.generation, MAX_TICK_IN_GENERATIONS) / MAX_TICK_IN_GENERATIONS)
 end
 
 function Resourcer:deploy()
-    self.collider:setAwake(false)
     local contacts = self.collider:getContacts('Block')
     for i, contact in ipairs(contacts) do
         local x, y = contact:getPositions()
