@@ -42,14 +42,20 @@ function Projectile:draw()
 end
 
 function Projectile:_checkForGround()
-    local offset = 10 + self.radius
     local x,y = self.collider:getPosition()
-    local hits = self.gamestate.world:queryLine(x, y, x, y + offset, { 'Block' })
+    local pad = self.radius * 0.75
+    local offset_down = 5 + self.radius
+    local y_check = y + offset_down
+    return self:_checkForBlock(x,y, x - pad, y_check)
+        or self:_checkForBlock(x,y, x + pad, y_check)
+end
+
+function Projectile:_checkForBlock(me_x,me_y, check_x,check_y)
+    local hits = self.gamestate.world:queryLine(me_x, me_y, check_x, check_y, { 'Block' })
     return #hits > 0
 end
 
 function Projectile:onHitWall(collision_data)
-    self.has_stabilized = true
     local pos = Vec(self.collider:getPosition())
     local x,y = collision_data.collider:getPosition()
     local hit_ground = y > pos.y and self:_checkForGround()
