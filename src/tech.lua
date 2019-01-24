@@ -7,14 +7,17 @@ local MAX_RESOURCES = 4000
 Tech.Levels = {
     Bouncy = {
         name="Bouncy",
+        key= {'f1', '?1'},
         resourceCost = 700,
     },
     Boosty = {
         name="Boosty",
+        key= {'f2', '?2'},
         resourceCost = 1500,
     },
     Sticky = {
         name="Sticky",
+        key= {'f3', '?3'},
         resourceCost = 2500,
     }
 }
@@ -75,14 +78,14 @@ function Tech:drawResourceUI()
         if level == self.techLevel then
             love.graphics.setColor(0, 0, 255)
         end
-        local textWidth = 50
+        local textWidth = 75
         local x1 = self.owner.index == 1 and origin or origin - textWidth
         local x2 = origin + width + textWidth
         local textX = self.owner.index ==1 and x1 + width + 5 or x1
         local distanceFromBottom = (level.resourceCost / MAX_RESOURCES) * barHeight
         local y = marginTop + (barHeight - distanceFromBottom)
         love.graphics.line(x1, y, x2, y)
-        love.graphics.print(level.name, textX, y)
+        love.graphics.print(level.name .. " (" .. level.key[self.owner.index] .. ")",  textX, y)
 
     end
     
