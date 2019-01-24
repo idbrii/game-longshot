@@ -38,7 +38,7 @@ end
 
 function Barracks:spawnSoldier()
     local cx,cy = self.collider:getPosition()
-    Soldier:new(self.gamestate, self.owner, cx - self.radius / -2 * self.direction, cy, self.direction)
+    Soldier:new(self.gamestate, self.owner, cx - self.radius * self.direction * -1.5, cy, self.direction)
 end
 function Barracks:update()
     local ts = love.timer.getTime()

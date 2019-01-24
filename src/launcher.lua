@@ -11,17 +11,18 @@ local Launcher = class('Launcher')
 Launcher.collision_class = 'Building'
 
 function Launcher:initialize(gamestate, owner, x, y)
-    self.collider = self.projectile.collider
+
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
-    self.collider:setObject(self)
-    self.collider:setCollisionClass(Launcher.collision_class)
-    self.collider:applyLinearImpulse(500, 500)
     self.owner = owner
+    self.owner:addLauncher(self)
     self.projectile = Projectile:new(gamestate, owner, x, y)
     self.projectile.onHitWall_cb = function(collision_data)
         self:onHitWall(collision_data)
     end
-    self.owner:addLauncher(self)
+    self.collider = self.projectile.collider
+    self.collider:setObject(self)
+    self.collider:setCollisionClass(Launcher.collision_class)
+    self.collider:applyLinearImpulse(500, 500)
     self.projectile.tint = 0.1
     self.radius = self.projectile.radius
 end

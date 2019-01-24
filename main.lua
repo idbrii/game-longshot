@@ -206,9 +206,9 @@ function love.mousepressed(x, y, button)
         elseif love.keyboard.isDown("rshift") then
             Resourcer:new(gamestate, gamestate.players[2], x, y)
         elseif love.keyboard.isDown("lctrl") then
-            Barracks:new(gamestate, gamestate.players[1], x, y, 1)
+            Barracks:new(gamestate, gamestate.players[1], x, y)
         elseif love.keyboard.isDown("rctrl") then
-            Barracks:new(gamestate, gamestate.players[2], x, y, -1)
+            Barracks:new(gamestate, gamestate.players[2], x, y)
         end
 
     elseif button == 3 then

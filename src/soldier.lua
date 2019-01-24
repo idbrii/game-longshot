@@ -75,7 +75,7 @@ function Soldier:die()
 end
 
 function Soldier:attack(other)
-    self.collider:applyLinearImpulse(-20 * self.direction, -20)
+    self.collider:applyLinearImpulse(self.walkBounceImpulse * self.direction, self.walkBounceImpulse)
     other.damagable:takeDamage(self.attackDamage)
 end
 
@@ -129,12 +129,12 @@ function Soldier:update()
         self:walkBounce()
     end
 
-    if self.collider:enter('SoldiersP1')
-            or self.collider:enter('SoldiersP2')
-            or self.collider:enter('Building') then
-        local collision = self.collider:getEnterCollisionData('SoldiersP1')
+    if self.collider:enter('Building')
+            or self.collider:enter('SoldiersP1')
+            or self.collider:enter('SoldiersP2') then
+        local collision = self.collider:getEnterCollisionData('Building')
+                or self.collider:getEnterCollisionData('SoldiersP1')
                 or self.collider:getEnterCollisionData('SoldiersP2')
-                or self.collider:getEnterCollisionData('Building')
         self.lastCollisionTs = ts
         self.state = states.walking
         local target = collision.collider:getObject()
