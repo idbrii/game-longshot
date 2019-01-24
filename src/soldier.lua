@@ -194,7 +194,7 @@ function Soldier:draw()
     end
     love.graphics.setLineWidth(1)
     if self.owner.index == 1 then
-        love.graphics.setColor(0, 0, 255)
+        love.graphics.setColor(0, 255, 0)
     else
         love.graphics.setColor(255, 0, 0)
     end

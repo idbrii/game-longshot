@@ -4,6 +4,11 @@ local utils = require("pl.utils")
 local tablex = require("pl.tablex")
 local Damagable = require("damagable")
 
+local images = {
+    deployed=love.graphics.newImage("assets/sprites/barracks/deployed.png"),
+}
+
+
 local Barracks = Projectile:subclass('Barracks')
 
 Barracks.collision_class = 'Building'
@@ -54,8 +59,20 @@ end
 function Barracks:draw()
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
-    love.graphics.setColor(r, g, b, self.damagable:percentHp())
-    love.graphics.circle('line', cx, cy, self.radius)
+    love.graphics.setColor(r, g, b)
+
+    local hp = self.damagable:percentHp()
+    if hp < 1 then
+        love.graphics.setLineWidth(8)
+        love.graphics.line(cx - (self.radius), cy - 32, cx + (self.radius * hp), cy - 32 )
+    end
+    if self.owner.index == 1 then
+        love.graphics.setColor(0, 255, 0)
+    else
+        love.graphics.setColor(255, 0, 0)
+    end
+    love.graphics.draw(images.deployed,
+            cx-36 * self.direction, cy-36, 0, self.direction, 1)
 end
 
 function Barracks:die()
