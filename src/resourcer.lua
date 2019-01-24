@@ -6,6 +6,9 @@ local tablex = require("pl.tablex")
 local Damagable = require("damagable")
 local Entity = require('entity')
 
+local images = {
+    deployed=love.graphics.newImage("assets/sprites/resourcer/deployed.png"),
+}
 
 local Resourcer = Entity:subclass('Resourcer')
 Resourcer.collision_class = 'Building'
@@ -52,8 +55,13 @@ function Resourcer:draw()
     self.projectile:draw()
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
-    love.graphics.setColor(r, g, b, self.damagable:percentHp())
-    love.graphics.circle('fill', cx, cy, self.radius)
+    self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
+    if self.owner.index == 1 then
+        love.graphics.setColor(0, 255, 0)
+    else
+        love.graphics.setColor(255, 0, 0)
+    end
+    love.graphics.draw(images.deployed, cx-self.radius, cy-self.radius)
 end
 function Resourcer:die()
     Entity.die(self)

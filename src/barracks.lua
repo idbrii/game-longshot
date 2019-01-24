@@ -70,7 +70,6 @@ function Barracks:draw()
     self.projectile:draw()
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
-    love.graphics.setColor(r, g, b)
     self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
     if self.owner.index == 1 then
         love.graphics.setColor(0, 255, 0)
@@ -78,7 +77,7 @@ function Barracks:draw()
         love.graphics.setColor(255, 0, 0)
     end
     love.graphics.draw(images.deployed,
-            cx-36 * self.direction, cy-36, 0, self.direction, 1)
+            cx-self.radius * self.direction, cy-self.radius, 0, self.direction, 1)
 end
 
 function Barracks:die()

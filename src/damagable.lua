@@ -20,7 +20,7 @@ function Damagable:drawHpBar(thickness, x, y, width, r, g, b)
     local hp = self:percentHp()
     if hp < 1 then
         love.graphics.setLineWidth(thickness)
-        love.graphics.line(x, y, x + width, y )
+        love.graphics.line(x, y, x + width * hp, y )
     end
 end
 
