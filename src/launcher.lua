@@ -33,7 +33,7 @@ function Launcher:initialize(gamestate, owner, x, y)
 end
 
 function Launcher:update(dt, gamestate)
-    Entity.update(self)
+    Entity.update(self, dt)
     self.projectile:update(dt, gamestate)
 end
 function Launcher:draw()

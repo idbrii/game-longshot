@@ -3,17 +3,19 @@ local Soldier = require("soldier")
 local utils = require("pl.utils")
 local tablex = require("pl.tablex")
 local Damagable = require("damagable")
+local Entity = require('entity')
 
 local images = {
     deployed=love.graphics.newImage("assets/sprites/barracks/deployed.png"),
 }
 
 
-local Barracks = Projectile:subclass('Barracks')
+local Barracks = Entity:subclass('Barracks')
 
 Barracks.collision_class = 'Building'
 
 function Barracks:initialize(gamestate, owner, x, y, launch_params)
+    Entity.initialize(self, gamestate, owner)
     launch_params = launch_params or {}
     if launch_params.direction == nil then
         print('[Barracks] No direction giving. Defaulting to player direction.')
@@ -23,7 +25,12 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
             launch_params.direction = -1
         end
     end
-    Projectile.initialize(self, gamestate, owner, x, y, 32)
+    self.projectile = Projectile:new(gamestate, owner, x, y, 32)
+    --~ table.insert(self.projectile.onHitWall_cb, function(...)
+    --~     self:onHitWall(...)
+    --~ end)
+    self.collider = self.projectile.collider
+    self.radius = self.projectile.radius
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
     self.direction = launch_params.direction
     self.collider:setCollisionClass(Barracks.collision_class)
@@ -45,7 +52,9 @@ function Barracks:spawnSoldier()
     local cx,cy = self.collider:getPosition()
     Soldier:new(self.gamestate, self.owner, cx - self.radius * self.direction * -1.5, cy, self.direction)
 end
-function Barracks:update()
+function Barracks:update(dt)
+    Entity.update(self, dt)
+    self.projectile:update(dt)
     local ts = love.timer.getTime()
     if self.collider:enter('Block') then
         self:deploy()
@@ -57,6 +66,8 @@ function Barracks:update()
 
 end
 function Barracks:draw()
+    Entity.draw(self)
+    self.projectile:draw()
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
     love.graphics.setColor(r, g, b)
@@ -76,9 +87,8 @@ function Barracks:draw()
 end
 
 function Barracks:die()
-    local idx = tablex.find(self.gamestate.entities, self)
-    table.remove(self.gamestate.entities, idx)
-    self.collider:destroy()
+    Entity.die(self)
+    self.projectile:die()
 end
 
 return Barracks
