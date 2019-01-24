@@ -15,6 +15,8 @@ local gridgen = require("gridgen")
 local wf = require("windfield")
 local Input = require('boipushy.Input')
 local Soldier = require("soldier")
+local Resourcer = require("resourcer")
+local ClaimsManager = require("claims_manager")
 local Launcher = require('launcher')
 
 
@@ -24,6 +26,7 @@ local gamestate = {
     -- map: tiles
     -- world: windfield physics world
     -- entities: objects in the world
+    -- claims: the ClaimsManager instance
 }
 gamestate.config = {
     world_width = 50,
@@ -53,6 +56,7 @@ function love.load()
         'Soldiers',
         KillVolume.collision_class,
         Launcher.collision_class,
+        Resourcer.collision_class,
     }
     for i,col_class in ipairs(mob_collision_classes) do
         if col_class == "Soldiers" then
@@ -73,6 +77,8 @@ function love.load()
         gamestate.config.world_height
         )
     gamestate.map:registerCollision(gamestate.world, mob_collision_classes)
+
+    ClaimsManager:new(gamestate)
     
 
 
@@ -157,7 +163,12 @@ end
 function love.mousepressed(x, y, button)
 
     if button == 1 or button == 2 then
-		Soldier:new(gamestate, x, y, button == 1 and 1 or -1)
+        if love.keyboard.isDown("lshift") then
+            Resourcer:new(gamestate, x, y, gamestate.players[1])
+        else
+            Soldier:new(gamestate, x, y, button == 1 and 1 or -1)
+        end
+
     elseif button == 3 then
         -- Remove collision
         local grid_pos = gamestate.map:toGridPosVector(Vec(x,y))
