@@ -4,7 +4,7 @@ local pretty = require("pl.pretty")
 
 
 local Resourcer = class("Resourcer")
-Resourcer.collision_class = 'ResourcerBuilding'
+Resourcer.collision_class = 'Building'
 function Resourcer:initialize(gamestate, x, y, player)
     self.gamestate = gamestate
     self.radius = 32
