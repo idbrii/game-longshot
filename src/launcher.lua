@@ -1,11 +1,12 @@
+local Damagable = require("damagable")
+local Entity = require('entity')
 local M = require("moses.moses")
 local Projectile = require('projectile')
 local Vec = require('hump.vector')
-local utils = require("pl.utils")
-local tablex = require("pl.tablex")
-local Damagable = require("damagable")
 local class = require('astray.MiddleClass')
-local Entity = require('entity')
+local lume = require('rxi.lume')
+local tablex = require("pl.tablex")
+local utils = require("pl.utils")
 
 local Launcher = Entity:subclass('Launcher')
 
@@ -39,6 +40,25 @@ function Launcher:draw()
     local x,y = self.collider:getPosition()
     local w,h = Launcher.sprite_body:getDimensions()
     love.graphics.draw(Launcher.sprite_body, x - w/2, y - h/2)
+
+    local r = 0
+    if self.aim_dir then
+        r = lume.angle(0, 0, self.aim_dir.x, self.aim_dir.y) + math.pi/2
+    end
+
+    w,h = Launcher.sprite_arm:getDimensions()
+    love.graphics.draw(Launcher.sprite_arm, x, y,
+        r,
+        1, 1,
+        w/2, h/2)
+end
+
+function Launcher:poseArm(aim_dir)
+    self.aim_dir = aim_dir
+end
+
+function Launcher:parkArm()
+    self.aim_dir = nil
 end
 
 function Launcher:onHitWall(collision_data)

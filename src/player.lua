@@ -159,9 +159,17 @@ function Player:update(dt, gamestate)
         aim = self.aim_dir
     end
 
+    local launch = self:_getLauncher()
+    if launch then
+        launch:parkArm()
+    end
+
     if     self:_isHeld('fire') then
         self.launch_held_seconds = self.launch_held_seconds + dt
         self.launch_held_seconds = lume.clamp(self.launch_held_seconds, 0, k_launch_maximum_held_seconds)
+        if launch then
+            launch:poseArm(self.aim_dir)
+        end
     elseif self:_isPressed('fire') then
         self.launch_held_seconds = 0
     elseif self.launch_held_seconds > k_launch_minimum_held_seconds then
