@@ -1,4 +1,5 @@
 local Launcher = require('launcher')
+local M = require("moses.moses")
 local Vec = require('hump.vector')
 local class = require('astray.MiddleClass')
 local lume = require('rxi.lume')
@@ -15,6 +16,9 @@ local k_gamepad_player_id = 2
 local current_gamepad_player_id = nil
 
 local k_launch_offset = 15
+local k_launch_minimum_held_seconds = 0.3
+local k_launch_maximum_held_seconds = 4
+
 
 function Player:initialize(gamestate, index)
     table.insert(gamestate.entities, self)
@@ -24,7 +28,8 @@ function Player:initialize(gamestate, index)
     self.selected_launcher_idx = nil
     self.gamestate = gamestate
     self.aim_dir = Vec()
-    self.launch_power = 50
+    self.launch_held_seconds = 0
+    self.launch_power_per_second = 10
 
     if self:_isMouseUser() then
         self.getAim = function(this)
@@ -109,14 +114,22 @@ function Player:_isHeld(cmd)
     return self.gamestate.input:held(player_cmd)
 end
 
-function Player:update()
+function Player:update(dt, gamestate)
     local aim = self:getAim()
     if moremath.isApproxZero(aim.x) and moremath.isApproxZero(aim.x) then
         aim = self.aim_dir
     end
 
-    if     self:_isPressed('fire') then
-        self:_fire()
+    if     self:_isHeld('fire') then
+        self.launch_held_seconds = self.launch_held_seconds + dt
+        self.launch_held_seconds = lume.clamp(self.launch_held_seconds, 0, k_launch_maximum_held_seconds)
+    elseif self:_isPressed('fire') then
+        self.launch_held_seconds = 0
+    elseif self.launch_held_seconds > k_launch_minimum_held_seconds then
+        local sec = self.launch_held_seconds
+        self.launch_held_seconds = 0
+
+        self:_fire(pow)
     elseif self:_isPressed('cycle_launcher_left') then
         self:_cycleLauncher(-1)
     elseif self:_isPressed('cycle_launcher_right') then
@@ -142,12 +155,19 @@ local function _getLaunchStart(launch, aim_dir)
     return Vec(launch.collider:getPosition()) + aim_dir * k_launch_offset
 end
 
-function Player:_fire()
+function Player:_calcLaunchPower()
+    local sec = self.launch_held_seconds - k_launch_minimum_held_seconds
+    local pow = sec / (k_launch_maximum_held_seconds - k_launch_minimum_held_seconds)
+    pow = sec * self.launch_power_per_second
+    return pow
+end
+
+function Player:_fire(launch_power)
     local launch = self:_getLauncher()
     if launch then
         local start = _getLaunchStart(launch, self.aim_dir)
         local projectile = Launcher:new(self.gamestate, self, start.x, start.y)
-        local impulse = self.aim_dir * self.launch_power
+        local impulse = self.aim_dir * self:_calcLaunchPower()
         projectile.collider:applyLinearImpulse(impulse:unpack())
     end
 end
@@ -163,6 +183,9 @@ function Player:draw()
         love.graphics.setColor(self:getColour())
         love.graphics.circle('line', centre.x, centre.y, launch.radius * 1.3)
 
+        local intensity = self:_calcLaunchPower()
+        local tinted = {255, intensity, 0}
+        love.graphics.setColor(unpack(tinted))
         local start = _getLaunchStart(launch, self.aim_dir)
         local target = start + self.aim_dir * k_launch_offset * 2
         love.graphics.line(start.x, start.y, target.x, target.y)
