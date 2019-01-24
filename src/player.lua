@@ -20,6 +20,14 @@ local k_launch_minimum_held_seconds = 0.3
 local k_launch_maximum_held_seconds = 4
 
 
+local function snapToDeadzone(input)
+    local deadzone = 0.2
+    if math.abs(input) < deadzone then
+        return 0
+    end
+    return input
+end
+
 function Player:initialize(gamestate, index)
     table.insert(gamestate.entities, self)
     self.index = index
@@ -27,7 +35,7 @@ function Player:initialize(gamestate, index)
     self.launchers = {}
     self.selected_launcher_idx = nil
     self.gamestate = gamestate
-    self.aim_dir = Vec()
+    self.aim_dir = Vec(0,1)
     self.launch_held_seconds = 0
     self.launch_power_per_second = 10
 
@@ -47,6 +55,8 @@ function Player:initialize(gamestate, index)
             if self.index == current_gamepad_player_id then
                 local x = self.gamestate.input.joysticks[1]:getGamepadAxis('leftx')
                 local y = self.gamestate.input.joysticks[1]:getGamepadAxis('lefty')
+                x = snapToDeadzone(x)
+                y = snapToDeadzone(y)
                 return Vec(x,y)
             else 
                 return Vec()
@@ -114,6 +124,12 @@ function Player:_isHeld(cmd)
     return self.gamestate.input:held(player_cmd)
 end
 
+local function _rotateAim(dt, aim, direction)
+    local angle = lume.angle(0,0, aim.x, aim.y)
+    angle = angle + math.pi * direction * dt
+    return Vec(lume.vector(angle, 1))
+end
+
 function Player:update(dt, gamestate)
     local aim = self:getAim()
     if moremath.isApproxZero(aim.x) and moremath.isApproxZero(aim.x) then
@@ -128,7 +144,6 @@ function Player:update(dt, gamestate)
     elseif self.launch_held_seconds > k_launch_minimum_held_seconds then
         local sec = self.launch_held_seconds
         self.launch_held_seconds = 0
-
         self:_fire(pow)
     elseif self:_isPressed('cycle_launcher_left') then
         self:_cycleLauncher(-1)
@@ -141,11 +156,9 @@ function Player:update(dt, gamestate)
     elseif self:_isPressed('up') then
     elseif self:_isPressed('down') then
     elseif self:_isHeld('left') then
-        local delta = Vec(lume.vector(-5, 1))
-        aim = aim + delta
+        aim = _rotateAim(dt, aim, -1)
     elseif self:_isHeld('right') then
-        local delta = Vec(lume.vector(5, 1))
-        aim = aim + delta
+        aim = _rotateAim(dt, aim, 1)
     end
 
     self.aim_dir = aim
