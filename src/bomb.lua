@@ -51,7 +51,10 @@ function Bomb:_explode()
     tryDestroyTile(grid, grid_pos.x, grid_pos.y+1)
     self.gamestate.map:refresh(grid)
     self:die()
-    Vfx:new(self.gamestate, screen_pos.x, screen_pos.y, 'poof', 3)
+    Vfx:new(self.gamestate, screen_pos.x, screen_pos.y, 'poof', {
+            lifetime = 2,
+            fade_seconds = 2,
+        })
 end
 
 return Bomb
