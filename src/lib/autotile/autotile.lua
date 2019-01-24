@@ -1,3 +1,5 @@
+-- How it works: https://love2d.org/forums/viewtopic.php?t=7826
+--
 -- This function calculates the adjacent tile values and draws the autotile
 --
 -- grid: A 2-d grid used to represent connected tiles. Values can either
