@@ -11,7 +11,7 @@ local Launcher = class('Launcher')
 Launcher.collision_class = 'Building'
 
 function Launcher:initialize(gamestate, owner, x, y)
-
+    self.gamestate = gamestate
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
     self.owner = owner
     self.owner:addLauncher(self)
