@@ -181,6 +181,11 @@ function vector:mirrorOn(v)
 	return new(s * v.x - self.x, s * v.y - self.y)
 end
 
+function vector:dot(v)
+	assert(isvector(v), "dot: wrong argument types (<vector> expected)")
+	return self.x * v.x + self.y * v.y
+end
+
 function vector:cross(v)
 	assert(isvector(v), "cross: wrong argument types (<vector> expected)")
 	return self.x * v.y - self.y * v.x

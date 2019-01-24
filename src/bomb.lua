@@ -6,7 +6,7 @@ local Bomb = Projectile:subclass('Bomb')
 
 Bomb.collision_class = 'Building'
 
-function Bomb:initialize(gamestate, owner, x, y)
+function Bomb:initialize(gamestate, owner, x, y, launch_params)
     Projectile.initialize(self, gamestate, owner, x, y)
     self.collider:setCollisionClass(Bomb.collision_class)
     self.tint = 1

@@ -5,17 +5,18 @@ local Barracks = Projectile:subclass('Barracks')
 
 Barracks.collision_class = 'Building'
 
-function Barracks:initialize(gamestate, owner, x, y, direction)
-    if direction == nil then
-        -- TODO: Smarter detection of where to go? Away from launcher?
+function Barracks:initialize(gamestate, owner, x, y, launch_params)
+    launch_params = launch_params or {}
+    if launch_params.direction == nil then
+        print('[Barracks] No direction giving. Defaulting to player direction.')
         if owner.index == 1 then
-            direction = 1
+            launch_params.direction = 1
         else
-            direction = -1
+            launch_params.direction = -1
         end
     end
     Projectile.initialize(self, gamestate, owner, x, y, 32)
-    self.direction = direction
+    self.direction = launch_params.direction
     self.collider:setCollisionClass(Barracks.collision_class)
     self.deployed = false
     self.lastSpawnAt = love.timer.getTime()

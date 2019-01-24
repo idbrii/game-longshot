@@ -7,7 +7,7 @@ local Launcher = class('Launcher')
 
 Launcher.collision_class = 'Building'
 
-function Launcher:initialize(gamestate, owner, x, y)
+function Launcher:initialize(gamestate, owner, x, y, launch_params)
     self.owner = owner
     self.projectile = Projectile:new(gamestate, owner, x, y)
     self.projectile.onHitWall_cb = function(collision_data)
