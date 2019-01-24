@@ -16,8 +16,8 @@ See also player.lua: defineKeyboardInput and defineGamepadInput.
 aim with mouse
 
 * space - fire
-* w     - up
-* a     - left
+* w     - cycle_projectile_prev
+* a     - cycle_projectile_next
 * s     - down
 * d     - right
 * q     - cycle_launcher_left
@@ -29,9 +29,9 @@ aim with mouse
 
 ### Player 2
 * rctrl - fire
-* up    - up
+* up    - cycle_projectile_prev
+* down  - cycle_projectile_next
 * left  - left
-* down  - down
 * right - right
 * [     - cycle_launcher_left
 * ]     - cycle_launcher_right
@@ -44,9 +44,9 @@ or gamepad:
 
 * leftstick     - aim
 * fdown         - fire
-* dpup          - up
+* dpup          - cycle_projectile_prev
+* dpdown        - cycle_projectile_next
 * dpleft        - left
-* dpdown        - down
 * dpright       - right
 * leftshoulder  - cycle_launcher_left
 * rightshoulder - cycle_launcher_right

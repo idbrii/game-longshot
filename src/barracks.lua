@@ -11,6 +11,7 @@ function Barracks:initialize(gamestate, owner, x, y, direction)
     self.collider:setCollisionClass(Barracks.collision_class)
     self.deployed = false
     self.lastSpawnAt = love.timer.getTime()
+    self.tint = 1
 end
 
 function Barracks:spawnInterval()

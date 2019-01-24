@@ -1,5 +1,8 @@
+local Barracks = require('barracks')
+local Bomb = require('bomb')
 local Launcher = require('launcher')
 local M = require("moses.moses")
+local Resourcer = require('resourcer')
 local Vec = require('hump.vector')
 local class = require('astray.MiddleClass')
 local lume = require('rxi.lume')
@@ -22,10 +25,18 @@ local k_launch_maximum_held_seconds = 4
 local k_projectile_id_to_name = {
     'launcher',
     'barracks',
-    'harvester',
+    'resourcer',
     'bomb',
 }
 local k_projectile_id = pl_table.index_map(k_projectile_id_to_name)
+local k_projectile_id_to_class = {
+    Launcher,
+    Barracks,
+    Resourcer,
+    Bomb,
+}
+
+
 
 
 local function snapToDeadzone(input)
@@ -189,7 +200,8 @@ function Player:_fire()
     local launch = self:_getLauncher()
     if launch then
         local start = _getLaunchStart(launch, self.aim_dir)
-        local projectile = Launcher:new(self.gamestate, self, start.x, start.y)
+        local SelectedProjectile = k_projectile_id_to_class[self.selected_projectile_id]
+        local projectile = SelectedProjectile:new(self.gamestate, self, start.x, start.y)
         local power = self:_calcLaunchPower()
         local impulse = self.aim_dir * power
         projectile.collider:applyLinearImpulse(impulse:unpack())
