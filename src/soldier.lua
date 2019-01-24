@@ -4,6 +4,15 @@ local tablex = require("pl.tablex")
 local utils = require("pl.utils")
 local Damagable = require("damagable")
 
+local images = {
+    walk1=love.graphics.newImage("assets/sprites/soldier/walk1.png"),
+    walk2=love.graphics.newImage("assets/sprites/soldier/walk2.png"),
+    climb1=love.graphics.newImage("assets/sprites/soldier/climb1.png"),
+    climb2=love.graphics.newImage("assets/sprites/soldier/climb2.png"),
+    fall1=love.graphics.newImage("assets/sprites/soldier/fall1.png"),
+    attack1=love.graphics.newImage("assets/sprites/soldier/attack1.png"),
+    attack2=love.graphics.newImage("assets/sprites/soldier/attack2.png")
+}
 local states = {
     walking=1,
     falling=2,
@@ -152,22 +161,28 @@ function Soldier:draw()
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
     love.graphics.setColor(r, g, b, self.damagable:percentHp())
-    love.graphics.circle('fill', cx, cy, 10)
-
     --debug
     if self.lastCollision then
         local x, y = self.lastCollision.collider:getPosition()
         love.graphics.circle('fill', x, y, 3)
     end
 
-    love.graphics.setColor(0, 0, 0)
-    local statesSymbol = {
-        "W",
-        "F",
-        "C",
-        "A"
+    love.graphics.setColor(255, 255, 255, self.damagable:percentHp())
+    local stateImages= {
+        images.walk1,
+        images.fall1,
+        images.climb1,
+        images.attack1
     }
-    love.graphics.print(statesSymbol[self.state], cx-5, cy-5)
+    local px
+    if self.direction == 1 then
+        px = cx - 8
+    else
+        px = cx + 8
+    end
+    love.graphics.draw(stateImages[self.state],
+            px, cy-18, 0, self.direction, 1)
+
 
 
 end
