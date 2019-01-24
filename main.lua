@@ -202,6 +202,8 @@ function love.mousepressed(x, y, button)
     if button == 1 or button == 2 then
         if love.keyboard.isDown("lshift") then
             Resourcer:new(gamestate, x, y, gamestate.players[1])
+        elseif love.keyboard.isDown("rshift") then
+            Resourcer:new(gamestate, x, y, gamestate.players[2])
         else
             Soldier:new(gamestate, x, y, button == 1 and 1 or -1)
         end
