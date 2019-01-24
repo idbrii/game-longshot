@@ -2,13 +2,13 @@ local class = require("astray.MiddleClass")
 local gridgen = require("gridgen")
 local Claim = require("claim")
 local Vec = require('hump.vector')
--- @todo make per resourcer!
-local tmpGen = 1
+
 local ClaimsManager = class("ClaimsManager")
 function ClaimsManager:initialize(gamestate)
     self.expandInterval = 1.5
     self.lastExpansion = love.timer.getTime()
     self.gamestate = gamestate
+    self.generation = 0
     self.grid = {}
     for x = 1, gamestate.config.world_width do
         self.grid[x] = {}
@@ -18,7 +18,7 @@ function ClaimsManager:initialize(gamestate)
     end
     gamestate.claims = self
     table.insert(gamestate.entities, self)
-    self.claims = {}
+    self.resourcerClaims = {}
 end
 
 function ClaimsManager:isUnclaimed(x, y)
@@ -34,7 +34,10 @@ end
 function ClaimsManager:addClaim(resourcer, x, y, generation)
     local newClaim = Claim:new(self.gamestate, x, y, resourcer, generation)
     self.grid[x][y] = newClaim
-    table.insert(self.claims, newClaim)
+    if not self.resourcerClaims[resourcer] then
+        self.resourcerClaims[resourcer] = {}
+    end
+    table.insert(self.resourcerClaims[resourcer], newClaim)
     return newClaim
 end
 
@@ -57,12 +60,13 @@ function ClaimsManager:claimFromResourcer(resourcer, x, y)
 end
 
 function ClaimsManager:expandAll()
-    tmpGen = tmpGen + 1
-    for i, claim in ipairs(self.claims) do
-        if claim.generation < tmpGen then
-            self:expand(claim)
+    for resourcer, claims in pairs(self.resourcerClaims) do
+        resourcer.generation = resourcer.generation + 1
+        for i, claim in ipairs(claims) do
+            if claim.generation < resourcer.generation then
+                self:expand(claim)
+            end
         end
-
     end
 
 end

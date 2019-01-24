@@ -11,6 +11,7 @@ function Resourcer:initialize(gamestate, x, y, player)
     self.collider = gamestate.world:newCircleCollider(x, y, self.radius)
     self.owner = player
     self.collider:setCollisionClass(Resourcer.collision_class)
+    self.generation = 1
     table.insert(gamestate.entities, self)
 end
 function Resourcer:addClaimFrom(x, y)
