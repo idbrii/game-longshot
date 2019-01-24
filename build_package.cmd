@@ -2,11 +2,12 @@
 
 pushd %~dp0
 
-set build_dir=c:\scratch\build_longshot
+set build_dir=c:\scratch\build_longshot\longshot
 set network_dir=M:\gamejam-2019-01-23\longshot
 set love_dir=%USERPROFILE%\scoop\apps\love\11.2
 
-mkdir %build_dir% 2>NUL
+rd /S /Q %build_dir%
+mkdir %build_dir%
 
 %USERPROFILE%\scoop\shims\7z.exe a -y -tzip -x!.git -x!cscope.* -x!*tags -x!*.swp %build_dir%\Longshot.love .
 copy /b %love_dir%\love.exe+%build_dir%\Longshot.love %build_dir%\Longshot.exe
