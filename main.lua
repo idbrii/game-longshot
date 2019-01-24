@@ -62,7 +62,7 @@ function love.load()
         --Resourcer.collision_class,
     }
     for i,col_class in ipairs(mob_collision_classes) do
-        if col_class == "Soldiers" then
+        if col_class == "SoldiersP1" or col_class == "SoldiersP2" then
             gamestate.world:addCollisionClass(col_class, {ignores={col_class}})
         else
         gamestate.world:addCollisionClass(col_class)
