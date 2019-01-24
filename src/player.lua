@@ -14,7 +14,7 @@ local k_mouse_player_id = 1
 local k_gamepad_player_id = 2
 local current_gamepad_player_id = nil
 
-local k_launch_offset = 30
+local k_launch_offset = 15
 
 function Player:initialize(gamestate, index)
     table.insert(gamestate.entities, self)
@@ -177,7 +177,10 @@ function Player:addLauncher(launcher)
 end
 
 function Player:_getLauncher()
-    return self.launchers[self.selected_launcher_idx]
+    local launch = self.launchers[self.selected_launcher_idx]
+    if launch and launch.has_stabilized then
+        return launch
+    end
 end
 
 function Player:getColour()
