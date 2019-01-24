@@ -10,6 +10,7 @@ io.stdout:setvbuf("no")
 local TileMap = require("tilemap")
 local Vec = require('hump.vector')
 local Player = require('player')
+local moretable = require('moretable')
 local KillVolume = require('killvolume')
 local gridgen = require("gridgen")
 local wf = require("windfield")
@@ -32,6 +33,7 @@ gamestate.config = {
     world_width = 50,
     world_height = 30,
     tile_size = 32,
+    foreground_blend_index = 1,
 }
 
 local debug_draw_fn
@@ -114,8 +116,8 @@ function love.joystickadded(joystick)
 end
 
 function love.keypressed(key)
-    -- Reset translation
-    if key == "space" then
+    if key == 'b' then
+        gamestate.config.foreground_blend_index = moretable.circular_index_number(8, gamestate.config.foreground_blend_index + 1)
     end
 end
 
@@ -144,15 +146,29 @@ function love.update(dt)
 end
 
 function love.draw()
-    love.graphics.setBlendMode('alpha', 'alphamultiply')
+    local blendmodes = {
+        'alpha',
+        'replace',
+        'screen',
+        'add',
+        'subtract',
+        'multiply',
+        'lighten',
+        'darken',
+        false, -- don't draw at all
+    }
+
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(gamestate.plates.skybox, 0, 0)
 
     -- Draw map
     gamestate.map:draw(gamestate.grid)
 
-    love.graphics.setBlendMode('subtract', 'premultiplied')
-    --~ love.graphics.draw(gamestate.plates.foreground, 0, 0)
+    local mode = blendmodes[gamestate.config.foreground_blend_index]
+    if mode then
+        love.graphics.setBlendMode(mode, 'premultiplied')
+        love.graphics.draw(gamestate.plates.foreground, 0, 0)
+    end
     -- restore default
     love.graphics.setBlendMode('alpha', 'alphamultiply')
 
