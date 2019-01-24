@@ -24,6 +24,7 @@ end
 function Projectile:die()
     self.gamestate:removeEntity(self)
     self.collider:destroy()
+    self.collider = nil
 end
 
 function Projectile:update()
