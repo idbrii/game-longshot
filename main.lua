@@ -67,6 +67,11 @@ function love.load()
 
     end
 
+
+    gamestate.plates = {}
+    gamestate.plates.skybox = love.graphics.newImage("assets/textures/skybox.png")
+    gamestate.plates.foreground = love.graphics.newImage("assets/textures/ground_overlay.png")
+
     gamestate.grid = gridgen.generate_grid(gamestate.config.world_width, gamestate.config.world_height)
     gamestate.map = TileMap:new(
         gamestate,
@@ -139,9 +144,17 @@ function love.update(dt)
 end
 
 function love.draw()
-    -- Draw map
+    love.graphics.setBlendMode('alpha', 'alphamultiply')
     love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(gamestate.plates.skybox, 0, 0)
+
+    -- Draw map
     gamestate.map:draw(gamestate.grid)
+
+    love.graphics.setBlendMode('subtract', 'premultiplied')
+    love.graphics.draw(gamestate.plates.foreground, 0, 0)
+    -- restore default
+    love.graphics.setBlendMode('alpha', 'alphamultiply')
 
     -- Draw physics objects
     love.graphics.setColor(255, 0, 255)
