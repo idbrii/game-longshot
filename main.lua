@@ -12,6 +12,7 @@ local pl_table = require('pl.tablex')
 local Vec = require('hump.vector')
 local Vfx = require('vfx')
 local Player = require('player')
+local Projectile = require('projectile')
 local moretable = require('moretable')
 local KillVolume = require('killvolume')
 local gridgen = require("gridgen")
@@ -67,13 +68,12 @@ function love.load()
         'SoldiersP1',
         'SoldiersP2',
         KillVolume.collision_class,
-        Launcher.collision_class,
-        --~ Resourcer.collision_class,
+        Projectile.collision_class,
     }
     gamestate.world:addCollisionClass('SoldiersP1',               {ignores={'SoldiersP1'}})
     gamestate.world:addCollisionClass('SoldiersP2',               {ignores={'SoldiersP2'}})
     gamestate.world:addCollisionClass(KillVolume.collision_class)
-    gamestate.world:addCollisionClass(Launcher.collision_class)
+    gamestate.world:addCollisionClass(Projectile.collision_class)
 
 
     gamestate.plates = {}

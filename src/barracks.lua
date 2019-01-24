@@ -12,8 +12,6 @@ local images = {
 
 local Barracks = Entity:subclass('Barracks')
 
-Barracks.collision_class = 'Building'
-
 function Barracks:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner)
     launch_params = launch_params or {}
@@ -33,7 +31,6 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
     self.radius = self.projectile.radius
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
     self.direction = launch_params.direction
-    self.collider:setCollisionClass(Barracks.collision_class)
     self.collider:setObject(self)
     self.deployed = false
     self.lastSpawnAt = love.timer.getTime()

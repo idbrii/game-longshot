@@ -6,13 +6,10 @@ local Entity = require('entity')
 
 local Bomb = Entity:subclass('Bomb')
 
-Bomb.collision_class = 'Building'
-
 function Bomb:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner)
     self.projectile = Projectile:new(gamestate, owner, x, y)
     self.collider = self.projectile.collider
-    self.collider:setCollisionClass(Bomb.collision_class)
     self.tint = 1
     table.insert(self.projectile.onHitWall_cb, function(...)
         self:onHitWall(...)

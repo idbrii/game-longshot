@@ -9,8 +9,6 @@ local Entity = require('entity')
 
 local Launcher = Entity:subclass('Launcher')
 
-Launcher.collision_class = 'Building'
-
 function Launcher.load()
     Launcher.sprite_body = love.graphics.newImage("assets/textures/launcher.png")
     Launcher.sprite_arm = love.graphics.newImage("assets/textures/launcher_aimer.png")
@@ -26,7 +24,6 @@ function Launcher:initialize(gamestate, owner, x, y)
     end)
     self.collider = self.projectile.collider
     self.collider:setObject(self)
-    self.collider:setCollisionClass(Launcher.collision_class)
     self.collider:applyLinearImpulse(500, 500)
     self.projectile.tint = 0.1
     self.radius = self.projectile.radius

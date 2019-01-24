@@ -11,7 +11,6 @@ local images = {
 }
 
 local Resourcer = Entity:subclass('Resourcer')
-Resourcer.collision_class = 'Building'
 local MAX_RESOURCER_TICK = 30
 local MAX_TICK_IN_GENERATIONS = 60
 function Resourcer:initialize(gamestate, owner, x, y, launch_params)
@@ -23,7 +22,6 @@ function Resourcer:initialize(gamestate, owner, x, y, launch_params)
     self.collider = self.projectile.collider
     self.radius = self.projectile.radius
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
-    self.collider:setCollisionClass(Resourcer.collision_class)
     self.collider:setObject(self)
     self.lastExpansion = love.timer.getTime()
     self.generation = 1
