@@ -5,8 +5,6 @@ local Vec = require('hump.vector')
 
 local ClaimsManager = class("ClaimsManager")
 function ClaimsManager:initialize(gamestate)
-    self.expandInterval = 1.5
-    self.lastExpansion = love.timer.getTime()
     self.gamestate = gamestate
     self.generation = 0
     self.grid = {}
@@ -59,19 +57,18 @@ function ClaimsManager:claimFromResourcer(resourcer, x, y)
     end
 end
 
-function ClaimsManager:expandAll()
-    for resourcer, claims in pairs(self.resourcerClaims) do
-        resourcer.generation = resourcer.generation + 1
-        for i, claim in ipairs(claims) do
-            if claim.generation < resourcer.generation then
-                self:expand(claim)
-            end
+function ClaimsManager:expandResourcer(resourcer)
+    local claims = self.resourcerClaims[resourcer]
+    resourcer.generation = resourcer.generation + 1
+    print(resourcer:expandInterval())
+    for i, claim in ipairs(claims) do
+        if claim.generation < resourcer.generation then
+            self:expandClaim(claim)
         end
     end
-
 end
 
-function ClaimsManager:expand(claim)
+function ClaimsManager:expandClaim(claim)
     local directions = {
         Vec(claim.x - 1, claim.y),
         Vec(claim.x + 1, claim.y),
@@ -87,10 +84,15 @@ end
 
 function ClaimsManager:update()
     local ts = love.timer.getTime()
-    if ts > (self.lastExpansion + self.expandInterval) then
-        self:expandAll()
-        self.lastExpansion = ts
+    --for resourcer, claims in pairs(self.resourcerClaims) do
+    for resourcer in pairs(self.resourcerClaims) do
+        if ts > (resourcer.lastExpansion + resourcer:expandInterval()) then
+            self:expandResourcer(resourcer)
+            resourcer.lastExpansion = ts
+        end
     end
+
+
 end
 
 function ClaimsManager:draw()

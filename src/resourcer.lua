@@ -5,8 +5,11 @@ local pretty = require("pl.pretty")
 
 local Resourcer = class("Resourcer")
 Resourcer.collision_class = 'Building'
+local MAX_RESOURCER_TICK = 30
+local MAX_TICK_IN_GENERATIONS = 60
 function Resourcer:initialize(gamestate, x, y, player)
     self.gamestate = gamestate
+    self.lastExpansion = love.timer.getTime()
     self.radius = 32
     self.collider = gamestate.world:newCircleCollider(x, y, self.radius)
     self.owner = player
@@ -14,12 +17,10 @@ function Resourcer:initialize(gamestate, x, y, player)
     self.generation = 1
     table.insert(gamestate.entities, self)
 end
-function Resourcer:addClaimFrom(x, y)
+function Resourcer:expandInterval()
+    return MAX_RESOURCER_TICK * (math.min(self.generation, MAX_TICK_IN_GENERATIONS) / MAX_TICK_IN_GENERATIONS)
+end
 
-end
-function Resourcer:addClaimAt(x, y)
-    Claim:new(self.gamestate, x, y, self)
-end
 function Resourcer:deploy()
     self.collider:setAwake(false)
     local contacts = self.collider:getContacts('Block')
