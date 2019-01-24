@@ -10,7 +10,7 @@ local states = {
 
 local Soldier = class("Soldier")
 
-function Soldier:initialize(gamestate, x, y, direction)
+function Soldier:initialize(gamestate, owner, x, y, direction)
     self.targetWalkSpeed = 80
     self.walkBounceImpulse = -40
     self.climbSpeed = 50
@@ -18,10 +18,11 @@ function Soldier:initialize(gamestate, x, y, direction)
     self.ledgeVaultTimeout = 0.1
     self.stuckTimeout = 2.5
     self.gamestate = gamestate
+    self.owner = owner
     self.direction = direction
     self.collider = gamestate.world:newCircleCollider(x, y, 10)
     self.collider:setRestitution(0.1)
-    self.collider:setCollisionClass("Soldiers")
+    self.collider:setCollisionClass("SoldiersP" .. self.owner.index)
     table.insert(gamestate.entities, self)
     self.state = states.falling
     self.scheduleFall = nil
@@ -109,7 +110,8 @@ end
 function Soldier:draw()
     love.graphics.setColor(255, 0, 255)
     local cx,cy = self.collider:getPosition()
-    love.graphics.circle('fill', cx, cy, 10)
+    love.graphics.setColor(self.owner:getColour())
+    love.graphics.circle('line', cx, cy, 10)
 
     --debug
     if self.lastCollision then

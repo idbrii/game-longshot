@@ -9,6 +9,7 @@ local MAX_RESOURCER_TICK = 30
 local MAX_TICK_IN_GENERATIONS = 60
 function Resourcer:initialize(gamestate, owner, x, y)
     Projectile.initialize(self, gamestate, owner, x, y, 32)
+    self.collider:setCollisionClass(Resourcer.collision_class)
     self.lastExpansion = love.timer.getTime()
     self.generation = 1
 end

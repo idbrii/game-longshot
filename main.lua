@@ -15,8 +15,8 @@ local KillVolume = require('killvolume')
 local gridgen = require("gridgen")
 local wf = require("windfield")
 local Input = require('boipushy.Input')
-local Soldier = require("soldier")
 local Resourcer = require("resourcer")
+local Barracks = require("barracks")
 local ClaimsManager = require("claims_manager")
 local Launcher = require('launcher')
 
@@ -55,7 +55,8 @@ function love.load()
     gamestate.world = wf.newWorld(0, 0, true)
     gamestate.world:setGravity(0, 512)
     local mob_collision_classes = {
-        'Soldiers',
+        'SoldiersP1',
+        'SoldiersP2',
         KillVolume.collision_class,
         Launcher.collision_class,
         --Resourcer.collision_class,
@@ -204,8 +205,10 @@ function love.mousepressed(x, y, button)
             Resourcer:new(gamestate, gamestate.players[1], x, y)
         elseif love.keyboard.isDown("rshift") then
             Resourcer:new(gamestate, gamestate.players[1], x, y)
-        else
-            Soldier:new(gamestate, x, y, button == 1 and 1 or -1)
+        elseif love.keyboard.isDown("lctrl") then
+            Barracks:new(gamestate, gamestate.players[1], x, y, 1)
+        elseif love.keyboard.isDown("rctrl") then
+            Barracks:new(gamestate, gamestate.players[2], x, y, -1)
         end
 
     elseif button == 3 then
