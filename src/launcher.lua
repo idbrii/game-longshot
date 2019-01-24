@@ -17,10 +17,10 @@ function Launcher.load()
 end
 
 function Launcher:initialize(gamestate, owner, x, y)
-    Entity.initialize(self, gamestate, owner, x, y)
+    Entity.initialize(self, gamestate, owner)
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
     self.owner:addLauncher(self)
-    self.projectile = Projectile:new(gamestate, owner, x, y)
+    self.projectile = Projectile:new(gamestate, owner, x, y, 30)
     table.insert(self.projectile.onHitWall_cb, function(...)
         self:onHitWall(...)
     end)
@@ -40,7 +40,9 @@ function Launcher:draw()
     Entity.draw(self)
     self.projectile:draw()
     
-    love.graphics.draw(Launcher.sprite_body, self.x, self.y)
+    local x,y = self.collider:getPosition()
+    local w,h = Launcher.sprite_body:getDimensions()
+    love.graphics.draw(Launcher.sprite_body, x - w/2, y - h/2)
 end
 
 function Launcher:onHitWall(collision_data)
