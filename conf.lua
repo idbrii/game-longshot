@@ -22,5 +22,5 @@ function love.conf(t)
         t.window.y = nil   --  The y-coordinate of the window's position in the specified display (number)
     end
     t.window.width = 1632                -- The window width (number)
-    t.window.height = 992+50               -- The window height (number)
+    t.window.height = 928+50               -- The window height (number)
 end

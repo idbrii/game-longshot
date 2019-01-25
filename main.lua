@@ -39,7 +39,7 @@ local gamestate = {
 }
 gamestate.config = {
     world_width = 50,
-    world_height = 30,
+    world_height = 28,
     tile_size = 32,
     foreground_blend_index = 6,
     has_cheats = true,
