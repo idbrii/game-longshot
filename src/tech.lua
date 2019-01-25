@@ -52,43 +52,41 @@ function Tech:deductResource(amount)
 end
 
 function Tech:drawResourceUI()
-    local width = 30
-    local padding = 10
-    local marginTop = 120
-    local marginBottom = 300
-    local barHeight = love.graphics.getHeight() - marginBottom - marginTop
-    local origin = self.owner.index == 1 and padding or (love.graphics.getWidth() - width - padding)
+    local height = 20
+    local padding = 5
+    local gutter = 64 + padding * 2
+    local screenWidth = love.graphics.getWidth()
+    local width = screenWidth / 2 - padding - gutter
+    local top = love.graphics.getHeight() - padding - height
+    local left = self.owner.index == 1 and gutter or (screenWidth / 2 + padding)
     local r, g, b = self.owner:getColour()
 
-    -- Tech progress bar
+     --Tech progress bar
     love.graphics.setColor(r, g, b, 0.5)
     love.graphics.setLineWidth(2)
-    love.graphics.rectangle('line', origin, marginTop, width, barHeight)
+    love.graphics.rectangle('line', left, top, width, height)
 
-    -- Tech progress fill
-    local resourceBarHeight = (math.min(self.resources, MAX_RESOURCES) / MAX_RESOURCES) * barHeight
-    local emptySpaceHeight = barHeight - resourceBarHeight
-    love.graphics.rectangle('fill', origin, marginTop + emptySpaceHeight, width, resourceBarHeight)
+    ---- Tech progress fill
+    local resourceBarWidth = (math.min(self.resources, MAX_RESOURCES) / MAX_RESOURCES) * width
+
+    love.graphics.rectangle('fill', left, top, resourceBarWidth, height)
 
 
     -- Tech level... levels
 
     for i, level in ipairs(self.techLevels) do
-        love.graphics.setColor(255, 255, 255)
+        love.graphics.setColor(0, 0, 0)
         if level == self.techLevel then
-            love.graphics.setColor(0, 0, 255)
+            love.graphics.setColor(0, 0, 1)
         end
         local textWidth = 75
-        local x1 = self.owner.index == 1 and origin or origin - textWidth
-        local x2 = origin + width + textWidth
-        local textX = self.owner.index ==1 and x1 + width + 5 or x1
-        local distanceFromBottom = (level.resourceCost / MAX_RESOURCES) * barHeight
-        local y = marginTop + (barHeight - distanceFromBottom)
-        love.graphics.line(x1, y, x2, y)
-        love.graphics.print(level.name .. " (" .. level.key[self.owner.index] .. ")",  textX, y)
+        local markerX = left + (level.resourceCost / MAX_RESOURCES) * width
+        local markerY = top - 20
+        love.graphics.line(markerX, markerY, markerX, top + height)
+        love.graphics.print(level.name .. " (" .. level.key[self.owner.index] .. ")",  markerX + padding, markerY)
 
     end
-    
+
 end
 
 return Tech
