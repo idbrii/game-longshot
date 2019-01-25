@@ -17,18 +17,31 @@ function Entity:setCollider(collider)
     self.collider:setObject(self)
 end
 
-local do_vfx_for = {
+local do_big_poof_for = {
     resourcer = true,
     barracks = true,
     launcher = true,
 }
 
+local do_person_death_for = {
+    soldier = true,
+}
+
 function Entity:die()
-    if do_vfx_for[self.type_name] and self.collider then
-        local x,y = self.collider:getPosition()
-        Vfx:new(self.gamestate, x, y, 'poof', {
-                fade_seconds = 1,
-            })
+    if self.collider then
+        local poof = nil
+        if do_big_poof_for[self.type_name] then
+            poof = 'poof'
+        elseif do_person_death_for[self.type_name] then
+            poof = 'person_death'
+        end
+
+        if poof then
+            local x,y = self.collider:getPosition()
+            Vfx:new(self.gamestate, x, y, poof, {
+                    fade_seconds = 1,
+                })
+        end
     end
 
     self.gamestate:removeEntity(self)

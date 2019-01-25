@@ -7,6 +7,7 @@ Vfx.effects = {
 
 function Vfx.load()
     Vfx.effects.poof = love.graphics.newImage("assets/textures/poof.png")
+    Vfx.effects.person_death = love.graphics.newImage("assets/textures/person_death.png")
 end
 
 function Vfx:initialize(gamestate, x, y, effect_name, params)
