@@ -81,6 +81,7 @@ function love.load()
     gamestate.plates = {}
     gamestate.plates.skybox = love.graphics.newImage("assets/textures/skybox.png")
     gamestate.plates.foreground = love.graphics.newImage("assets/textures/ground_overlay.png")
+    gamestate.plates.ui_bg = love.graphics.newImage("assets/textures/ui_background.png")
 
     gamestate.art = {
         bomb = love.graphics.newImage("assets/textures/bomb.png"),
@@ -172,6 +173,7 @@ function love.update(dt)
 end
 
 function love.draw()
+    local screen_w, screen_h = love.graphics.getWidth(), love.graphics.getHeight()
     local blendmodes = {
         { 'alpha', 'alphamultiply' },
         { 'alpha', 'premultiplied' },
@@ -203,11 +205,9 @@ function love.draw()
     -- restore default
     love.graphics.setBlendMode('alpha', 'alphamultiply')
 
-    -- Draw physics objects
-    love.graphics.setColor(255, 0, 255)
-    if should_draw_physics then
-        gamestate.world:draw()
-    end
+    love.graphics.setColor(1,1,1)
+    local sprite = gamestate.plates.ui_bg
+    love.graphics.draw(sprite, 0, screen_h-50)
 
     -- Draw entities
     love.graphics.setColor(255, 0, 255)
@@ -218,6 +218,12 @@ function love.draw()
     if mode then
         love.graphics.setColor(0, 100, 100)
         love.graphics.print(mode[1] ..' '.. mode[2], 10,10)
+    end
+
+    -- Draw physics objects
+    love.graphics.setColor(255, 0, 255)
+    if should_draw_physics then
+        gamestate.world:draw()
     end
 
     if debug_draw_fn then
