@@ -102,7 +102,12 @@ end
 function Soldier:attack(other)
     self.collider:applyLinearImpulse(self.walkBounceImpulse * self.direction, self.walkBounceImpulse)
     self.showCombatPoseUntil = love.timer.getTime() + self.combatPoseTime
-    other.damagable:takeDamage(self.attackDamage)
+    if other.damagable then
+        other.damagable:takeDamage(self.attackDamage)
+    else
+        print("Why doesn't this thing have a damagable?", other)
+        pretty.dumps(other)
+    end
 end
 
 function Soldier:update(dt)
