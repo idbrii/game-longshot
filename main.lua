@@ -44,6 +44,8 @@ local debug_draw_fn
 local should_draw_physics = false
 
 function love.load()
+    love.graphics.setDefaultFilter('nearest', 'nearest', 16)
+
     gamestate.input = Input()
     gamestate.input:bind('escape', love.event.quit)
     gamestate.input:bind('backspace', function()
@@ -76,7 +78,6 @@ function love.load()
     gamestate.world:addCollisionClass('SoldiersP2',               {ignores={'SoldiersP2'}})
     gamestate.world:addCollisionClass(KillVolume.collision_class)
     gamestate.world:addCollisionClass(Projectile.collision_class)
-
 
     gamestate.plates = {}
     gamestate.plates.skybox = love.graphics.newImage("assets/textures/skybox.png")
