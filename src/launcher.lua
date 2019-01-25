@@ -21,7 +21,7 @@ function Launcher:initialize(gamestate, owner, x, y, launch_params)
     self.damagable = Damagable:new(tuning.health.launcher, utils.bind1(self.die, self))
     self.owner:addLauncher(self)
     self.techEffect = launch_params.techEffect
-    self.projectile = Projectile:new(gamestate, owner, x, y, 30, gamestate.art.balls.launcher, launch_params.techEffect, true)
+    self.projectile = Projectile:new(self, owner, x, y, 30, gamestate.art.balls.launcher, launch_params.techEffect, true)
     self.projectile.triggerdeath_cb = function()
         self:die()
     end

@@ -64,7 +64,6 @@ end
 
 function Sensor:getCollidingEntities()
     local collision_data = self.collider:getStayCollisionData(Sensor.collision_class)
-    print("dbriscoe:", "sensor", collision_data)
     if collision_data == nil then
         return {}
     end

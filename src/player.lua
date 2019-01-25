@@ -62,6 +62,7 @@ function Player:initialize(gamestate, index)
     self.launch_held_seconds = 0
     self.launch_power_per_second = k_launch_default_power
     self.selected_projectile_id = k_projectile_id.bomb
+    self.selected_building_instance = nil
 
     if self:_isMouseUser() then
         self.getAim = function(this)
@@ -232,17 +233,34 @@ function Player:_fire()
         local power = self:_calcLaunchPower()
         local impulse = self.aim_dir * power
         projectile.collider:applyLinearImpulse(impulse:unpack())
+        self.selected_building_instance = projectile
+        self.selected_building_type_id = self.selected_projectile_id
     end
 end
 
 function Player:_cycleLauncher(direction)
     self.selected_launcher_idx = moretable.circular_index_number(#self.launchers, self.selected_launcher_idx + direction)
+    self:clearBuildingSelection()
 end
 
 function Player:_cycleProjectile(direction)
     local idx = self.selected_projectile_id
     self.selected_projectile_id = moretable.circular_index_number(#k_projectile_id_to_name, idx + direction)
     print("switched to", k_projectile_id_to_name[self.selected_projectile_id])
+end
+
+function Player:notifyDestroyed(ent)
+    -- same behavior
+    self:markBuildingStabilized(ent)
+end
+function Player:markBuildingStabilized(projectile)
+    if self.selected_building_instance == projectile then
+        self:clearBuildingSelection()
+    end
+end
+function Player:clearBuildingSelection()
+    self.selected_building_instance = nil
+    self.selected_building_type_id = nil
 end
 
 function Player:draw()
@@ -273,11 +291,6 @@ function Player:draw()
             w/2, h/2)
 
 
-        -- Launcher selection
-        local centre = Vec(launch.collider:getPosition())
-        love.graphics.setLineWidth(1)
-        love.graphics.circle('line', centre.x, centre.y, launch.radius * 2.1)
-
         -- Launcher power
         if self.launch_held_seconds > k_launch_minimum_held_seconds then
             local power,intensity = self:_calcLaunchPower()
@@ -290,6 +303,22 @@ function Player:draw()
             love.graphics.line(start.x, start.y, target.x, target.y)
         end
     end
+
+    local selected_building
+    if self.selected_building_instance then
+        selected_building = self.selected_building_instance
+    elseif launch then
+        selected_building = launch
+    end
+
+    -- Launcher selection
+    if selected_building and selected_building.collider then
+        local centre = Vec(selected_building.collider:getPosition())
+        love.graphics.setLineWidth(1)
+        love.graphics.setColor(self:getColour())
+        love.graphics.circle('line', centre.x, centre.y, selected_building.projectile.radius * 2.1)
+    end
+
     self.tech:drawResourceUI()
 end
 

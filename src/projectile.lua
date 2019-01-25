@@ -12,13 +12,14 @@ local Projectile = class('Projectile')
 
 Projectile.collision_class = 'Building'
 
-function Projectile:initialize(gamestate, owner, x, y, radius, image, techEffect, isDeployable)
-    self.gamestate = gamestate
+function Projectile:initialize(entity, owner, x, y, radius, image, techEffect, isDeployable)
+    self.entity = entity
+    self.gamestate = entity.gamestate
     --~ print("Projectile:", "creating at", x, y)
     self.owner = owner
     self.sprite = image
     self.radius = radius or 10
-    self.collider = gamestate.world:newCircleCollider(x, y, self.radius)
+    self.collider = self.gamestate.world:newCircleCollider(x, y, self.radius)
     self.techEffect = techEffect
     self.isDeployable = isDeployable
     self.collider:setRestitution(techEffect.restitution)
@@ -121,6 +122,7 @@ function Projectile:wallActivation(collision_data, cx, cy)
         self.collider:setType('static')
         self.collider:setLinearDamping(0.1)
         self.has_stabilized = true
+        self.owner:markBuildingStabilized(self.entity)
         self.tint = 1
         local px, py = self.collider:getPosition()
         local angle = math.atan2(cx-px,cy-py)

@@ -19,7 +19,7 @@ local MAX_TICK_IN_GENERATIONS = 60
 function Resourcer:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner, 'resourcer')
     self.techEffect = launch_params.techEffect
-    self.projectile = Projectile:new(gamestate, owner, x, y, 32, gamestate.art.balls.resourcer, launch_params.techEffect, true)
+    self.projectile = Projectile:new(self, owner, x, y, 32, gamestate.art.balls.resourcer, launch_params.techEffect, true)
     self.projectile.triggerdeath_cb = function()
         self:die()
     end
