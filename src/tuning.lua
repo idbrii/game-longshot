@@ -17,7 +17,7 @@ local tuning = {
         projectile = {
             max_lifetime = 10,
             -- can't be too small or might die during initial spawn and fall
-            max_idle_lifetime = 0.85,
+            max_idle_lifetime = 0.95,
         },
     },
 }
