@@ -45,7 +45,6 @@ gamestate.config = {
     has_cheats = true,
 }
 
-local debug_draw_fn
 local should_draw_physics = false
 
 
@@ -145,7 +144,7 @@ function love.load()
     Player.defineKeyboardInput(gamestate)
 
     local starts = {}
-    starts.p1, starts.p2, debug_draw_fn = gamestate.map:buildStartPoints(gamestate.grid)
+    starts.p1, starts.p2 = gamestate.map:buildStartPoints(gamestate.grid)
     Launcher:new(gamestate, gamestate.players[1], starts.p1.x,starts.p1.y, {techEffect = Tech.Effects.Basic})
     Launcher:new(gamestate, gamestate.players[2], starts.p2.x,starts.p2.y, {techEffect = Tech.Effects.Basic})
     gamestate.map:refresh(gamestate.grid)
@@ -265,8 +264,8 @@ function love.draw()
         gamestate.world:draw()
     end
 
-    if debug_draw_fn then
-        debug_draw_fn()
+    if gamestate.debug_draw_fn then
+        gamestate.debug_draw_fn()
     end
 end
 
