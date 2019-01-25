@@ -254,9 +254,7 @@ function Player:draw()
         love.graphics.setColor(self:getColour())
         
         local selected = k_projectile_id_to_name[self.selected_projectile_id]
-        print(selected)
         local sprite = self.gamestate.art[selected]
-        print(sprite)
         local w,h = sprite:getDimensions()
         love.graphics.draw(sprite,
             draw_x, bottom,

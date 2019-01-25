@@ -28,12 +28,17 @@ function ClaimsManager:isUnclaimed(x, y)
     end
     return self.gamestate.grid[x][y] and not self.grid[x][y]
 end
-
+function ClaimsManager:manageResourcer(resourcer)
+    self.resourcerClaims[resourcer] = {}
+    resourcer.cooldown:set(resourcer:expandInterval(), function ()
+        self:expandResourcer(resourcer)
+    end)
+end
 function ClaimsManager:addClaim(resourcer, x, y, generation)
     local newClaim = Claim:new(self.gamestate, x, y, resourcer, generation)
     self.grid[x][y] = newClaim
     if not self.resourcerClaims[resourcer] then
-        self.resourcerClaims[resourcer] = {}
+        self:manageResourcer(resourcer)
     end
     table.insert(self.resourcerClaims[resourcer], newClaim)
     return newClaim
@@ -65,6 +70,9 @@ function ClaimsManager:expandResourcer(resourcer)
             self:expandClaim(claim)
         end
     end
+    resourcer.cooldown:set(resourcer:expandInterval(), function ()
+        self:expandResourcer(resourcer)
+    end)
 end
 
 function ClaimsManager:expandClaim(claim)
@@ -91,16 +99,6 @@ end
 
 function ClaimsManager:update(dt)
     Entity.update(self, dt)
-    local ts = love.timer.getTime()
-    --for resourcer, claims in pairs(self.resourcerClaims) do
-    for resourcer in pairs(self.resourcerClaims) do
-        if ts > (resourcer.lastExpansion + resourcer:expandInterval()) then
-            self:expandResourcer(resourcer)
-            resourcer.lastExpansion = ts
-        end
-    end
-
-
 end
 
 function ClaimsManager:draw()

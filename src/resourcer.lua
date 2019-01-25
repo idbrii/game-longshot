@@ -5,6 +5,7 @@ local utils = require("pl.utils")
 local tablex = require("pl.tablex")
 local Damagable = require("damagable")
 local Entity = require('entity')
+local CoolDown = require('cooldown')
 
 local images = {
     deployed=love.graphics.newImage("assets/sprites/resourcer/deployed.png"),
@@ -22,6 +23,7 @@ function Resourcer:initialize(gamestate, owner, x, y, launch_params)
     self:setCollider(self.projectile.collider)
     self.radius = self.projectile.radius
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
+    self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius , self.radius * 2)
     self.lastExpansion = love.timer.getTime()
     self.generation = 1
 end
@@ -37,10 +39,12 @@ end
 function Resourcer:update(dt)
     Entity.update(self, dt)
     self.projectile:update(dt)
+    self.cooldown:update(dt)
 end
 function Resourcer:draw()
     Entity.draw(self)
     self.projectile:draw()
+    self.cooldown:draw(dt)
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
     self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
