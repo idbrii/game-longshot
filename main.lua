@@ -159,7 +159,7 @@ end
 function love.keypressed(key)
     gamestate.show_titlecard = false
 
-    if not gamestate.has_cheats then
+    if not gamestate.config.has_cheats then
         return
     end
 
@@ -273,7 +273,7 @@ end
 function love.mousepressed(x, y, button)
     gamestate.show_titlecard = false
 
-    if not gamestate.has_cheats then
+    if not gamestate.config.has_cheats then
         return
     end
 
