@@ -5,11 +5,11 @@ local Tech = class("Tech")
 local MAX_RESOURCES = 4000
 
 Tech.Levels = {
-    --~ Normal = {
-    --~     name="Normal",
-    --~     key= {'1', '7'},
-    --~     resourceCost = 0,
-    --~ },
+    Basic = {
+        name="Basic",
+        key= {'1', '7'},
+        resourceCost = 0,
+    },
     Bouncy = {
         name="Bouncy",
         key= {'2', '8'},
@@ -30,7 +30,7 @@ Tech.Levels = {
 function Tech:initialize(owner)
     self.owner = owner
     self.techLevels = {
-        --~ Tech.Levels.Normal,
+        Tech.Levels.Basic,
         Tech.Levels.Bouncy,
         Tech.Levels.Boosty,
         Tech.Levels.Sticky,
