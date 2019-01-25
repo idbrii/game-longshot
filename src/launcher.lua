@@ -56,6 +56,7 @@ function Launcher:draw()
         1, 1,
         w/2, h/2)
 
+    self.damagable:drawHpBar(8, x - self.radius, y - 40, self.radius * 2, self.owner:getColour())
     self.cooldown:draw()
 end
 
