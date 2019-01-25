@@ -13,5 +13,10 @@ local tuning = {
         bomb = 100,
         soldier = 25,
     },
+    timer = {
+        projectile = {
+            max_lifetime = 1,
+        },
+    },
 }
 return tuning

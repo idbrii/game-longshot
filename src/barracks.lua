@@ -20,6 +20,9 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
         end
     end
     self.projectile = Projectile:new(gamestate, owner, x, y, 32, gamestate.art.balls.barracks)
+    self.projectile.triggerdeath_cb = function()
+        self:die()
+    end
     --~ table.insert(self.projectile.onHitWall_cb, function(...)
     --~     self:onHitWall(...)
     --~ end)

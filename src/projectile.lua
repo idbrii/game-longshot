@@ -24,6 +24,8 @@ function Projectile:initialize(gamestate, owner, x, y, radius, image)
     self.tint = 1
     self.onHitWall_cb = {}
     self.onHitBuilding_cb = {}
+    self.triggerdeath_cb = nil
+    self.seconds_remaining = tuning.timer.projectile.max_lifetime
 end
 
 function Projectile:die()
@@ -31,7 +33,14 @@ function Projectile:die()
     self.collider = nil
 end
 
-function Projectile:update()
+function Projectile:update(dt)
+    self.seconds_remaining = self.seconds_remaining - dt
+    if not self.has_stabilized and self.seconds_remaining <= 0 then
+        print('dying from idle hands')
+        self.triggerdeath_cb()
+        return
+    end
+
     local wall = 'Block'
     if self.collider:enter(wall) then
         local collision_data = self.collider:getEnterCollisionData(wall)
