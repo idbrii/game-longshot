@@ -39,7 +39,7 @@ function Tech:initialize(owner)
         Tech.Effects.Boosty,
         Tech.Effects.Sticky,
     }
-    self.resources = 10000
+    self.resources = 0
     self.selectedEffect = Tech.Effects.Basic
 end
 
