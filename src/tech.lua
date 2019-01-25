@@ -29,7 +29,6 @@ function Tech:initialize(owner)
         Tech.Levels.Boosty,
         Tech.Levels.Sticky,
     }
-    self.techLevel = nil
     self.resources = 0
 end
 
@@ -43,12 +42,10 @@ end
 
 function Tech:addResource(amount)
     self.resources = self.resources + amount
-    self.techLevel = self:getTechLevel()
 end
 
 function Tech:deductResource(amount)
     self.resources = self.resources - amount
-    self.techLevel = self:getTechLevel()
 end
 
 function Tech:drawResourceUI()
@@ -76,7 +73,7 @@ function Tech:drawResourceUI()
 
     for i, level in ipairs(self.techLevels) do
         love.graphics.setColor(0, 0, 0)
-        if level == self.techLevel then
+        if level.resourceCost < self.resources then
             love.graphics.setColor(0, 0, 1)
         end
         local textWidth = 75
