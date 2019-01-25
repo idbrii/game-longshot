@@ -20,7 +20,7 @@ local k_mouse_player_id = 1
 local k_gamepad_player_id = 2
 local current_gamepad_player_id = nil
 
-local k_launch_offset = 25
+local k_launch_offset = 50
 local k_launch_minimum_held_seconds = 0.3
 local k_launch_maximum_held_seconds = 2
 local k_launch_default_power = 500
@@ -218,6 +218,10 @@ function Player:_fire()
     local launch = self:_getLauncher()
     if launch then
         local start = _getLaunchStart(launch, self.aim_dir)
+        -- See where things are spawned on launch
+        --~ self.gamestate.debug_draw_fn = function()
+        --~     love.graphics.circle('fill', start.x, start.y, 10)
+        --~ end
         local SelectedProjectile = k_projectile_id_to_class[self.selected_projectile_id]
         launch:fire(SelectedProjectile)
         local dot = self.aim_dir:dot(Vec(0,1))
@@ -280,8 +284,9 @@ function Player:draw()
             local power,intensity = self:_calcLaunchPower()
             local tinted = {255, power, 0}
             love.graphics.setColor(unpack(tinted))
-            local start = _getLaunchStart(launch, self.aim_dir)
-            local target = start + self.aim_dir * (k_launch_offset + 50 * intensity)
+            local to_edge_of_barrel = self.aim_dir * 13
+            local start = _getLaunchStart(launch, self.aim_dir) + to_edge_of_barrel
+            local target = start + self.aim_dir * 50 * intensity
             love.graphics.setLineWidth(5)
             love.graphics.line(start.x, start.y, target.x, target.y)
         end
