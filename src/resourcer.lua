@@ -16,7 +16,7 @@ local Resourcer = Entity:subclass('Resourcer')
 local MAX_RESOURCER_TICK = 30
 local MAX_TICK_IN_GENERATIONS = 60
 function Resourcer:initialize(gamestate, owner, x, y, launch_params)
-    Entity.initialize(self, gamestate, owner)
+    Entity.initialize(self, gamestate, owner, 'resourcer')
     self.projectile = Projectile:new(gamestate, owner, x, y, 32, gamestate.art.balls.resourcer)
     self.projectile.triggerdeath_cb = function()
         self:die()

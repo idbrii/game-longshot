@@ -7,7 +7,7 @@ local Entity = require('entity')
 local Bomb = Entity:subclass('Bomb')
 
 function Bomb:initialize(gamestate, owner, x, y, launch_params)
-    Entity.initialize(self, gamestate, owner)
+    Entity.initialize(self, gamestate, owner, 'bomb')
     self.projectile = Projectile:new(gamestate, owner, x, y, 10, gamestate.art.bomb)
     self.projectile.triggerdeath_cb = function()
         self:die()
@@ -22,17 +22,17 @@ function Bomb:initialize(gamestate, owner, x, y, launch_params)
     end)
 end
 
-function Bomb:update()
-    self.projectile:update(self)
+function Bomb:update(dt)
+    self.projectile:update(dt)
 end
 function Bomb:draw()
-    self.projectile:draw(self)
+    self.projectile:draw()
 end
 
 
 function Bomb:die()
     Entity.die(self)
-    self.projectile:die(self)
+    self.projectile:die()
 end
 
 function Bomb:onHitSomething(collision_data)

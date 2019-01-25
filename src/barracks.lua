@@ -9,7 +9,7 @@ local CoolDown = require('cooldown')
 local Barracks = Entity:subclass('Barracks')
 
 function Barracks:initialize(gamestate, owner, x, y, launch_params)
-    Entity.initialize(self, gamestate, owner)
+    Entity.initialize(self, gamestate, owner, 'barracks')
     launch_params = launch_params or {}
     if launch_params.direction == nil then
         print('[Barracks] No direction giving. Defaulting to player direction.')

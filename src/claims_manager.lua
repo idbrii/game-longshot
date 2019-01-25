@@ -6,7 +6,7 @@ local Entity = require('entity')
 
 local ClaimsManager = Entity:subclass("ClaimsManager")
 function ClaimsManager:initialize(gamestate)
-    Entity.initialize(self, gamestate) -- has no owner
+    Entity.initialize(self, gamestate, nil, 'claims_manager') -- has no owner
     self.generation = 0
     self.grid = {}
     for x = 0, gamestate.config.world_width do

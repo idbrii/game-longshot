@@ -38,7 +38,7 @@ local states = {
 local Soldier = Entity:subclass("Soldier")
 
 function Soldier:initialize(gamestate, owner, x, y, direction)
-    Entity.initialize(self, gamestate, owner)
+    Entity.initialize(self, gamestate, owner, 'soldier')
     self.targetWalkSpeed = 80
     self.walkBounceImpulse = -40
     self.climbSpeed = 50

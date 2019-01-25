@@ -6,7 +6,7 @@ local Entity = require('entity')
 local Claim = Entity:subclass("Claim")
 
 function Claim:initialize(gamestate, x, y, resourcer, generation)
-    Entity.initialize(self, gamestate, resourcer.owner)
+    Entity.initialize(self, gamestate, resourcer.owner, 'claim')
     self.x = x
     self.y = y
     self.resourcer = resourcer

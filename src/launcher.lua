@@ -18,7 +18,7 @@ function Launcher.load()
 end
 
 function Launcher:initialize(gamestate, owner, x, y)
-    Entity.initialize(self, gamestate, owner)
+    Entity.initialize(self, gamestate, owner, 'launcher')
     self.damagable = Damagable:new(tuning.health.launcher, utils.bind1(self.die, self))
     self.owner:addLauncher(self)
     self.projectile = Projectile:new(gamestate, owner, x, y, 30, gamestate.art.balls.launcher)
@@ -91,9 +91,9 @@ function Launcher:hasStabilized()
 end
 
 function Launcher:die()
+    Entity.die(self)
     self.owner:removeLauncher(self)
     self.projectile:die()
-    Entity.die(self)
 end
 
 return Launcher
