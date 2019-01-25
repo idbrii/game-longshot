@@ -1,4 +1,5 @@
 local Projectile = require('projectile')
+local tuning = require('tuning')
 local Vec = require('hump.vector')
 local pretty = require("pl.pretty")
 local utils = require("pl.utils")
@@ -25,7 +26,7 @@ function Resourcer:initialize(gamestate, owner, x, y, launch_params)
     end)
     self:setCollider(self.projectile.collider)
     self.radius = self.projectile.radius
-    self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
+    self.damagable = Damagable:new(tuning.health.resourcer, utils.bind1(self.die, self))
     self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius , self.radius * 2)
     self.lastExpansion = love.timer.getTime()
     self.generation = 1

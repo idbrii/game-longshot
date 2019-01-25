@@ -7,6 +7,7 @@ local Vec = require('hump.vector')
 local class = require('astray.MiddleClass')
 local lume = require('rxi.lume')
 local tablex = require("pl.tablex")
+local tuning = require('tuning')
 local utils = require("pl.utils")
 
 local Launcher = Entity:subclass('Launcher')
@@ -18,7 +19,7 @@ end
 
 function Launcher:initialize(gamestate, owner, x, y)
     Entity.initialize(self, gamestate, owner)
-    self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
+    self.damagable = Damagable:new(tuning.health.launcher, utils.bind1(self.die, self))
     self.owner:addLauncher(self)
     self.projectile = Projectile:new(gamestate, owner, x, y, 30, gamestate.art.balls.launcher)
     table.insert(self.projectile.onHitWall_cb, function(...)

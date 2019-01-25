@@ -4,6 +4,7 @@ local class = require("astray.MiddleClass")
 local moremath = require('moremath')
 local pl_table = require('pl.tablex')
 local pretty = require("pl.pretty")
+local tuning = require('tuning')
 
 -- A thing that might be launched out of a Launcher.
 local Projectile = class('Projectile')
@@ -110,7 +111,7 @@ function Projectile:onHitBuilding(collision_data)
 
     local target = collision_data.collider:getObject()
     if target.damagable then
-        target.damagable:takeDamage(10)
+        target.damagable:takeDamage(tuning.damage_dealer.launcher)
     else
         print("Why doesn't this thing have a damagable?", target)
         --~ pretty.dump(target)

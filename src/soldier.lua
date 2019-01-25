@@ -2,6 +2,7 @@ local class = require("astray.MiddleClass")
 local pretty = require("pl.pretty")
 local Entity = require('entity')
 local tablex = require("pl.tablex")
+local tuning = require('tuning')
 local utils = require("pl.utils")
 local Damagable = require("damagable")
 
@@ -44,10 +45,10 @@ function Soldier:initialize(gamestate, owner, x, y, direction)
     self.climbLedgeVault = 100
     self.ledgeVaultTimeout = 0.1
     self.stuckTimeout = 2.5
-    self.attackDamage = 25
+    self.attackDamage = tuning.damage_dealer.soldier
     self.stepRate = 0.75
     self.combatPoseTime = 0.4
-    self.damagable = Damagable:new(100, utils.bind1(self.die, self))
+    self.damagable = Damagable:new(tuning.health.soldier, utils.bind1(self.die, self))
     self.owner = owner
     self.direction = direction
     self.collider = gamestate.world:newCircleCollider(x, y, 10)
