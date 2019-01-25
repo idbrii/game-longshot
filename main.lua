@@ -289,15 +289,18 @@ function love.mousepressed(x, y, button)
     end
 
     if button == 1 or button == 2 then
-        if love.keyboard.isDown("lshift") then
-            Resourcer:new(gamestate, gamestate.players[1], x, y, {techEffect = gamestate.players[1].tech.selectedEffect})
-        elseif love.keyboard.isDown("rshift") then
-            Resourcer:new(gamestate, gamestate.players[2], x, y, {techEffect = gamestate.players[2].tech.selectedEffect})
-        elseif love.keyboard.isDown("lctrl") then
-            Barracks:new(gamestate, gamestate.players[1], x, y, {techEffect = gamestate.players[1].tech.selectedEffect})
-        elseif love.keyboard.isDown("rctrl") then
-            Barracks:new(gamestate, gamestate.players[2], x, y, {techEffect = gamestate.players[2].tech.selectedEffect})
+        if gamestate.config.has_cheats  then
+            if love.keyboard.isDown("lshift") then
+                Resourcer:new(gamestate, gamestate.players[1], x, y, {techEffect = gamestate.players[1].tech.selectedEffect})
+            elseif love.keyboard.isDown("rshift") then
+                Resourcer:new(gamestate, gamestate.players[2], x, y, {techEffect = gamestate.players[2].tech.selectedEffect})
+            elseif love.keyboard.isDown("lctrl") then
+                Barracks:new(gamestate, gamestate.players[1], x, y, {techEffect = gamestate.players[1].tech.selectedEffect})
+            elseif love.keyboard.isDown("rctrl") then
+                Barracks:new(gamestate, gamestate.players[2], x, y, {techEffect = gamestate.players[2].tech.selectedEffect})
+            end
         end
+
 
     elseif button == 3 then
         if love.keyboard.isDown("lshift") then
