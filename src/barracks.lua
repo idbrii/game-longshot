@@ -77,8 +77,12 @@ function Barracks:draw()
         self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
         self.cooldown:draw()
         love.graphics.setColor(self.owner:getColour())
+        local isVertical = (round(self.attachmentAngle) - self.attachmentAngle) == 0
         love.graphics.draw(self.gamestate.art.barracks,
-            cx, cy, self.attachmentAngle, self.direction, 1, self.radius, self.radius)
+            cx, cy, self.attachmentAngle,
+                isVertical and self.direction or  1,
+                isVertical and 1 or self.direction,
+            self.radius, self.radius)
     end
 end
 
