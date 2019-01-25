@@ -167,7 +167,7 @@ function Player:update(dt, gamestate)
         launch:parkArm()
     end
 
-    if     self:_isHeld('fire') then
+    if     self:_isHeld('fire') and launch and launch.can_fire then
         self.launch_held_seconds = self.launch_held_seconds + dt
         self.launch_held_seconds = lume.clamp(self.launch_held_seconds, 0, k_launch_maximum_held_seconds)
     elseif self:_isPressed('fire') then
@@ -213,6 +213,7 @@ end
 function Player:_fire()
     local launch = self:_getLauncher()
     if launch then
+        launch:fire()
         local start = _getLaunchStart(launch, self.aim_dir)
         local SelectedProjectile = k_projectile_id_to_class[self.selected_projectile_id]
         local dot = self.aim_dir:dot(Vec(0,1))

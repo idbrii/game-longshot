@@ -1,3 +1,4 @@
+local CoolDown = require('cooldown')
 local Damagable = require("damagable")
 local Entity = require('entity')
 local M = require("moses.moses")
@@ -9,6 +10,8 @@ local tablex = require("pl.tablex")
 local utils = require("pl.utils")
 
 local Launcher = Entity:subclass('Launcher')
+
+local k_launch_interval = 2
 
 function Launcher.load()
 end
@@ -25,11 +28,14 @@ function Launcher:initialize(gamestate, owner, x, y)
     self.collider:applyLinearImpulse(500, 500)
     self.projectile.tint = 0.1
     self.radius = self.projectile.radius
+    self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius+5, self.radius * 2)
+    self.can_fire = true
 end
 
 function Launcher:update(dt, gamestate)
     Entity.update(self, dt)
     self.projectile:update(dt, gamestate)
+    self.cooldown:update(dt)
 end
 function Launcher:draw()
     Entity.draw(self)
@@ -49,6 +55,8 @@ function Launcher:draw()
         r,
         1, 1,
         w/2, h/2)
+
+    self.cooldown:draw()
 end
 
 function Launcher:poseArm(aim_dir)
@@ -57,6 +65,13 @@ end
 
 function Launcher:parkArm()
     self.aim_dir = nil
+end
+
+function Launcher:fire()
+    self.can_fire = false
+    self.cooldown:set(k_launch_interval, function()
+        self.can_fire = true
+    end)
 end
 
 function Launcher:onHitWall(collision_data)
