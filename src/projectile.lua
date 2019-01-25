@@ -1,6 +1,7 @@
 local M = require("moses.moses")
 local Vec = require('hump.vector')
 local class = require("astray.MiddleClass")
+local moremath = require('moremath')
 local pl_table = require('pl.tablex')
 local pretty = require("pl.pretty")
 
@@ -21,6 +22,7 @@ function Projectile:initialize(gamestate, owner, x, y, radius, image)
     self.has_stabilized = false
     self.tint = 1
     self.onHitWall_cb = {}
+    self.onHitBuilding_cb = {}
 end
 
 function Projectile:die()
@@ -35,8 +37,24 @@ function Projectile:update()
         self:onHitWall(collision_data)
     elseif self.collider:enter(Projectile.collision_class) then
         local collision_data = self.collider:getEnterCollisionData(Projectile.collision_class)
-        self:onHitBuilding(collision_data)
+        if not self.source_launcher_hit then
+            self.source_launcher_hit = collision_data.collider
+        elseif self.has_cleared_launcher or self:isMotionless() then
+            self.has_cleared_launcher = true
+            self:onHitBuilding(collision_data)
+        elseif self.source_launcher_hit ~= collision_data.collider then
+            self.has_cleared_launcher = true
+        end
+        self.has_cleared_launcher = true
+    else
+        self.has_cleared_launcher = true
     end
+end
+
+function Projectile:isMotionless()
+    local vel = Vec(self.collider:getLinearVelocity())
+    local speed2 = vel:len2()
+    return moremath.isApproxZero(speed2)
 end
 
 function Projectile:draw()
@@ -84,13 +102,22 @@ function Projectile:onHitWall(collision_data)
     end
 end
 
-function Projectile.onHitBuilding(collision_data)
+function Projectile:onHitBuilding(collision_data)
+    if self.has_stabilized then
+        -- We don't do anything if we're stable. They should be destroyed.
+        return
+    end
+
     local target = collision_data.collider:getObject()
     if target.damagable then
         target.damagable:takeDamage(10)
     else
         print("Why doesn't this thing have a damagable?", target)
         --~ pretty.dump(target)
+    end
+
+    for i,listener in ipairs(self.onHitBuilding_cb) do
+        listener(self, collision_data)
     end
 end
 

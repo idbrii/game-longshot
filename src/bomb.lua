@@ -12,7 +12,10 @@ function Bomb:initialize(gamestate, owner, x, y, launch_params)
     self:setCollider(self.projectile.collider)
     self.tint = 1
     table.insert(self.projectile.onHitWall_cb, function(...)
-        self:onHitWall(...)
+        self:onHitSomething(...)
+    end)
+    table.insert(self.projectile.onHitBuilding_cb, function(...)
+        self:onHitSomething(...)
     end)
 end
 
@@ -29,7 +32,7 @@ function Bomb:die()
     self.projectile:die(self)
 end
 
-function Bomb:onHitWall(collision_data)
+function Bomb:onHitSomething(collision_data)
     -- ignore Projectile behavior
     self:_explode()
 end

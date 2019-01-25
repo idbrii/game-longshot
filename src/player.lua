@@ -292,6 +292,9 @@ end
 
 function Player:removeLauncher(launcher)
     local idx = pl_table.find(self.launchers, launcher)
+    if idx == nil then
+        return
+    end
     table.remove(self.launchers, idx)
     if idx == self.selected_launcher_idx then
         self.selected_launcher_idx = 1
