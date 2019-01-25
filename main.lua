@@ -29,6 +29,7 @@ local Launcher = require('launcher')
 local Tech = require('tech')
 local Sensor = require('sensor')
 
+local k_default_blend = 6
 
 local gamestate = {
     -- grid: true if tile is solid. false if empty.
@@ -42,7 +43,7 @@ gamestate.config = {
     world_width = 50,
     world_height = 28,
     tile_size = 32,
-    foreground_blend_index = 6,
+    foreground_blend_index = k_default_blend,
     has_cheats = devcheck.isDev(),
 }
 
@@ -185,6 +186,7 @@ end
 
 function love.draw()
     local screen_w, screen_h = love.graphics.getWidth(), love.graphics.getHeight()
+
     local blendmodes = {
         { 'alpha', 'alphamultiply' },
         { 'alpha', 'premultiplied' },
@@ -238,7 +240,7 @@ function love.draw()
         ent:draw(gamestate)
     end
 
-    if mode then
+    if mode and gamestate.config.foreground_blend_index ~= k_default_blend then
         love.graphics.setColor(0, 100, 100)
         love.graphics.print(mode[1] ..' '.. mode[2], 10,10)
     end
