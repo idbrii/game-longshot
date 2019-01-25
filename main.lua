@@ -167,6 +167,10 @@ function love.keypressed(key)
         gamestate.config.foreground_blend_index = moretable.circular_index_number(8, gamestate.config.foreground_blend_index + 1)
     elseif key == 'v' then
         Sound.setDanger()
+    elseif key == 'y' and (love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift")) then
+        gamestate.winner = gamestate.players[2]
+    elseif key == 'y' then
+        gamestate.winner = gamestate.players[1]
     end
 end
 
@@ -244,13 +248,6 @@ function love.draw()
         love.graphics.setColor(0, 100, 100)
         love.graphics.print(mode[1] ..' '.. mode[2], 10,10)
     end
-
-    --~ -- DEBUG: For testing winner
-    --~ gamestate.countdown_to_winner = gamestate.countdown_to_winner or 80
-    --~ gamestate.countdown_to_winner = gamestate.countdown_to_winner - 1
-    --~ if gamestate.countdown_to_winner <= 0 then
-    --~     gamestate.winner = gamestate.players[1]
-    --~ end
 
     if gamestate.winner then
         Sound.setWinner()
