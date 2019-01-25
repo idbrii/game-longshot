@@ -90,7 +90,7 @@ function Projectile:draw()
     love.graphics.draw(self.sprite,
         cx,cy,
         nil,
-        0.5, 0.5,
+        1,1,
         w/2, h/2)
 end
 
