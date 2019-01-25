@@ -75,11 +75,34 @@ function Bomb:_explode()
     local screen_pos = Vec(self.collider:getPosition())
     local grid_pos = self.gamestate.map:toGridPosVector(screen_pos)
     local grid = self.gamestate.grid
-    tryDestroyTile(grid, grid_pos.x, grid_pos.y)
-    tryDestroyTile(grid, grid_pos.x-1, grid_pos.y)
-    tryDestroyTile(grid, grid_pos.x+1, grid_pos.y)
-    tryDestroyTile(grid, grid_pos.x, grid_pos.y-1)
-    tryDestroyTile(grid, grid_pos.x, grid_pos.y+1)
+
+    local x,y = grid_pos.x,grid_pos.y
+    local radius = math.ceil(tuning.size.bomb.blast_radius / self.gamestate.config.tile_size)
+    local function apply_destruction(fn)
+        for it_x=x-radius,x+radius do
+            for it_y=y-radius,y+radius do
+                local is_corner = (it_x == x-radius or it_x == x+radius) and (it_y == y-radius or it_y == y+radius)
+                if not is_corner then
+                    fn(it_x, it_y)
+                end
+            end
+        end
+    end
+
+    apply_destruction(function(...)
+        tryDestroyTile(grid, ...)
+    end)
+
+    -- Draw removed tiles
+    --~ self.gamestate.debug_draw_fn = function()
+    --~     apply_destruction(function(it_x, it_y)
+    --~         local hsize = self.gamestate.config.tile_size / 2
+    --~         local draw_x = it_x*self.gamestate.config.tile_size + hsize
+    --~         local draw_y = it_y*self.gamestate.config.tile_size + hsize
+    --~         love.graphics.circle('fill', draw_x, draw_y, 3)
+    --~     end)
+    --~ end
+
     self.gamestate.map:refresh(grid)
     self:die()
     Vfx:new(self.gamestate, screen_pos.x, screen_pos.y, 'poof', {
