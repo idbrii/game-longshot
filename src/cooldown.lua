@@ -19,8 +19,12 @@ function CoolDown:reset()
     self.endsAt = nil
     self.duration = nil
 end
+
+function CoolDown:isActive()
+    return not not self.nextCallback
+end
 function CoolDown:set(duration, callback)
-    if self.nextCallback then
+    if self:isActive() then
         print("WARNING: Resetting a cooldown before it completed")
     end
     self.startedAt = love.timer.getTime()
@@ -36,7 +40,7 @@ function CoolDown:complete()
 end
 
 function CoolDown:update()
-    if self.nextCallback and love.timer.getTime() > self.endsAt then
+    if self:isActive()  and love.timer.getTime() > self.endsAt then
         self:complete()
     end
 end
