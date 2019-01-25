@@ -10,6 +10,9 @@ local function makeSound(key)
 end
 
 function Sound.load()
+    if not love.audio then
+        return
+    end
     Sound.music_danger = {sound = love.sound.newSoundData('assets/audio/song_danger.mp3')}
     Sound.music_focus = {sound = love.sound.newSoundData('assets/audio/song_focus.mp3')}
     makeSound("music_danger")
@@ -23,6 +26,9 @@ function Sound.load()
 end
 
 function Sound.update(dt)
+    if not love.audio then
+        return
+    end
     Sound.time_since_danger = Sound.time_since_danger + dt
 
     if Sound.time_since_danger > k_time_to_focus then
@@ -32,6 +38,9 @@ function Sound.update(dt)
 end
 
 function Sound.setDanger()
+    if not love.audio then
+        return
+    end
     if Sound.is_danger then
         print('more danger')
         Sound.time_since_danger = 0
