@@ -35,7 +35,12 @@ function Vfx:draw()
         alpha = self.fade_seconds_left / self.total_fade_seconds
     end
     love.graphics.setColor(255, 255, 255, alpha)
-    love.graphics.draw(self.img, self.x, self.y)
+    local w,h = self.img:getDimensions()
+    love.graphics.draw(self.img,
+        self.x, self.y,
+        nil,
+        nil, nil,
+        w/2, h/2)
 end
 
 return Vfx
