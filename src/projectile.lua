@@ -38,6 +38,12 @@ function Projectile:die()
     self.collider = nil
 end
 
+function Projectile:boost()
+    local vec = Vec(self.collider:getLinearVelocity())
+    vec:normalizeInplace()
+    vec = vec * tuning.projectile.boostForce
+    self.collider:applyLinearImpulse(vec.x, vec.y)
+end
 function Projectile:update(dt)
     if not self.has_stabilized then
         self.seconds_unstable = self.seconds_unstable + dt
@@ -139,7 +145,7 @@ function Projectile:onHitWall(collision_data, ...)
     local pos = Vec(self.collider:getPosition())
     local x,y = collision_data.collider:getPosition()
     local hit_ground = y > pos.y and self:_checkForGround()
-    if self.techEffect == Tech.Effects.Basic then
+    if self.techEffect == Tech.Effects.Basic or self.techEffect == Tech.Effects.Boosty then
         if self.isDeployable then
             if hit_ground then
                 self:wallActivation(collision_data, ...)
@@ -171,7 +177,7 @@ function Projectile:onHitBuilding(collision_data)
     end
 
     local target = collision_data.collider:getObject()
-    if target.damagable then
+    if target and target.damagable then
         target.damagable:takeDamage(tuning.damage_dealer.launcher)
     else
         print("Why doesn't this thing have a damagable?", target)

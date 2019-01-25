@@ -20,9 +20,9 @@ local tuning = {
         bomb = 0.75
     },
     mass = {
-      launcher = 0.75,
-      resourcer = 0.75,
-      barracks = 0.75,
+      launcher = 0.5,
+      resourcer = 0.5,
+      barracks = 0.5,
       bomb = 0.25,
     },
     size = {
@@ -38,7 +38,8 @@ local tuning = {
         },
     },
     projectile = {
-        minSpeed = 400
+        minSpeed = 400,
+        boostForce = 200
     }
 }
 return tuning

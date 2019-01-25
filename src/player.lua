@@ -167,7 +167,9 @@ function Player:update(dt, gamestate)
         launch:parkArm()
     end
 
-    if     self:_isHeld('fire') and launch and launch.can_fire then
+    if self.selected_building_instance and self.selected_building_instance.techEffect == Tech.Effects.Boosty and self:_isPressed('fire') then
+        self.selected_building_instance.projectile:boost()
+    elseif  self:_isHeld('fire') and launch and launch.can_fire then
         self.launch_held_seconds = self.launch_held_seconds + dt
         self.launch_held_seconds = lume.clamp(self.launch_held_seconds, 0, k_launch_maximum_held_seconds)
     elseif self:_isPressed('fire') then
