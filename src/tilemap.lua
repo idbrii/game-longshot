@@ -130,21 +130,22 @@ function TileMap:toGridPosVector(vector)
 end
 
 local function makeSpace(grid, x, y, radius)
-    for delta=1,radius do
-        -- TODO: Should do a square/circle instead of star?
-        grid[x - delta][y] = false
-        grid[x + delta][y] = false
-        grid[x][y - delta] = false
-        grid[x][y + delta] = false
-        grid[x + delta][y + delta] = false
-        grid[x + delta][y - delta] = false
-        grid[x - delta][y + delta] = false
-        grid[x - delta][y - delta] = false
+    -- Clear space
+    for it_x=x-radius,x+radius do
+        for it_y=y-radius,y do
+            grid[it_x][it_y] = false
+        end
     end
+
+    -- but ensure well-supported.
+    local down_one = y + 1
+    grid[x - 1][down_one] = true
+    grid[x][down_one] = true
+    grid[x + 1][down_one] = true
 end
 
 function TileMap:buildStartPoints(grid)
-    local start_radius = 3
+    local start_radius = 5
     local start_indent = start_radius+1
     local p1_grid = {}
     p1_grid.x, p1_grid.y = self:_findEmptyCollision(grid, start_indent, start_indent, function(x_iterator)
@@ -157,6 +158,8 @@ function TileMap:buildStartPoints(grid)
         return self.world_width - x_iterator
     end)
     makeSpace(grid, p2_grid.x, p2_grid.y, start_radius)
+
+    self:fixupGrid(grid)
 
     local p1_screen,p2_screen = self:toScreenPosVector(p1_grid), self:toScreenPosVector(p2_grid)
     return p1_screen,p2_screen

@@ -296,6 +296,7 @@ function love.mousepressed(x, y, button)
         else
             -- Remove collision
             local grid_pos = gamestate.map:toGridPosVector(Vec(x,y))
+            print("Removed collision from tile:", grid_pos.x, grid_pos.y)
             gamestate.grid[grid_pos.x][grid_pos.y] = false
             gamestate.map:refresh(gamestate.grid)
         end
