@@ -82,6 +82,10 @@ function love.load()
     gamestate.plates.skybox = love.graphics.newImage("assets/textures/skybox.png")
     gamestate.plates.foreground = love.graphics.newImage("assets/textures/ground_overlay.png")
 
+    gamestate.art = {
+        bomb = love.graphics.newImage("assets/textures/bomb.png"),
+    }
+
     gamestate.grid = gridgen.generate_grid(gamestate.config.world_width, gamestate.config.world_height)
     gamestate.map = TileMap:new(
         gamestate,
