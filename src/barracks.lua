@@ -62,7 +62,7 @@ function Barracks:spawnSoldier()
         -- we take damage for the soldier we couldn't spawn
         self.damagable:takeDamage(tuning.damage_dealer.soldier)
     else
-        Soldier:new(self.gamestate, self.owner, spawn_x, spawn_y, self.direction)
+        Soldier:new(self.gamestate, self.owner, spawn_x, spawn_y, self.direction,  self.techEffect)
     end
     self.cooldown:set(self:spawnInterval(), function()
         self:spawnSoldier()

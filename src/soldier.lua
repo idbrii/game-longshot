@@ -5,6 +5,7 @@ local tablex = require("pl.tablex")
 local tuning = require('tuning')
 local utils = require("pl.utils")
 local Damagable = require("damagable")
+local Tech = require("tech")
 
 local images = {
     walk1=love.graphics.newImage("assets/sprites/soldier/walk1.png"),
@@ -19,29 +20,30 @@ local imgAnim1= {
     images.walk1,
     images.fall1,
     images.climb1,
-    images.attack1
+    images.attack1,
+    images.climb1,
 }
 
 local imgAnim2= {
     images.walk2,
     images.fall1,
     images.climb2,
-    images.attack2
+    images.attack2,
+    images.climb2,
 }
 local states = {
     walking=1,
     falling=2,
     climbing=3,
     combat=4, -- ONLY used for animation, self.state will never equal this!
+    ceilingCrawl = 5,
 }
 
 local Soldier = Entity:subclass("Soldier")
 
-function Soldier:initialize(gamestate, owner, x, y, direction)
+function Soldier:initialize(gamestate, owner, x, y, direction, techEffect)
     Entity.initialize(self, gamestate, owner, 'soldier')
-    self.targetWalkSpeed = 80
-    self.walkBounceImpulse = -40
-    self.climbSpeed = 50
+    self.techEffect = techEffect
     self.climbLedgeVault = 100
     self.ledgeVaultTimeout = 0.1
     self.stuckTimeout = 2.5
@@ -62,6 +64,26 @@ function Soldier:initialize(gamestate, owner, x, y, direction)
     self.showCombatPoseUntil = nil
 end
 
+function Soldier:targetWalkSpeed()
+    if self.techEffect == Tech.Effects.Boosty then
+        return 120
+    end
+    return 80
+end
+
+function Soldier:climbSpeed()
+    if self.techEffect == Tech.Effects.Boosty then
+        return 75
+    end
+    return 50
+end
+function Soldier:walkBounceImpulse()
+    if self.techEffect == Tech.Effects.Bouncy then
+        return -120
+    end
+    return -40
+end
+
 function Soldier:shape()
     return self.collider.shapes.main;
 end
@@ -72,9 +94,9 @@ end
 function Soldier:walkBounce()
     self.state = states.walking
     local vx = self.collider:getLinearVelocity()
-    local xImpulse = self.direction * math.max(self.targetWalkSpeed  - math.abs(vx), 0)
+    local xImpulse = self.direction * math.max(self:targetWalkSpeed()  - math.abs(vx), 0)
     --print("WALK", xImpulse)
-    self.collider:applyLinearImpulse(xImpulse, self.walkBounceImpulse)
+    self.collider:applyLinearImpulse(xImpulse, self:walkBounceImpulse())
 end
 
 function Soldier:climb()
@@ -87,10 +109,28 @@ function Soldier:dropToWalk()
     self.collider:setLinearVelocity(0, 0)
 end
 
+function Soldier:dropFromCrawl()
+    self.state = states.falling
+    self.collider:setLinearVelocity(0, 0)
+end
+
+function Soldier:crawlToWall()
+    --print("ceiling crawl -> crawl?")
+    self.direction = -self.direction
+    self.collider:applyLinearImpulse(self.direction * 90, -90)
+    self.lastTouchedClimbingBlock = love.timer.getTime()
+    self.state = states.climbing
+end
+
 function Soldier:reverseDirection()
     self.collider:setLinearVelocity(0, 0)
-    self.direction = self.direction * -1
-    self.state = states.falling
+    self.direction = -self.direction
+    if self.techEffect == Tech.Effects.Sticky then
+        self.state = states.ceilingCrawl
+    else
+        self.state = states.falling
+    end
+
     --print("REVERSE")
 end
 
@@ -101,7 +141,7 @@ function Soldier:die()
 end
 
 function Soldier:attack(other)
-    self.collider:applyLinearImpulse(self.walkBounceImpulse * self.direction, self.walkBounceImpulse)
+    self.collider:applyLinearImpulse(self:walkBounceImpulse() * self.direction, self:walkBounceImpulse())
     self.showCombatPoseUntil = love.timer.getTime() + self.combatPoseTime
     if other.damagable then
         other.damagable:takeDamage(self.attackDamage)
@@ -114,13 +154,19 @@ end
 function Soldier:update(dt)
     Entity.update(self, dt)
     local ts = love.timer.getTime()
+    if self.state == states.ceilingCrawl and (ts - self.lastTouchedClimbingBlock) > self.ledgeVaultTimeout then
+        self:crawlToWall()
+    end
     if self.state == states.climbing then
         if self.lastTouchedClimbingBlock and (ts - self.lastTouchedClimbingBlock) > self.ledgeVaultTimeout then
             self:dropToWalk()
         else
-            self.collider:setLinearVelocity(self.direction * self.climbLedgeVault , -self.climbSpeed)
+            self.collider:setLinearVelocity(self.direction * self.climbLedgeVault , -self:climbSpeed())
         end
+    end
 
+    if self.state == states.ceilingCrawl then
+        self.collider:setLinearVelocity(self:climbSpeed() * self.direction, -self.climbLedgeVault)
     end
 
     if self.collider:exit('Block') then
@@ -141,9 +187,12 @@ function Soldier:update(dt)
         local didCollideAboveFloor = cy > bottomEdge
         local didCollideBelowCeiling = cy < topEdge
         self.lastCollision = collision
+        if self.state == states.ceilingCrawl and not didCollideAboveFloor and not didCollideBelowCeiling then
+            self:dropFromCrawl()
+        end
         if self.state == states.walking and not didCollideAboveFloor and didCollideOutsideHrzBounds then
             self:climb()
-        elseif self.state == states.climbing and not didCollideOutsideHrzBounds then
+        elseif self.state == states.climbing  and not didCollideOutsideHrzBounds then
             if didCollideBelowCeiling then
                 self.lastWalkBounce = nil
                 self:reverseDirection()
@@ -201,14 +250,23 @@ function Soldier:draw()
     local age = love.timer.getTime() - self.spawnedAt
     local imageMap = (math.floor(age * 5) % 2) == 0 and imgAnim1 or imgAnim2
     local px
-    if self.direction == 1 then
-        px = cx - 8
-    else
-        px = cx + 8
-    end
+    --if self.direction == 1 then
+    --    px = cx - 8
+    --else
+    --    px = cx + 8
+    --end
     local state = self.showCombatPoseUntil and states.combat or self.state
+    local rotation = 0
+    local scaleX = self.direction
+    local scaleY = 1
+    if self.state == states.ceilingCrawl then
+        rotation = self.direction * 0.5
+        scaleX = -scaleX
+    else
+        cy = cy - 10
+    end
     love.graphics.draw(imageMap[state],
-            px, cy-18, 0, self.direction, 1)
+            cx, cy, math.pi * rotation, scaleX, scaleY, 8, 8)
 end
 
 return Soldier
