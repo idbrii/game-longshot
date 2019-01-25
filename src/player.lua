@@ -238,25 +238,34 @@ end
 function Player:draw()
     local launch = self:_getLauncher()
     if launch then
-        local w, h = love.graphics.getWidth(), love.graphics.getHeight()
+        local screen_w, screen_h = love.graphics.getWidth(), love.graphics.getHeight()
 
         local pad = 50
-        local bottom = h - pad
-        local text_x
+        local bottom = screen_h - pad
+        local draw_x
         if self.index == 1 then
-            text_x = pad
+            draw_x = pad
         else
-            text_x = w - (100 + pad)
+            draw_x = screen_w - (10 + pad)
         end
 
         -- Current projectile
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.print('selected: '.. k_projectile_id_to_name[self.selected_projectile_id], text_x, bottom)
+        love.graphics.setColor(self:getColour())
+        
+        local selected = k_projectile_id_to_name[self.selected_projectile_id]
+        print(selected)
+        local sprite = self.gamestate.art[selected]
+        print(sprite)
+        local w,h = sprite:getDimensions()
+        love.graphics.draw(sprite,
+            draw_x, bottom,
+            nil,
+            nil, nil,
+            w/2, h/2)
 
 
         -- Launcher selection
         local centre = Vec(launch.collider:getPosition())
-        love.graphics.setColor(self:getColour())
         love.graphics.circle('line', centre.x, centre.y, launch.radius * 1.3)
 
         -- Launcher power
