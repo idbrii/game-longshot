@@ -1,6 +1,6 @@
 local Vfx = require('vfx')
 local class = require("astray.MiddleClass")
-
+local tuning = require('tuning')
 local Entity = class('Entity')
 
 function Entity:initialize(gamestate, owner, type_name)
@@ -14,6 +14,7 @@ end
 
 function Entity:setCollider(collider)
     self.collider = collider
+    collider:setMass(tuning.mass[self.type_name])
     self.collider:setObject(self)
 end
 

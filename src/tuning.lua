@@ -19,6 +19,12 @@ local tuning = {
         barracks = 5,
         bomb = 0.75
     },
+    mass = {
+      launcher = 0.75,
+      resourcer = 0.75,
+      barracks = 0.75,
+      bomb = 0.25,
+    },
     timer = {
         projectile = {
             max_lifetime = 10,
