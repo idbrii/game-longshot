@@ -93,14 +93,16 @@ function Tech:drawResourceUI()
         if level.resourceCost < self.resources then
             love.graphics.setColor(0, 0, 0)
         end
+        local key_hint = level.key[self.owner.index]
         if self.selectedEffect == level then
-            love.graphics.setColor(0, 0.75, 0.75)
+            love.graphics.setColor(0, 0.5, 0.5)
+            key_hint = 'selected'
         end
         local textWidth = 75
         local markerX = left + (level.resourceCost / MAX_RESOURCES) * width
         local markerY = top - 20
         love.graphics.line(markerX, markerY, markerX, top + height)
-        love.graphics.print(level.name .. " (" .. level.key[self.owner.index] .. ")",  markerX + padding, markerY)
+        love.graphics.print(level.name .. " (" .. key_hint .. ")",  markerX + padding, markerY)
 
     end
 
