@@ -88,7 +88,7 @@ function Barracks:draw()
         love.graphics.draw(self.gamestate.art.barracks,
             cx, cy, self.attachmentAngle,
             isVertical and self.direction or  1,
-            isVertical and 1 or self.direction,
+            isVertical and 1 or -1,
             self.radius, self.radius)
     end
 end
