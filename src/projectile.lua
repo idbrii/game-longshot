@@ -66,7 +66,16 @@ function Projectile:update(dt)
     local wall = 'Block'
     if self.collider:enter(wall) then
         local collision_data = self.collider:getEnterCollisionData(wall)
-        self:onHitWall(collision_data, collision_data.contact:getPositions())
+        -- collision_data.contact is often invalid (destroyed), so
+        -- check our existing contacts instead.
+        local contact_list = collision_data.collider:getContacts()
+        for i,contact in ipairs(contact_list) do
+            local contact_points = {contact:getPositions()}
+            if #contact_points > 0 then
+                self:onHitWall(collision_data, unpack(contact_points))
+                break
+            end
+        end
     elseif self.collider:enter(Projectile.collision_class) then
         local collision_data = self.collider:getEnterCollisionData(Projectile.collision_class)
         local other_ent = collision_data.collider:getObject()
