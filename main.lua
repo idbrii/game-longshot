@@ -24,6 +24,7 @@ local Barracks = require("barracks")
 local ClaimsManager = require("claims_manager")
 local Launcher = require('launcher')
 local Tech = require('tech')
+local Sensor = require('sensor')
 
 
 local gamestate = {
@@ -122,6 +123,7 @@ function love.load()
         gamestate.config.world_height
         )
     gamestate.map:registerCollision(gamestate.world, nonblock_collision_classes)
+    gamestate.world:addCollisionClass(Sensor.collision_class, {ignores={'Block', 'Ghost'}})
     gamestate.map:fixupGrid(gamestate.grid)
 
     ClaimsManager:new(gamestate)

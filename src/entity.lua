@@ -10,6 +10,7 @@ function Entity:initialize(gamestate, owner, type_name)
     self.type_name = type_name
     self.onupdate_cb = {}
     self.ondraw_cb = {}
+    self.is_dead = false
 end
 
 function Entity:setCollider(collider)
@@ -49,6 +50,8 @@ function Entity:die()
     for i,listener in ipairs(self.gamestate.onDie_cb) do
         listener(self)
     end
+
+    self.is_dead = true
 end
 
 function Entity:update(...)
