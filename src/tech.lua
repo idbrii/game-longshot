@@ -85,9 +85,12 @@ function Tech:drawResourceUI()
     -- Tech level... levels
 
     for i, level in ipairs(self.techLevels) do
-        love.graphics.setColor(0, 0, 0)
+        love.graphics.setColor(0.5, 0.5, 0.5)
         if level.resourceCost < self.resources then
-            love.graphics.setColor(0, 0, 1)
+            love.graphics.setColor(0, 0, 0)
+        end
+        if self.selectedEffect == level then
+            love.graphics.setColor(0, 1, 1)
         end
         local textWidth = 75
         local markerX = left + (level.resourceCost / MAX_RESOURCES) * width
