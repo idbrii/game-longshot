@@ -114,7 +114,9 @@ function Projectile:_checkForBlock(me_x,me_y, check_x,check_y)
     local hits = self.gamestate.world:queryLine(me_x, me_y, check_x, check_y, { 'Block' })
     return #hits > 0
 end
-
+function round(x)
+    return x>=0 and math.floor(x+0.5) or math.ceil(x-0.5)
+end
 function Projectile:wallActivation(collision_data, cx, cy)
     local attachmentAngle
     if self.isDeployable then

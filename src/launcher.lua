@@ -35,7 +35,7 @@ function Launcher:initialize(gamestate, owner, x, y, launch_params)
     self.radius = self.projectile.radius
     self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius+5, self.radius * 2)
     self.can_fire = true
-    self.attachmentAngle = 2
+    self.attachmentAngle = 0
 end
 
 function Launcher:update(dt, gamestate)
@@ -85,10 +85,13 @@ function Launcher:fire(projectileClass)
     end)
 end
 
-function round(x)
-    return x>=0 and math.floor(x+0.5) or math.ceil(x-0.5)
-end
+
 function Launcher:onHitWall(collision_data, attachmentAngle)
+    -- hacky hacky hack
+    if not self.owner.firstLauncherPlaced then
+        attachmentAngle = 0
+        self.owner.firstLauncherPlaced = true
+    end
     self.attachmentAngle = attachmentAngle
 end
 

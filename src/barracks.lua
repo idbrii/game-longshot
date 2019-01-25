@@ -39,7 +39,7 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
     self.direction = launch_params.direction
     self.deployed = false
     self.tint = 1
-    self.attachmentAngle = 2
+    self.attachmentAngle = 0
 end
 
 function Barracks:spawnInterval()

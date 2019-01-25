@@ -35,7 +35,7 @@ function Resourcer:initialize(gamestate, owner, x, y, launch_params)
     self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius , self.radius * 2)
     self.lastExpansion = love.timer.getTime()
     self.generation = 1
-    self.attachmentAngle = 2
+    self.attachmentAngle = 0
 end
 function Resourcer:expandInterval()
     return MAX_RESOURCER_TICK * (math.min(self.generation, MAX_TICK_IN_GENERATIONS) / MAX_TICK_IN_GENERATIONS)
