@@ -94,7 +94,7 @@ function Tech:drawResourceUI()
             love.graphics.setColor(0, 0, 0)
         end
         if self.selectedEffect == level then
-            love.graphics.setColor(0, 1, 1)
+            love.graphics.setColor(0, 0.75, 0.75)
         end
         local textWidth = 75
         local markerX = left + (level.resourceCost / MAX_RESOURCES) * width
