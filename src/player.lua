@@ -3,14 +3,15 @@ local Bomb = require('bomb')
 local Launcher = require('launcher')
 local M = require("moses.moses")
 local Resourcer = require('resourcer')
+local Tech = require('tech')
 local Vec = require('hump.vector')
 local class = require('astray.MiddleClass')
+local colorizer = require('colorizer')
 local lume = require('rxi.lume')
 local moremath = require('moremath')
 local moretable = require('moretable')
 local pl_table = require('pl.tablex')
 local wf = require('windfield')
-local Tech = require('tech')
 
 
 local Player = class('Player')
@@ -303,11 +304,7 @@ function Player:_getLauncher()
 end
 
 function Player:getColour()
-    if self.index == 1 then
-        return 0, 255, 0
-    else
-        return 255, 0, 0
-    end
+    return colorizer.getColour(self.index)
 end
 
 return Player
