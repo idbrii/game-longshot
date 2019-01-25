@@ -18,7 +18,7 @@ function Bomb:initialize(gamestate, owner, x, y, launch_params)
         self:die()
     end
     self:setCollider(self.projectile.collider)
-    self.sensor = Sensor:new(gamestate, owner, x, y, 50)
+    self.sensor = Sensor:new(gamestate, owner, x, y, tuning.size.bomb.blast_radius)
 
     self.tint = 1
     table.insert(self.projectile.onHitWall_cb, function(...)

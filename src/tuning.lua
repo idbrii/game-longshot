@@ -25,6 +25,11 @@ local tuning = {
       barracks = 0.75,
       bomb = 0.25,
     },
+    size = {
+        bomb = {
+            blast_radius = 50,
+        },
+    },
     timer = {
         projectile = {
             max_lifetime = 10,
