@@ -105,9 +105,8 @@ function Bomb:_explode()
 
     self.gamestate.map:refresh(grid)
     self:die()
-    Vfx:new(self.gamestate, screen_pos.x, screen_pos.y, 'poof', {
-            lifetime = 2,
-            fade_seconds = 2,
+    Vfx:new(self.gamestate, screen_pos.x, screen_pos.y, 'explosion', {
+            fade_seconds = .7,
         })
 end
 

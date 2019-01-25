@@ -6,6 +6,7 @@ Vfx.effects = {
 }
 
 function Vfx.load()
+    Vfx.effects.explosion = love.graphics.newImage("assets/textures/explosion.png")
     Vfx.effects.poof = love.graphics.newImage("assets/textures/poof.png")
     Vfx.effects.person_death = love.graphics.newImage("assets/textures/person_death.png")
 end
