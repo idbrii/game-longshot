@@ -1,5 +1,6 @@
 local class = require("astray.MiddleClass")
 local gridgen = require("gridgen")
+local pl_table = require('pl.tablex')
 local Claim = require("claim")
 local Vec = require('hump.vector')
 local Entity = require('entity')
@@ -104,8 +105,15 @@ end
 function ClaimsManager:refresh(tm, grid)
     tm:_foreachTile(function(x,y)
         if not grid[x][y] and self.grid[x][y] then
-            self.grid[x][y]:die()
+            local claim = self.grid[x][y]
             self.grid[x][y] = false
+            claim:die()
+            local resClaims = self.resourcerClaims[claim.resourcer]
+            local idx = pl_table.find(resClaims, claim)
+            if idx ~= nil then
+                table.remove(resClaims, idx)
+            end
+
         end
 
     end)
