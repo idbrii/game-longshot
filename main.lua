@@ -7,6 +7,7 @@ love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?
 --~ require("rxi.autobatch")
 
 io.stdout:setvbuf("no")
+local devcheck = require "devcheck"
 local Bomb = require('bomb')
 local Damagable = require("damagable")
 local TileMap = require("tilemap")
@@ -42,7 +43,7 @@ gamestate.config = {
     world_height = 28,
     tile_size = 32,
     foreground_blend_index = 6,
-    has_cheats = true,
+    has_cheats = devcheck.isDev(),
 }
 
 local should_draw_physics = false
