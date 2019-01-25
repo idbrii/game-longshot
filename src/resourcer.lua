@@ -23,7 +23,7 @@ function Resourcer:initialize(gamestate, owner, x, y, launch_params)
     self.projectile.triggerdeath_cb = function()
         self:die()
     end
-    table.insert(self.projectile.onWallActivate_cb, function(...)
+    table.insert(self.projectile.onWallActivate_cb, function(_, ...)
         self:deploy(...)
     end)
     table.insert(self.projectile.onHitBuilding_cb, function(...)
@@ -35,13 +35,15 @@ function Resourcer:initialize(gamestate, owner, x, y, launch_params)
     self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius , self.radius * 2)
     self.lastExpansion = love.timer.getTime()
     self.generation = 1
+    self.attachmentAngle = 2
 end
 function Resourcer:expandInterval()
     return MAX_RESOURCER_TICK * (math.min(self.generation, MAX_TICK_IN_GENERATIONS) / MAX_TICK_IN_GENERATIONS)
 end
 
-function Resourcer:deploy(projectile, collision_data)
+function Resourcer:deploy(collision_data, angle)
     local x, y = collision_data.collider:getPosition()
+    self.attachmentAngle = angle
     local tilePos = self.gamestate.map:toGridPosVector(Vec(x,y))
     self.gamestate.claims:claimFromResourcer(self, tilePos.x, tilePos.y)
 end
@@ -61,7 +63,7 @@ function Resourcer:draw()
         local r, g, b = self.owner:getColour()
         self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
         love.graphics.setColor(self.owner:getColour())
-        love.graphics.draw(self.gamestate.art.resourcer, cx-self.radius, cy-self.radius)
+        love.graphics.draw(self.gamestate.art.resourcer, cx, cy,  math.pi * self.attachmentAngle, 1, 1, self.radius, self.radius)
     end
 end
 function Resourcer:die()

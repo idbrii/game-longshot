@@ -59,7 +59,7 @@ function Projectile:update(dt)
     local wall = 'Block'
     if self.collider:enter(wall) then
         local collision_data = self.collider:getEnterCollisionData(wall)
-        self:onHitWall(collision_data)
+        self:onHitWall(collision_data, collision_data.contact:getPositions())
     elseif self.collider:enter(Projectile.collision_class) then
         local collision_data = self.collider:getEnterCollisionData(Projectile.collision_class)
         if not self.source_launcher_hit then
@@ -114,43 +114,47 @@ function Projectile:_checkForBlock(me_x,me_y, check_x,check_y)
     return #hits > 0
 end
 
-function Projectile:wallActivation(collision_data)
+function Projectile:wallActivation(collision_data, cx, cy)
+    local attachmentAngle
     if self.isDeployable then
         self.collider:setLinearVelocity(0, 0)
         self.collider:setType('static')
         self.collider:setLinearDamping(0.1)
         self.has_stabilized = true
         self.tint = 1
+        local px, py = self.collider:getPosition()
+        local angle = math.atan2(cx-px,cy-py)
+        attachmentAngle = round(angle * 2) / 2
     end
     for i,listener in ipairs(self.onWallActivate_cb) do
-        listener(self, collision_data)
+        listener(self, collision_data, attachmentAngle)
     end
 end
 
-function Projectile:onHitWall(collision_data)
+function Projectile:onHitWall(collision_data, ...)
     local pos = Vec(self.collider:getPosition())
     local x,y = collision_data.collider:getPosition()
     local hit_ground = y > pos.y and self:_checkForGround()
     if self.techEffect == Tech.Effects.Basic then
         if self.isDeployable then
             if hit_ground then
-                self:wallActivation(collision_data)
+                self:wallActivation(collision_data, ...)
             end
         else
-            self:wallActivation(collision_data)
+            self:wallActivation(collision_data, ...)
         end
     elseif self.techEffect == Tech.Effects.Bouncy then
         if self:isMotionless(tuning.projectile.minSpeed) then
             if self.isDeployable then
                 if hit_ground then
-                    self:wallActivation(collision_data)
+                    self:wallActivation(collision_data, ...)
                 end
             else
-                self:wallActivation(collision_data)
+                self:wallActivation(collision_data, ...)
             end
         end
     elseif self.techEffect == Tech.Effects.Sticky then
-        self:wallActivation(collision_data)
+        self:wallActivation(collision_data, ...)
     else
         print("WARNING: unknonwn tech effect", self.techEffect)
     end

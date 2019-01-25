@@ -26,9 +26,9 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
     self.projectile.triggerdeath_cb = function()
         self:die()
     end
-    --~ table.insert(self.projectile.onWallActivate_cb, function(...)
-    --~     self:onHitWall(...)
-    --~ end)
+    table.insert(self.projectile.onWallActivate_cb, function(_, ...)
+        self:deploy(...)
+    end)
     table.insert(self.projectile.onHitBuilding_cb, function(...)
         self:die()
     end)
@@ -39,13 +39,15 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
     self.direction = launch_params.direction
     self.deployed = false
     self.tint = 1
+    self.attachmentAngle = 2
 end
 
 function Barracks:spawnInterval()
     return 2
 end
 
-function Barracks:deploy()
+function Barracks:deploy(collision_data, angle)
+    self.attachmentAngle = angle
     self.deployed = true
     self.cooldown:set(self:spawnInterval(), function()
         self:spawnSoldier()
@@ -63,10 +65,6 @@ function Barracks:update(dt)
     Entity.update(self, dt)
     self.projectile:update(dt)
     self.cooldown:update(dt)
-
-    if self.collider:enter('Block') then
-        self:deploy()
-    end
 end
 function Barracks:draw()
     Entity.draw(self)
@@ -80,7 +78,7 @@ function Barracks:draw()
         self.cooldown:draw()
         love.graphics.setColor(self.owner:getColour())
         love.graphics.draw(self.gamestate.art.barracks,
-            cx-self.radius * self.direction, cy-self.radius, 0, self.direction, 1)
+            cx, cy, self.attachmentAngle, self.direction, 1, self.radius, self.radius)
     end
 end
 

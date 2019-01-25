@@ -7,6 +7,7 @@ local Vec = require('hump.vector')
 local class = require('astray.MiddleClass')
 local lume = require('rxi.lume')
 local tablex = require("pl.tablex")
+local pretty = require("pl.pretty")
 local tuning = require('tuning')
 local utils = require("pl.utils")
 
@@ -24,7 +25,7 @@ function Launcher:initialize(gamestate, owner, x, y, launch_params)
     self.projectile.triggerdeath_cb = function()
         self:die()
     end
-    table.insert(self.projectile.onWallActivate_cb, function(...)
+    table.insert(self.projectile.onWallActivate_cb, function(_, ...)
         self:onHitWall(...)
     end)
     table.insert(self.projectile.onHitBuilding_cb, function(...)
@@ -34,6 +35,7 @@ function Launcher:initialize(gamestate, owner, x, y, launch_params)
     self.radius = self.projectile.radius
     self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius+5, self.radius * 2)
     self.can_fire = true
+    self.attachmentAngle = 2
 end
 
 function Launcher:update(dt, gamestate)
@@ -61,7 +63,7 @@ function Launcher:draw()
             w/2, h/2)
 
         w,h = self.gamestate.art.launcher:getDimensions()
-        love.graphics.draw(self.gamestate.art.launcher, x - w/2, y - h/2)
+        love.graphics.draw(self.gamestate.art.launcher, x, y, math.pi * self.attachmentAngle,  1, 1, w/2, h/2)
 
         self.damagable:drawHpBar(8, x - self.radius, y - 40, self.radius * 2, self.owner:getColour())
         self.cooldown:draw()
@@ -83,7 +85,11 @@ function Launcher:fire(projectileClass)
     end)
 end
 
-function Launcher:onHitWall(collision_data)
+function round(x)
+    return x>=0 and math.floor(x+0.5) or math.ceil(x-0.5)
+end
+function Launcher:onHitWall(collision_data, attachmentAngle)
+    self.attachmentAngle = attachmentAngle
 end
 
 function Launcher:hasStabilized()
