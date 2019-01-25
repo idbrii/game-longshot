@@ -18,9 +18,15 @@ local major, minor, revision, codename = love.getVersion()
 local dir = love.filesystem.enumerate or love.filesystem.getDirectoryItems
 local time = love.timer.getTime or os.time
 local isdir = (major < 11) and love.filesystem.isDirectory or
-    function(item) return love.filesystem.getInfo(item).type == "directory" end
+    function(item)
+      local info = love.filesystem.getInfo(item)
+      return info and info.type == "directory"
+    end
 local lastmodified = (major < 11) and love.filesystem.getLastModified or
-    function(item) return love.filesystem.getInfo(item).modtime end
+    function(item)
+      local info = love.filesystem.getInfo(item)
+      return info and info.modtime
+    end
 
 local lovecallbacknames = {
   "update",
