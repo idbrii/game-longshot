@@ -165,7 +165,7 @@ function Projectile:onHitWall(collision_data, ...)
 end
 
 function Projectile:onHitBuilding(collision_data)
-    if self.has_stabilized then
+    if self.has_stabilized and not self.isDeployable then
         -- We don't do anything if we're stable. They should be destroyed.
         return
     end

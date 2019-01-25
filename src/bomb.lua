@@ -20,10 +20,10 @@ function Bomb:initialize(gamestate, owner, x, y, launch_params)
     self:setCollider(self.projectile.collider)
 
     self.tint = 1
-    table.insert(self.projectile.onWallActivate_cb, function(...)
+    table.insert(self.projectile.onWallActivate_cb, function(_, ...)
         self:onHitSomething(...)
     end)
-    table.insert(self.projectile.onHitBuilding_cb, function(...)
+    table.insert(self.projectile.onHitBuilding_cb, function(_, ...)
         self:onHitSomething(...)
     end)
 end
