@@ -191,7 +191,7 @@ function love.draw()
         false, -- don't draw at all
     }
 
-    love.graphics.setColor(255, 255, 255)
+    love.graphics.setColor(1,1,1)
     love.graphics.draw(gamestate.plates.skybox, 0, 0)
 
     -- Draw map
@@ -210,7 +210,7 @@ function love.draw()
     love.graphics.draw(sprite, 0, screen_h-50)
 
     -- Draw entities
-    love.graphics.setColor(255, 0, 255)
+    love.graphics.setColor(1,1,1)
     for _, ent in ipairs(gamestate.entities) do
         ent:draw(gamestate)
     end
@@ -221,7 +221,7 @@ function love.draw()
     end
 
     -- Draw physics objects
-    love.graphics.setColor(255, 0, 255)
+    love.graphics.setColor(1,1,1)
     if should_draw_physics then
         gamestate.world:draw()
     end

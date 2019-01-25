@@ -77,6 +77,7 @@ function TileMap:update(gamestate, dt)
 end
 
 function TileMap:draw(grid)
+    love.graphics.setColor(1,1,1)
     -- Draw the autotiles
     local size = self.tile_size
     self:_foreachTile(function(x,y)
