@@ -37,6 +37,19 @@ function Sound.update(dt)
     end
 end
 
+function Sound.setWinner()
+    if not love.audio then
+        return
+    end
+    if Sound.is_winner then
+        return
+    else
+        Sound.is_winner = true
+        Sound.music_danger.source:play()
+        Sound.music_focus.source:stop()
+    end
+end
+
 function Sound.setDanger()
     if not love.audio then
         return

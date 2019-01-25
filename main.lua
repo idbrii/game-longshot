@@ -247,6 +247,7 @@ function love.draw()
     --~ gamestate.winner = gamestate.players[1]
 
     if gamestate.winner then
+        Sound.setWinner()
         sprite = gamestate.plates.winner
         local w,h = sprite:getDimensions()
         love.graphics.setColor(gamestate.winner:getColour())
