@@ -61,7 +61,7 @@ function Player:initialize(gamestate, index)
     self.aim_dir = Vec(0,-1)
     self.launch_held_seconds = 0
     self.launch_power_per_second = k_launch_default_power
-    self.selected_projectile_id = k_projectile_id.launcher
+    self.selected_projectile_id = k_projectile_id.bomb
 
     if self:_isMouseUser() then
         self.getAim = function(this)
