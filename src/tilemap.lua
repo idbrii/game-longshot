@@ -91,12 +91,18 @@ function TileMap:draw(grid)
 end
 
 function TileMap:_findEmptyCollision(grid, start_x, start_y, get_x_fn)
+    local found
     for x_iterator = start_x, self.world_width do
         local x = get_x_fn(x_iterator)
         for y = start_y, self.world_height do
             if not grid[x][y] then
-                return x,y
+                -- good, but see if there's a lower starting point?
+                found = {x,y}
             end
+        end
+
+        if found then
+            return unpack(found)
         end
     end
 end
