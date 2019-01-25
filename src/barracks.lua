@@ -64,12 +64,8 @@ function Barracks:draw()
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
     self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
-    self.cooldown:draw(dt)
-    if self.owner.index == 1 then
-        love.graphics.setColor(0, 255, 0)
-    else
-        love.graphics.setColor(255, 0, 0)
-    end
+    self.cooldown:draw()
+    love.graphics.setColor(self.owner:getColour())
     love.graphics.draw(self.gamestate.art.barracks,
             cx-self.radius * self.direction, cy-self.radius, 0, self.direction, 1)
 end

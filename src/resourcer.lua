@@ -44,15 +44,11 @@ end
 function Resourcer:draw()
     Entity.draw(self)
     self.projectile:draw()
-    self.cooldown:draw(dt)
+    self.cooldown:draw()
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
     self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
-    if self.owner.index == 1 then
-        love.graphics.setColor(0, 255, 0)
-    else
-        love.graphics.setColor(255, 0, 0)
-    end
+    love.graphics.setColor(self.owner:getColour())
     love.graphics.draw(self.gamestate.art.resourcer, cx-self.radius, cy-self.radius)
 end
 function Resourcer:die()

@@ -190,11 +190,7 @@ function Soldier:draw()
     --end
     self.damagable:drawHpBar(5, cx - self:radius(), cy - 20, self:radius() * 2, r, g, b)
 
-    if self.owner.index == 1 then
-        love.graphics.setColor(0, 255, 0)
-    else
-        love.graphics.setColor(255, 0, 0)
-    end
+    love.graphics.setColor(self.owner:getColour())
 
     local age = love.timer.getTime() - self.spawnedAt
     local imageMap = (math.floor(age * 5) % 2) == 0 and imgAnim1 or imgAnim2
