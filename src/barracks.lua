@@ -4,7 +4,7 @@ local utils = require("pl.utils")
 local tablex = require("pl.tablex")
 local Damagable = require("damagable")
 local Entity = require('entity')
-
+local CoolDown = require('cooldown')
 local Barracks = Entity:subclass('Barracks')
 
 function Barracks:initialize(gamestate, owner, x, y, launch_params)
@@ -25,9 +25,9 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
     self:setCollider(self.projectile.collider)
     self.radius = self.projectile.radius
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
+    self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius , self.radius * 2)
     self.direction = launch_params.direction
     self.deployed = false
-    self.lastSpawnAt = love.timer.getTime()
     self.tint = 1
 end
 
@@ -37,24 +37,26 @@ end
 
 function Barracks:deploy()
     self.deployed = true
+    self.cooldown:set(self:spawnInterval(), function()
+        self:spawnSoldier()
+    end)
 end
 
 function Barracks:spawnSoldier()
     local cx,cy = self.collider:getPosition()
     Soldier:new(self.gamestate, self.owner, cx - self.radius * self.direction * -1.5, cy, self.direction)
+    self.cooldown:set(self:spawnInterval(), function()
+        self:spawnSoldier()
+    end)
 end
 function Barracks:update(dt)
     Entity.update(self, dt)
     self.projectile:update(dt)
-    local ts = love.timer.getTime()
+    self.cooldown:update(dt)
+
     if self.collider:enter('Block') then
         self:deploy()
     end
-    if self.deployed and ts > (self.lastSpawnAt + self:spawnInterval()) then
-        self:spawnSoldier()
-        self.lastSpawnAt = ts
-    end
-
 end
 function Barracks:draw()
     Entity.draw(self)
@@ -62,6 +64,7 @@ function Barracks:draw()
     local cx,cy = self.collider:getPosition()
     local r, g, b = self.owner:getColour()
     self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
+    self.cooldown:draw(dt)
     if self.owner.index == 1 then
         love.graphics.setColor(0, 255, 0)
     else
