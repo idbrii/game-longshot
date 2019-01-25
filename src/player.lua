@@ -273,7 +273,7 @@ function Player:draw()
         -- Launcher selection
         local centre = Vec(launch.collider:getPosition())
         love.graphics.setLineWidth(1)
-        love.graphics.circle('line', centre.x, centre.y, launch.radius * 1.3)
+        love.graphics.circle('line', centre.x, centre.y, launch.radius * 2.1)
 
         -- Launcher power
         if self.launch_held_seconds > k_launch_minimum_held_seconds then
