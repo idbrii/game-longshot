@@ -21,7 +21,7 @@ function CoolDown:reset()
 end
 function CoolDown:set(duration, callback)
     if self.nextCallback then
-        error("Can't set an already active cool-down - call reset first")
+        print("WARNING: Resetting a cooldown before it completed")
     end
     self.startedAt = love.timer.getTime()
     self.duration = duration
