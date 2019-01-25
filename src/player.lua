@@ -20,7 +20,7 @@ local k_mouse_player_id = 1
 local k_gamepad_player_id = 2
 local current_gamepad_player_id = nil
 
-local k_launch_offset = 15
+local k_launch_offset = 25
 local k_launch_minimum_held_seconds = 0.3
 local k_launch_maximum_held_seconds = 2
 local k_launch_default_power = 500
@@ -170,9 +170,6 @@ function Player:update(dt, gamestate)
     if     self:_isHeld('fire') then
         self.launch_held_seconds = self.launch_held_seconds + dt
         self.launch_held_seconds = lume.clamp(self.launch_held_seconds, 0, k_launch_maximum_held_seconds)
-        if launch then
-            launch:poseArm(self.aim_dir)
-        end
     elseif self:_isPressed('fire') then
         self.launch_held_seconds = 0
     elseif self.launch_held_seconds > k_launch_minimum_held_seconds then
@@ -197,6 +194,9 @@ function Player:update(dt, gamestate)
     end
 
     self.aim_dir = aim
+    if launch then
+        launch:poseArm(self.aim_dir)
+    end
 end
 
 local function _getLaunchStart(launch, aim_dir)
@@ -269,12 +269,14 @@ function Player:draw()
         love.graphics.circle('line', centre.x, centre.y, launch.radius * 1.3)
 
         -- Launcher power
-        local power,intensity = self:_calcLaunchPower()
-        local tinted = {255, power, 0}
-        love.graphics.setColor(unpack(tinted))
-        local start = _getLaunchStart(launch, self.aim_dir)
-        local target = start + self.aim_dir * k_launch_offset * 2
-        love.graphics.line(start.x, start.y, target.x, target.y)
+        if self.launch_held_seconds > k_launch_minimum_held_seconds then
+            local power,intensity = self:_calcLaunchPower()
+            local tinted = {255, power, 0}
+            love.graphics.setColor(unpack(tinted))
+            local start = _getLaunchStart(launch, self.aim_dir)
+            local target = start + self.aim_dir * (k_launch_offset + 50 * intensity)
+            love.graphics.line(start.x, start.y, target.x, target.y)
+        end
     end
     self.tech:drawResourceUI()
 end
