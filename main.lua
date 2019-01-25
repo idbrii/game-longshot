@@ -278,18 +278,18 @@ function love.mousepressed(x, y, button)
 
     if button == 1 or button == 2 then
         if love.keyboard.isDown("lshift") then
-            Resourcer:new(gamestate, gamestate.players[1], x, y)
+            Resourcer:new(gamestate, gamestate.players[1], x, y, {techEffect = Tech.Effects.Basic})
         elseif love.keyboard.isDown("rshift") then
-            Resourcer:new(gamestate, gamestate.players[2], x, y)
+            Resourcer:new(gamestate, gamestate.players[2], x, y, {techEffect = Tech.Effects.Basic})
         elseif love.keyboard.isDown("lctrl") then
-            Barracks:new(gamestate, gamestate.players[1], x, y)
+            Barracks:new(gamestate, gamestate.players[1], x, y, {techEffect = Tech.Effects.Basic})
         elseif love.keyboard.isDown("rctrl") then
-            Barracks:new(gamestate, gamestate.players[2], x, y)
+            Barracks:new(gamestate, gamestate.players[2], x, y, {techEffect = Tech.Effects.Basic})
         end
 
     elseif button == 3 then
         if love.keyboard.isDown("lshift") then
-            Bomb:new(gamestate, gamestate.players[1], x, y, {})
+            Bomb:new(gamestate, gamestate.players[1], x, y, {techEffect = Tech.Effects.Basic})
         else
             -- Remove collision
             local grid_pos = gamestate.map:toGridPosVector(Vec(x,y))
