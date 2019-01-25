@@ -40,11 +40,11 @@ function Projectile:draw()
         return v * self.tint
     end)
     love.graphics.setColor(unpack(tinted))
-    local style = 'line'
-    if self.has_stabilized then
-        style = 'fill'
-    end
-    love.graphics.circle(style, cx, cy, self.radius)
+    --~ local style = 'line'
+    --~ if self.has_stabilized then
+    --~     style = 'fill'
+    --~ end
+    --~ love.graphics.circle(style, cx, cy, self.radius)
 end
 
 function Projectile:_checkForGround()
