@@ -8,6 +8,7 @@ love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?
 
 io.stdout:setvbuf("no")
 local Bomb = require('bomb')
+local Damagable = require("damagable")
 local TileMap = require("tilemap")
 local pl_table = require('pl.tablex')
 local Vec = require('hump.vector')
@@ -82,12 +83,6 @@ function love.load()
     --~ love.physics.setMeter(32)
     gamestate.world = wf.newWorld(0, 0, true)
     gamestate.world:setGravity(0, 512)
-    local nonblock_collision_classes = {
-        'SoldiersP1',
-        'SoldiersP2',
-        KillVolume.collision_class,
-        Projectile.collision_class,
-    }
     gamestate.world:addCollisionClass('SoldiersP1',               {ignores={'SoldiersP1'}})
     gamestate.world:addCollisionClass('SoldiersP2',               {ignores={'SoldiersP2'}})
     gamestate.world:addCollisionClass(KillVolume.collision_class)
@@ -123,7 +118,7 @@ function love.load()
         gamestate.config.world_width,
         gamestate.config.world_height
         )
-    gamestate.map:registerCollision(gamestate.world, nonblock_collision_classes)
+    gamestate.map:registerCollision(gamestate.world, Damagable.collision_classes)
     gamestate.world:addCollisionClass(Sensor.collision_class, {ignores={'Block', 'Ghost'}})
     gamestate.map:fixupGrid(gamestate.grid)
 

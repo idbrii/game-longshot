@@ -1,6 +1,15 @@
+local KillVolume = require('killvolume')
+local Projectile = require('projectile')
 local class = require("astray.MiddleClass")
 
 local Damagable = class("Damagable")
+
+Damagable.collision_classes = {
+    'SoldiersP1',
+    'SoldiersP2',
+    KillVolume.collision_class,
+    Projectile.collision_class,
+}
 
 function Damagable:initialize(startingHealth, onDeath)
     self.startingHealth = startingHealth
