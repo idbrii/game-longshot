@@ -11,8 +11,6 @@ local utils = require("pl.utils")
 local Launcher = Entity:subclass('Launcher')
 
 function Launcher.load()
-    Launcher.sprite_body = love.graphics.newImage("assets/textures/launcher.png")
-    Launcher.sprite_arm = love.graphics.newImage("assets/textures/launcher_aimer.png")
 end
 
 function Launcher:initialize(gamestate, owner, x, y)
@@ -38,16 +36,16 @@ function Launcher:draw()
     self.projectile:draw()
     
     local x,y = self.collider:getPosition()
-    local w,h = Launcher.sprite_body:getDimensions()
-    love.graphics.draw(Launcher.sprite_body, x - w/2, y - h/2)
+    local w,h = self.gamestate.art.launcher_body:getDimensions()
+    love.graphics.draw(self.gamestate.art.launcher_body, x - w/2, y - h/2)
 
     local r = 0
     if self.aim_dir then
         r = lume.angle(0, 0, self.aim_dir.x, self.aim_dir.y) + math.pi/2
     end
 
-    w,h = Launcher.sprite_arm:getDimensions()
-    love.graphics.draw(Launcher.sprite_arm, x, y,
+    w,h = self.gamestate.art.launcher_arm:getDimensions()
+    love.graphics.draw(self.gamestate.art.launcher_arm, x, y,
         r,
         1, 1,
         w/2, h/2)

@@ -84,6 +84,10 @@ function love.load()
 
     gamestate.art = {
         bomb = love.graphics.newImage("assets/textures/bomb.png"),
+        resourcer = love.graphics.newImage("assets/sprites/resourcer/deployed.png"),
+        barracks = love.graphics.newImage("assets/sprites/barracks/deployed.png"),
+        launcher_body = love.graphics.newImage("assets/textures/launcher.png"),
+        launcher_arm = love.graphics.newImage("assets/textures/launcher_aimer.png"),
     }
 
     gamestate.grid = gridgen.generate_grid(gamestate.config.world_width, gamestate.config.world_height)

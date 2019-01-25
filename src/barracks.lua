@@ -5,11 +5,6 @@ local tablex = require("pl.tablex")
 local Damagable = require("damagable")
 local Entity = require('entity')
 
-local images = {
-    deployed=love.graphics.newImage("assets/sprites/barracks/deployed.png"),
-}
-
-
 local Barracks = Entity:subclass('Barracks')
 
 function Barracks:initialize(gamestate, owner, x, y, launch_params)
@@ -72,7 +67,7 @@ function Barracks:draw()
     else
         love.graphics.setColor(255, 0, 0)
     end
-    love.graphics.draw(images.deployed,
+    love.graphics.draw(self.gamestate.art.barracks,
             cx-self.radius * self.direction, cy-self.radius, 0, self.direction, 1)
 end
 

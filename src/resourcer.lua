@@ -49,7 +49,7 @@ function Resourcer:draw()
     else
         love.graphics.setColor(255, 0, 0)
     end
-    love.graphics.draw(images.deployed, cx-self.radius, cy-self.radius)
+    love.graphics.draw(self.gamestate.art.resourcer, cx-self.radius, cy-self.radius)
 end
 function Resourcer:die()
     Entity.die(self)
