@@ -7,6 +7,7 @@ love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?
 --~ require("rxi.autobatch")
 
 io.stdout:setvbuf("no")
+local Bomb = require('bomb')
 local TileMap = require("tilemap")
 local pl_table = require('pl.tablex')
 local Vec = require('hump.vector')
@@ -292,10 +293,14 @@ function love.mousepressed(x, y, button)
         end
 
     elseif button == 3 then
-        -- Remove collision
-        local grid_pos = gamestate.map:toGridPosVector(Vec(x,y))
-        gamestate.grid[grid_pos.x][grid_pos.y] = false
-        gamestate.map:refresh(gamestate.grid)
+        if love.keyboard.isDown("lshift") then
+            Bomb:new(gamestate, gamestate.players[1], x, y, {})
+        else
+            -- Remove collision
+            local grid_pos = gamestate.map:toGridPosVector(Vec(x,y))
+            gamestate.grid[grid_pos.x][grid_pos.y] = false
+            gamestate.map:refresh(gamestate.grid)
+        end
     end
 end
 
