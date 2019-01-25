@@ -245,11 +245,23 @@ function love.draw()
         love.graphics.print(mode[1] ..' '.. mode[2], 10,10)
     end
 
-    -- DEBUG: For testing winner
-    --~ gamestate.winner = gamestate.players[1]
+    --~ -- DEBUG: For testing winner
+    --~ gamestate.countdown_to_winner = gamestate.countdown_to_winner or 80
+    --~ gamestate.countdown_to_winner = gamestate.countdown_to_winner - 1
+    --~ if gamestate.countdown_to_winner <= 0 then
+    --~     gamestate.winner = gamestate.players[1]
+    --~ end
 
     if gamestate.winner then
         Sound.setWinner()
+
+        -- tint
+        love.graphics.setColor(1,1,1,0.3)
+        love.graphics.rectangle('fill',
+            0,0,
+            screen_w, screen_h)
+
+        -- winner image
         sprite = gamestate.plates.winner
         local w,h = sprite:getDimensions()
         love.graphics.setColor(gamestate.winner:getColour())
