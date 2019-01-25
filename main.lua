@@ -48,6 +48,9 @@ local should_draw_physics = false
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest', 16)
 
+    -- Don't show title card for developers.
+    gamestate.show_titlecard = not gamestate.config.has_cheats
+
     gamestate.input = Input()
     gamestate.input:bind('escape', love.event.quit)
     gamestate.input:bind('backspace', function()
@@ -88,6 +91,7 @@ function love.load()
     gamestate.world:addCollisionClass(Projectile.collision_class)
 
     gamestate.plates = {}
+    gamestate.plates.titlecard = love.graphics.newImage("assets/textures/titlecard.png")
     gamestate.plates.skybox = love.graphics.newImage("assets/textures/skybox.png")
     gamestate.plates.foreground = love.graphics.newImage("assets/textures/ground_overlay.png")
     gamestate.plates.ui_bg = love.graphics.newImage("assets/textures/ui_background.png")
@@ -153,6 +157,12 @@ function love.joystickadded(joystick)
 end
 
 function love.keypressed(key)
+    gamestate.show_titlecard = false
+
+    if not gamestate.has_cheats then
+        return
+    end
+
     if key == 'b' then
         gamestate.config.foreground_blend_index = moretable.circular_index_number(8, gamestate.config.foreground_blend_index + 1)
     elseif key == 'v' then
@@ -195,6 +205,18 @@ function love.draw()
 
     love.graphics.setColor(1,1,1)
     love.graphics.draw(gamestate.plates.skybox, 0, 0)
+
+    if gamestate.show_titlecard then
+        local sprite = gamestate.plates.titlecard
+        local w,h = sprite:getDimensions()
+        love.graphics.draw(sprite,
+            screen_w/2, screen_h/2,
+            nil,
+            nil, nil,
+            w/2, h/2)
+        return
+    end
+
 
     -- Draw map
     gamestate.map:draw(gamestate.grid)
@@ -249,7 +271,9 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button)
-    if not gamestate.config.has_cheats then
+    gamestate.show_titlecard = false
+
+    if not gamestate.has_cheats then
         return
     end
 
