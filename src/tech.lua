@@ -2,7 +2,7 @@ local class = require("astray.MiddleClass")
 
 local Tech = class("Tech")
 
-local MAX_RESOURCES = 4000
+local MAX_RESOURCES = 4000/2
 
 Tech.Effects = {
     Basic = {
@@ -14,19 +14,19 @@ Tech.Effects = {
     Bouncy = {
         name="Bouncy",
         key= {'2', '8'},
-        resourceCost = 700,
+        resourceCost = 700/2,
         restitution = 0.6,
     },
     Boosty = {
         name="Boosty",
         key= {'3', '9'},
-        resourceCost = 1500,
+        resourceCost = 1500/2,
         restitution = 0.1,
     },
     Sticky = {
         name="Sticky",
         key= {'4', '0'},
-        resourceCost = 2500,
+        resourceCost = 2500/2,
         restitution = 0.1,
     }
 }
