@@ -296,6 +296,10 @@ function Player:removeLauncher(launcher)
         -- We removed one before, so move up to keep the same one selected.
         self.selected_launcher_idx = self.selected_launcher_idx + 1
     end
+
+    if #self.launchers == 0 then
+        self.gamestate:onLose(self)
+    end
 end
 
 function Player:_getLauncher()

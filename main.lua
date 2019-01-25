@@ -43,6 +43,7 @@ gamestate.config = {
 local debug_draw_fn
 local should_draw_physics = false
 
+
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest', 16)
 
@@ -61,6 +62,13 @@ function love.load()
         table.remove(gamestate.entities, idx)
     end
     gamestate.onDie_cb = {} -- function(victim)
+    gamestate.onLose = function(state, loser)
+        if loser.index == 1 then
+            gamestate.winner = gamestate.players[2]
+        else
+            gamestate.winner = gamestate.players[1]
+        end
+    end
 
 
     -- Prepare physics world
@@ -83,6 +91,7 @@ function love.load()
     gamestate.plates.skybox = love.graphics.newImage("assets/textures/skybox.png")
     gamestate.plates.foreground = love.graphics.newImage("assets/textures/ground_overlay.png")
     gamestate.plates.ui_bg = love.graphics.newImage("assets/textures/ui_background.png")
+    gamestate.plates.winner = love.graphics.newImage("assets/textures/winner.png")
 
     gamestate.art = {
         bomb = love.graphics.newImage("assets/textures/bomb.png"),
@@ -219,6 +228,21 @@ function love.draw()
     if mode then
         love.graphics.setColor(0, 100, 100)
         love.graphics.print(mode[1] ..' '.. mode[2], 10,10)
+    end
+
+    -- For testing winner
+    --~ gamestate.winner = gamestate.players[1]
+
+    if gamestate.winner then
+        sprite = gamestate.plates.winner
+        local w,h = sprite:getDimensions()
+        love.graphics.setColor(gamestate.winner:getColour())
+        love.graphics.draw(sprite,
+            screen_w/2, screen_h/2,
+            nil,
+            nil, nil,
+            w/2, h/2)
+        --~ love.graphics.print('Winner is P'.. gamestate.winner.index, screen_w/2, screen_h/2-(h/2+50))
     end
 
     -- Draw physics objects
