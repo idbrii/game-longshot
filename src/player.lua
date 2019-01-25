@@ -240,13 +240,14 @@ function Player:draw()
     if launch then
         local screen_w, screen_h = love.graphics.getWidth(), love.graphics.getHeight()
 
-        local pad = 50
+        local pad = 25
         local bottom = screen_h - pad
+        pad = pad + 5
         local draw_x
         if self.index == 1 then
             draw_x = pad
         else
-            draw_x = screen_w - (10 + pad)
+            draw_x = screen_w - pad
         end
 
         -- Current projectile
@@ -260,7 +261,7 @@ function Player:draw()
         love.graphics.draw(sprite,
             draw_x, bottom,
             nil,
-            nil, nil,
+            0.5, 0.5,
             w/2, h/2)
 
 
