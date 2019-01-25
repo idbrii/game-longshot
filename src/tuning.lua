@@ -14,8 +14,8 @@ local tuning = {
         soldier = 25,
     },
     cool_downs = {
-        launcher = 10,
-        resourcer = 7,
+        launcher = 5,
+        resourcer = 5,
         barracks = 5,
         bomb = 0.75
     },
