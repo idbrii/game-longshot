@@ -36,8 +36,8 @@ function Launcher:draw()
     self.projectile:draw()
     
     local x,y = self.collider:getPosition()
-    local w,h = self.gamestate.art.launcher_body:getDimensions()
-    love.graphics.draw(self.gamestate.art.launcher_body, x - w/2, y - h/2)
+    local w,h = self.gamestate.art.launcher:getDimensions()
+    love.graphics.draw(self.gamestate.art.launcher, x - w/2, y - h/2)
 
     local r = 0
     if self.aim_dir then
