@@ -31,6 +31,21 @@ function TileMap:_foreachTile(fn)
     end
 end
 
+function TileMap:fixupGrid(grid)
+    for x = 0, self.world_width do
+        grid[x][1] = true
+        grid[x][2] = true
+        grid[x][self.world_height-1] = true
+        grid[x][self.world_height] = true
+    end
+    for y = 0, self.world_height do
+        grid[1][y] = true
+        grid[2][y] = true
+        grid[self.world_width-1][y] = true
+        grid[self.world_width][y] = true
+    end
+end
+
 function TileMap:registerCollision(world, mob_collision_classes)
     world:addCollisionClass('Block')
     local ignore_classes = pl_table.copy(mob_collision_classes)
@@ -107,8 +122,9 @@ function TileMap:toGridPosVector(vector)
     }
 end
 
-local function makeSpace(grid, x, y)
-    for delta=1,3 do
+local function makeSpace(grid, x, y, radius)
+    for delta=1,radius do
+        -- TODO: Should do a square/circle instead of star?
         grid[x - delta][y] = false
         grid[x + delta][y] = false
         grid[x][y - delta] = false
@@ -121,19 +137,19 @@ local function makeSpace(grid, x, y)
 end
 
 function TileMap:buildStartPoints(grid)
-    local start_radius = 2
+    local start_radius = 3
     local start_indent = start_radius+1
     local p1_grid = {}
     p1_grid.x, p1_grid.y = self:_findEmptyCollision(grid, start_indent, start_indent, function(x_iterator)
         return x_iterator
     end)
-    makeSpace(grid, p1_grid.x, p1_grid.y)
+    makeSpace(grid, p1_grid.x, p1_grid.y, start_radius)
 
     local p2_grid = {}
     p2_grid.x,p2_grid.y = self:_findEmptyCollision(grid, start_indent, start_indent, function(x_iterator)
         return self.world_width - x_iterator
     end)
-    makeSpace(grid, p2_grid.x, p2_grid.y)
+    makeSpace(grid, p2_grid.x, p2_grid.y, start_radius)
 
     local p1_screen,p2_screen = self:toScreenPosVector(p1_grid), self:toScreenPosVector(p2_grid)
     return p1_screen,p2_screen

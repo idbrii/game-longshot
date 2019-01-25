@@ -96,6 +96,7 @@ function love.load()
         gamestate.config.world_height
         )
     gamestate.map:registerCollision(gamestate.world, nonblock_collision_classes)
+    gamestate.map:fixupGrid(gamestate.grid)
 
     ClaimsManager:new(gamestate)
     
