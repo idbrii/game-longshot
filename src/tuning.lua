@@ -1,7 +1,7 @@
 local tuning = {
     health = {
-        launcher = 50,
-        resourcer = 50,
+        launcher = 1000,
+        resourcer = 1000,
         barracks = 1000,
         bomb = 10,
         soldier = 50,
@@ -32,10 +32,13 @@ local tuning = {
     },
     timer = {
         projectile = {
-            max_lifetime = 10,
+            max_lifetime = 15,
             -- can't be too small or might die during initial spawn and fall
             max_idle_lifetime = 0.95,
         },
     },
+    projectile = {
+        minSpeed = 400
+    }
 }
 return tuning

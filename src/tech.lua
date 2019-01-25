@@ -16,7 +16,7 @@ Tech.Effects = {
         name="Bouncy",
         key= {'2', '8'},
         resourceCost = 700,
-        restitution = 0.8,
+        restitution = 0.6,
         activateOnImpact = false,
     },
     Boosty = {

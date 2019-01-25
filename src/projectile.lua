@@ -11,7 +11,7 @@ local Projectile = class('Projectile')
 
 Projectile.collision_class = 'Building'
 
-function Projectile:initialize(gamestate, owner, x, y, radius, image, techEffect)
+function Projectile:initialize(gamestate, owner, x, y, radius, image, techEffect, isDeployable)
     self.gamestate = gamestate
     --~ print("Projectile:", "creating at", x, y)
     self.owner = owner
@@ -19,11 +19,12 @@ function Projectile:initialize(gamestate, owner, x, y, radius, image, techEffect
     self.radius = radius or 10
     self.collider = gamestate.world:newCircleCollider(x, y, self.radius)
     self.techEffect = techEffect
+    self.isDeployable = isDeployable
     self.collider:setRestitution(techEffect.restitution)
     self.collider:setCollisionClass(Projectile.collision_class)
     self.has_stabilized = false
     self.tint = 1
-    self.onHitWall_cb = {}
+    self.onWallActivate_cb = {}
     self.onHitBuilding_cb = {}
     self.triggerdeath_cb = nil
     self.seconds_unstable = 0
@@ -74,10 +75,14 @@ function Projectile:update(dt)
     end
 end
 
-function Projectile:isMotionless()
+function Projectile:isMotionless(minSpeed)
     local vel = Vec(self.collider:getLinearVelocity())
     local speed2 = vel:len2()
-    return moremath.isApproxZero(speed2)
+    if minSpeed then
+        return speed2 < minSpeed
+    else
+        return moremath.isApproxZero(speed2)
+    end
 end
 
 function Projectile:draw()
@@ -108,23 +113,41 @@ function Projectile:_checkForBlock(me_x,me_y, check_x,check_y)
     return #hits > 0
 end
 
-function Projectile:onHitWall(collision_data)
-    if not self.techEffect.activateOnImpact then
-        return
-    end
-    local pos = Vec(self.collider:getPosition())
-    local x,y = collision_data.collider:getPosition()
-    local hit_ground = y > pos.y and self:_checkForGround()
-    if hit_ground then
+function Projectile:wallActivation(collision_data)
+    if self.isDeployable then
         self.collider:setLinearVelocity(0, 0)
         self.collider:setType('static')
         self.collider:setLinearDamping(0.1)
         self.has_stabilized = true
         self.tint = 1
     end
-
-    for i,listener in ipairs(self.onHitWall_cb) do
+    for i,listener in ipairs(self.onWallActivate_cb) do
         listener(self, collision_data)
+    end
+end
+
+function Projectile:onHitWall(collision_data)
+    local pos = Vec(self.collider:getPosition())
+    local x,y = collision_data.collider:getPosition()
+    local hit_ground = y > pos.y and self:_checkForGround()
+    if self.techEffect.activateOnImpact then
+        if self.isDeployable then
+            if hit_ground then
+                self:wallActivation(collision_data)
+            end
+        else
+            self:wallActivation(collision_data)
+        end
+    else
+        if self:isMotionless(tuning.projectile.minSpeed) then
+            if self.isDeployable then
+                if hit_ground then
+                    self:wallActivation(collision_data)
+                end
+            else
+                self:wallActivation(collision_data)
+            end
+        end
     end
 end
 

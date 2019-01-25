@@ -13,14 +13,14 @@ Bomb.launchCoolDown = tuning.cool_downs.bomb
 function Bomb:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner, 'bomb')
     self.techEffect = launch_params.techEffect
-    self.projectile = Projectile:new(gamestate, owner, x, y, 10, gamestate.art.bomb, launch_params.techEffect)
+    self.projectile = Projectile:new(gamestate, owner, x, y, 10, gamestate.art.bomb, launch_params.techEffect, false)
     self.projectile.triggerdeath_cb = function()
         self:die()
     end
     self:setCollider(self.projectile.collider)
 
     self.tint = 1
-    table.insert(self.projectile.onHitWall_cb, function(...)
+    table.insert(self.projectile.onWallActivate_cb, function(...)
         self:onHitSomething(...)
     end)
     table.insert(self.projectile.onHitBuilding_cb, function(...)

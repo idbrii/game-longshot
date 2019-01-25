@@ -22,11 +22,11 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
         end
     end
     self.techEffect = launch_params.techEffect
-    self.projectile = Projectile:new(gamestate, owner, x, y, 32, gamestate.art.balls.barracks, launch_params.techEffect)
+    self.projectile = Projectile:new(gamestate, owner, x, y, 32, gamestate.art.balls.barracks, launch_params.techEffect, true)
     self.projectile.triggerdeath_cb = function()
         self:die()
     end
-    --~ table.insert(self.projectile.onHitWall_cb, function(...)
+    --~ table.insert(self.projectile.onWallActivate_cb, function(...)
     --~     self:onHitWall(...)
     --~ end)
     table.insert(self.projectile.onHitBuilding_cb, function(...)
