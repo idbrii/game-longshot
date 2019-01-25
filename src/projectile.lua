@@ -69,7 +69,14 @@ function Projectile:update(dt)
         self:onHitWall(collision_data, collision_data.contact:getPositions())
     elseif self.collider:enter(Projectile.collision_class) then
         local collision_data = self.collider:getEnterCollisionData(Projectile.collision_class)
-        if not self.source_launcher_hit then
+        local other_ent = collision_data.collider:getObject()
+        if self.entity.type_name == 'bomb' then
+            -- Need to special case bomb because it starts outside of launcher collision.
+            self:onHitBuilding(collision_data)
+        elseif not self.has_stabilized and other_ent.projectile and not other_ent.projectile.has_stabilized then
+            -- two in-flight projectiles
+            self:onHitBuilding(collision_data)
+        elseif not self.source_launcher_hit then
             self.source_launcher_hit = collision_data.collider
         elseif self.has_cleared_launcher or self:isMotionless() then
             self.has_cleared_launcher = true
@@ -77,7 +84,6 @@ function Projectile:update(dt)
         elseif self.source_launcher_hit ~= collision_data.collider then
             self.has_cleared_launcher = true
         end
-        self.has_cleared_launcher = true
     else
         self.has_cleared_launcher = true
     end
@@ -171,8 +177,9 @@ function Projectile:onHitWall(collision_data, ...)
 end
 
 function Projectile:onHitBuilding(collision_data)
-    if self.has_stabilized and not self.isDeployable then
-        -- We don't do anything if we're stable. They should be destroyed.
+    if self.has_stabilized then
+        -- We don't do anything if we're stable. The other thing
+        -- should react (be destroyed).
         return
     end
 
