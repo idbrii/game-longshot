@@ -15,7 +15,7 @@ function Vfx:initialize(gamestate, x, y, effect_name, params)
     self.x = x
     self.y = y
     self.img = Vfx.effects[effect_name]
-    self.remaining_seconds = params.lifetime
+    self.remaining_seconds = params.lifetime or params.fade_seconds
     self.fade_seconds_left = params.fade_seconds
     self.total_fade_seconds = params.fade_seconds
 end
