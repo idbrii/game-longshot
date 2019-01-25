@@ -8,6 +8,7 @@ local wf = require("windfield")
 local TileMap = class("TileMap")
 
 function TileMap:initialize(gamestate, floor_image, autotile_image, tile_size, world_width, world_height)
+    self.gamestate = gamestate
     self.floor_image = floor_image
     self.tiler = autotile(autotile_image, tile_size)
     self.world_width = world_width
@@ -62,6 +63,7 @@ function TileMap:registerCollision(world, mob_collision_classes)
 end
 
 function TileMap:refresh(grid)
+    self.gamestate.claims:refresh(self, grid)
     self:_foreachTile(function(x,y)
         local col_class = 'Ghost'
         local has_collision = grid[x][y]

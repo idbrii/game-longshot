@@ -101,6 +101,17 @@ function ClaimsManager:declaimResourcer(resourcer)
     self.resourcerClaims[resourcer] = nil
 end
 
+function ClaimsManager:refresh(tm, grid)
+    tm:_foreachTile(function(x,y)
+        if not grid[x][y] and self.grid[x][y] then
+            self.grid[x][y]:die()
+            self.grid[x][y] = false
+        end
+
+    end)
+end
+
+
 function ClaimsManager:update(dt)
     Entity.update(self, dt)
 end
