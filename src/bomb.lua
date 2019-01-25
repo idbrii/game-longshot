@@ -1,7 +1,7 @@
 local Entity = require('entity')
+local Damagable = require "damagable"
 local M = require("moses.moses")
 local Projectile = require('projectile')
-local Sensor = require('sensor')
 local Vec = require('hump.vector')
 local Vfx = require('vfx')
 local tuning = require('tuning')
@@ -18,7 +18,6 @@ function Bomb:initialize(gamestate, owner, x, y, launch_params)
         self:die()
     end
     self:setCollider(self.projectile.collider)
-    self.sensor = Sensor:new(gamestate, owner, x, y, tuning.size.bomb.blast_radius)
 
     self.tint = 1
     table.insert(self.projectile.onHitWall_cb, function(...)
@@ -30,20 +29,16 @@ function Bomb:initialize(gamestate, owner, x, y, launch_params)
 end
 
 function Bomb:update(dt)
-    self.sensor:setPosition(self.collider:getPosition())
-    self.sensor:update(dt)
     self.projectile:update(dt)
 end
 function Bomb:draw()
     self.projectile:draw()
-    self.sensor:draw()
 end
 
 
 function Bomb:die()
     Entity.die(self)
     self.projectile:die()
-    self.sensor:die()
 end
 
 function Bomb:onHitSomething(collision_data)
@@ -57,13 +52,25 @@ local function tryDestroyTile(grid, x, y)
     end
 end
 
-function Bomb:_explode()
-    for i,ent in ipairs(self.sensor:getCollidingEntities()) do
-        if ent.damagable then
-            ent.damagable:takeDamage(tuning.damage_dealer.bomb)
-        else
-            print("Why doesn't this thing have a damagable?", ent)
+function Bomb:_getBlastRadiusEntities()
+    -- queryCircleArea and sensors don't work. Just brute force it.
+    local pos = Vec(self.collider:getPosition())
+    local rad2 = tuning.size.bomb.blast_radius * tuning.size.bomb.blast_radius
+    local victims = {}
+    for i,ent in ipairs(self.gamestate.entities) do
+        if ent.collider and ent.damagable and ent ~= self then
+            local victim_pos = Vec(ent.collider:getPosition())
+            if pos:dist2(victim_pos) < rad2 then
+                table.insert(victims, ent)
+            end
         end
+    end
+    return victims
+end
+
+function Bomb:_explode()
+    for i,ent in ipairs(self:_getBlastRadiusEntities()) do
+        ent.damagable:takeDamage(tuning.damage_dealer.bomb)
     end
     local screen_pos = Vec(self.collider:getPosition())
     local grid_pos = self.gamestate.map:toGridPosVector(screen_pos)
