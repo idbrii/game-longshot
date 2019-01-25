@@ -42,18 +42,16 @@ aim with mouse
 
 or gamepad:
 
-* leftstick     - aim
-* fdown         - fire
-* dpup          - cycle_projectile_prev
-* dpdown        - cycle_projectile_next
-* dpleft        - left
-* dpright       - right
-* leftshoulder  - cycle_launcher_left
-* rightshoulder - cycle_launcher_right
-* back          - mod_normal
-* fleft         - mod_bouncy
-* fup           - mod_boosty
-* fright        - mod_sticky
+* r1      - fire
+* l1      - cycle_launcher_right
+* dpup    - cycle_projectile_prev
+* dpdown  - cycle_projectile_next
+* dpleft  - cycle_launcher_left
+* dpright - cycle_launcher_right
+* fdown   - mod_normal
+* fleft   - mod_bouncy
+* fup     - mod_boosty
+* fright  - mod_sticky
 
 ## Running
 
