@@ -56,9 +56,11 @@ function CoolDown:draw()
     if self.endsAt then
         local px, py = self.parentBody:getPosition()
         local x = px + self.offsetX
-        local y = py + self.offsetY
-        love.graphics.setLineWidth(5)
-        love.graphics.setColor(0, 0,0,0.8)
+        local y = py + self.offsetY + 10
+        love.graphics.setLineWidth(10)
+        love.graphics.setColor(0.0, 0.0, 0.0, 0.5)
+        love.graphics.line(x, y, x + 1 * self.width , y)
+        love.graphics.setColor(0.5, 0.5, 0.5, 0.8)
         love.graphics.line(x, y, x + self:progress() * self.width , y)
     end
 end

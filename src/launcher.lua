@@ -33,7 +33,7 @@ function Launcher:initialize(gamestate, owner, x, y, launch_params)
     end)
     self:setCollider(self.projectile.collider)
     self.radius = self.projectile.radius
-    self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius+5, self.radius * 2)
+    self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius, self.radius * 2)
     self.can_fire = true
     self.attachmentAngle = 0
 end

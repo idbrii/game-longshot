@@ -32,7 +32,7 @@ function Resourcer:initialize(gamestate, owner, x, y, launch_params)
     self:setCollider(self.projectile.collider)
     self.radius = self.projectile.radius
     self.damagable = Damagable:new(tuning.health.resourcer, utils.bind1(self.die, self))
-    self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius , self.radius * 2)
+    self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius, self.radius * 2)
     self.lastExpansion = love.timer.getTime()
     self.generation = 1
     self.attachmentAngle = 0

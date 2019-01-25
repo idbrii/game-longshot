@@ -35,7 +35,7 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
     self:setCollider(self.projectile.collider)
     self.radius = self.projectile.radius
     self.damagable = Damagable:new(tuning.health.barracks, utils.bind1(self.die, self))
-    self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius , self.radius * 2)
+    self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius, self.radius * 2)
     self.direction = launch_params.direction
     self.deployed = false
     self.tint = 1
