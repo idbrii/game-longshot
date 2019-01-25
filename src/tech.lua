@@ -4,7 +4,7 @@ local Tech = class("Tech")
 
 local MAX_RESOURCES = 4000
 
-Tech.Levels = {
+Tech.Effects = {
     Basic = {
         name="Basic",
         key= {'1', '7'},
@@ -30,12 +30,19 @@ Tech.Levels = {
 function Tech:initialize(owner)
     self.owner = owner
     self.techLevels = {
-        Tech.Levels.Basic,
-        Tech.Levels.Bouncy,
-        Tech.Levels.Boosty,
-        Tech.Levels.Sticky,
+        Tech.Effects.Basic,
+        Tech.Effects.Bouncy,
+        Tech.Effects.Boosty,
+        Tech.Effects.Sticky,
     }
-    self.resources = 0
+    self.resources = 10000
+    self.selectedEffect = Tech.Effects.Basic
+end
+
+function Tech:selectEffect(effect)
+    if effect.resourceCost < self.resources then
+        self.selectedEffect = effect
+    end
 end
 
 function Tech:getTechLevel()

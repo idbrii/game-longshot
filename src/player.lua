@@ -184,9 +184,13 @@ function Player:update(dt, gamestate)
     elseif self:_isPressed('cycle_projectile_next') then
         self:_cycleProjectile(1)
     elseif self:_isPressed('mod_normal') then
+        self.tech:selectEffect(Tech.Effects.Basic)
     elseif self:_isPressed('mod_bouncy') then
+        self.tech:selectEffect(Tech.Effects.Bouncy)
     elseif self:_isPressed('mod_boosty') then
+        self.tech:selectEffect(Tech.Effects.Boosty)
     elseif self:_isPressed('mod_sticky') then
+        self.tech:selectEffect(Tech.Effects.Sticky)
     elseif self:_isHeld('left') then
         aim = _rotateAim(dt, aim, -1)
     elseif self:_isHeld('right') then
