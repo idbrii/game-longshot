@@ -11,7 +11,7 @@ local tuning = require('tuning')
 local utils = require("pl.utils")
 
 local Launcher = Entity:subclass('Launcher')
-Launcher.launchCoolDown = 10
+Launcher.launchCoolDown = tuning.cool_downs.launcher
 function Launcher.load()
 end
 

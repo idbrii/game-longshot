@@ -6,9 +6,10 @@ local Damagable = require("damagable")
 local tuning = require('tuning')
 local Entity = require('entity')
 local CoolDown = require('cooldown')
+local tuning = require('tuning')
 local Barracks = Entity:subclass('Barracks')
 
-Barracks.launchCoolDown = 6
+Barracks.launchCoolDown = tuning.cool_downs.barracks
 
 function Barracks:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner, 'barracks')

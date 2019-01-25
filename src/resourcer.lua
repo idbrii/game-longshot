@@ -13,7 +13,7 @@ local images = {
 }
 
 local Resourcer = Entity:subclass('Resourcer')
-Resourcer.launchCoolDown = 5
+Resourcer.launchCoolDown = tuning.cool_downs.resourcer
 local MAX_RESOURCER_TICK = 30
 local MAX_TICK_IN_GENERATIONS = 60
 function Resourcer:initialize(gamestate, owner, x, y, launch_params)

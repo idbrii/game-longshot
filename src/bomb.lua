@@ -3,10 +3,11 @@ local Projectile = require('projectile')
 local Vec = require('hump.vector')
 local Vfx = require('vfx')
 local Entity = require('entity')
+local tuning = require('tuning')
 
 local Bomb = Entity:subclass('Bomb')
 
-Bomb.launchCoolDown = 0.75
+Bomb.launchCoolDown = tuning.cool_downs.bomb
 
 function Bomb:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner, 'bomb')
