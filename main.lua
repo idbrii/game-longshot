@@ -23,6 +23,7 @@ local Resourcer = require("resourcer")
 local Barracks = require("barracks")
 local ClaimsManager = require("claims_manager")
 local Launcher = require('launcher')
+local Tech = require('tech')
 
 
 local gamestate = {
@@ -147,8 +148,8 @@ function love.load()
 
     local starts = {}
     starts.p1, starts.p2, debug_draw_fn = gamestate.map:buildStartPoints(gamestate.grid)
-    Launcher:new(gamestate, gamestate.players[1], starts.p1.x,starts.p1.y)
-    Launcher:new(gamestate, gamestate.players[2], starts.p2.x,starts.p2.y)
+    Launcher:new(gamestate, gamestate.players[1], starts.p1.x,starts.p1.y, {techEffect = Tech.Effects.Basic})
+    Launcher:new(gamestate, gamestate.players[2], starts.p2.x,starts.p2.y, {techEffect = Tech.Effects.Basic})
     gamestate.map:refresh(gamestate.grid)
 end
 

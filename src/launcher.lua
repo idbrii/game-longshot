@@ -15,11 +15,12 @@ Launcher.launchCoolDown = tuning.cool_downs.launcher
 function Launcher.load()
 end
 
-function Launcher:initialize(gamestate, owner, x, y)
+function Launcher:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner, 'launcher')
     self.damagable = Damagable:new(tuning.health.launcher, utils.bind1(self.die, self))
     self.owner:addLauncher(self)
-    self.projectile = Projectile:new(gamestate, owner, x, y, 30, gamestate.art.balls.launcher)
+    self.techEffect = launch_params.techEffect
+    self.projectile = Projectile:new(gamestate, owner, x, y, 30, gamestate.art.balls.launcher, launch_params.techEffect)
     self.projectile.triggerdeath_cb = function()
         self:die()
     end

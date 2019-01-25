@@ -223,6 +223,7 @@ function Player:_fire()
         local dot = self.aim_dir:dot(Vec(0,1))
         local launch_params = {
             direction = dot > 0 and 1 or -1,
+            techEffect = self.tech.selectedEffect,
         }
         local projectile = SelectedProjectile:new(self.gamestate, self, start.x, start.y, launch_params)
         local power = self:_calcLaunchPower()

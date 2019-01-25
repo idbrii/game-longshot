@@ -11,7 +11,8 @@ Bomb.launchCoolDown = tuning.cool_downs.bomb
 
 function Bomb:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner, 'bomb')
-    self.projectile = Projectile:new(gamestate, owner, x, y, 10, gamestate.art.bomb)
+    self.techEffect = launch_params.techEffect
+    self.projectile = Projectile:new(gamestate, owner, x, y, 10, gamestate.art.bomb, launch_params.techEffect)
     self.projectile.triggerdeath_cb = function()
         self:die()
     end

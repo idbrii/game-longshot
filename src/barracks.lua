@@ -13,7 +13,6 @@ Barracks.launchCoolDown = tuning.cool_downs.barracks
 
 function Barracks:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner, 'barracks')
-    launch_params = launch_params or {}
     if launch_params.direction == nil then
         print('[Barracks] No direction giving. Defaulting to player direction.')
         if owner.index == 1 then
@@ -22,7 +21,8 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
             launch_params.direction = -1
         end
     end
-    self.projectile = Projectile:new(gamestate, owner, x, y, 32, gamestate.art.balls.barracks)
+    self.techEffect = launch_params.techEffect
+    self.projectile = Projectile:new(gamestate, owner, x, y, 32, gamestate.art.balls.barracks, launch_params.techEffect)
     self.projectile.triggerdeath_cb = function()
         self:die()
     end

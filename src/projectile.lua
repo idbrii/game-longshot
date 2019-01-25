@@ -11,14 +11,15 @@ local Projectile = class('Projectile')
 
 Projectile.collision_class = 'Building'
 
-function Projectile:initialize(gamestate, owner, x, y, radius, image)
+function Projectile:initialize(gamestate, owner, x, y, radius, image, techEffect)
     self.gamestate = gamestate
     --~ print("Projectile:", "creating at", x, y)
     self.owner = owner
     self.sprite = image
     self.radius = radius or 10
     self.collider = gamestate.world:newCircleCollider(x, y, self.radius)
-    self.collider:setRestitution(0.1)
+    self.techEffect = techEffect
+    self.collider:setRestitution(techEffect.restitution)
     self.collider:setCollisionClass(Projectile.collision_class)
     self.has_stabilized = false
     self.tint = 1
@@ -108,6 +109,9 @@ function Projectile:_checkForBlock(me_x,me_y, check_x,check_y)
 end
 
 function Projectile:onHitWall(collision_data)
+    if self.techEffect.activateOnImpact then
+        return
+    end
     local pos = Vec(self.collider:getPosition())
     local x,y = collision_data.collider:getPosition()
     local hit_ground = y > pos.y and self:_checkForGround()

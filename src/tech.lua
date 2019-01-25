@@ -9,21 +9,29 @@ Tech.Effects = {
         name="Basic",
         key= {'1', '7'},
         resourceCost = 0,
+        restitution = 0.2,
+        activateOnImpact = true,
     },
     Bouncy = {
         name="Bouncy",
         key= {'2', '8'},
         resourceCost = 700,
+        restitution = 0.8,
+        activateOnImpact = false,
     },
     Boosty = {
         name="Boosty",
         key= {'3', '9'},
         resourceCost = 1500,
+        restitution = 0.1,
+        activateOnImpact = true,
     },
     Sticky = {
         name="Sticky",
         key= {'4', '0'},
         resourceCost = 2500,
+        restitution = 0.1,
+        activateOnImpact = true,
     }
 }
 
