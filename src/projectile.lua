@@ -25,7 +25,8 @@ function Projectile:initialize(gamestate, owner, x, y, radius, image)
     self.onHitWall_cb = {}
     self.onHitBuilding_cb = {}
     self.triggerdeath_cb = nil
-    self.seconds_remaining = tuning.timer.projectile.max_lifetime
+    self.seconds_unstable = 0
+    self.seconds_motionless = 0
 end
 
 function Projectile:die()
@@ -34,11 +35,22 @@ function Projectile:die()
 end
 
 function Projectile:update(dt)
-    self.seconds_remaining = self.seconds_remaining - dt
-    if not self.has_stabilized and self.seconds_remaining <= 0 then
-        print('dying from idle hands')
-        self.triggerdeath_cb()
-        return
+    if not self.has_stabilized then
+        self.seconds_unstable = self.seconds_unstable + dt
+        if self:isMotionless() then
+            self.seconds_motionless = self.seconds_motionless + dt
+        else
+            self.seconds_motionless = 0
+        end
+        if self.seconds_unstable > tuning.timer.projectile.max_lifetime then
+            print('dying from old age')
+            self.triggerdeath_cb()
+            return
+        elseif self.seconds_motionless > tuning.timer.projectile.max_idle_lifetime then
+            print('dying from idle hands')
+            self.triggerdeath_cb()
+            return
+        end
     end
 
     local wall = 'Block'

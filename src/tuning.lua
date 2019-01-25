@@ -15,7 +15,8 @@ local tuning = {
     },
     timer = {
         projectile = {
-            max_lifetime = 1,
+            max_lifetime = 10,
+            max_idle_lifetime = 0.5,
         },
     },
 }
