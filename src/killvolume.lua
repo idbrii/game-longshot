@@ -26,11 +26,13 @@ function KillVolume:registerCollision(world)
 end
 
 function KillVolume:update(gamestate, dt)
-    local victim = 'Soldiers'
-    if self.collider:enter(victim) then
-        local collision_data = self.collider:getEnterCollisionData(victim)
-        collision_data.Collder:applyLinearImpulse(1000, 0)
-        collision_data.Collder:applyAngularImpulse(5000)
+    for i=1,2 do
+        local victim = 'SoldiersP'.. i
+        if self.collider:enter(victim) then
+            local collision_data = self.collider:getEnterCollisionData(victim)
+            local ent = collision_data.collider:getObject()
+            ent:die()
+        end
     end
 end
 
