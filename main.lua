@@ -38,6 +38,7 @@ gamestate.config = {
     world_height = 30,
     tile_size = 32,
     foreground_blend_index = 6,
+    has_cheats = true,
 }
 
 local debug_draw_fn
@@ -248,6 +249,9 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button)
+    if not gamestate.config.has_cheats then
+        return
+    end
 
     if button == 1 or button == 2 then
         if love.keyboard.isDown("lshift") then
