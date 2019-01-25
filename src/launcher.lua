@@ -48,19 +48,20 @@ function Launcher:draw()
     else
         love.graphics.setColor(self.owner:getColour())
         local x,y = self.collider:getPosition()
-        local w,h = self.gamestate.art.launcher:getDimensions()
-        love.graphics.draw(self.gamestate.art.launcher, x - w/2, y - h/2)
 
         local r = 0
         if self.aim_dir then
             r = lume.angle(0, 0, self.aim_dir.x, self.aim_dir.y) + math.pi/2
         end
 
-        w,h = self.gamestate.art.launcher_arm:getDimensions()
+        local w,h = self.gamestate.art.launcher_arm:getDimensions()
         love.graphics.draw(self.gamestate.art.launcher_arm, x, y,
             r,
             1, 1,
             w/2, h/2)
+
+        w,h = self.gamestate.art.launcher:getDimensions()
+        love.graphics.draw(self.gamestate.art.launcher, x - w/2, y - h/2)
 
         self.damagable:drawHpBar(8, x - self.radius, y - 40, self.radius * 2, self.owner:getColour())
         self.cooldown:draw()
