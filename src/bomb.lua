@@ -8,7 +8,7 @@ local Bomb = Entity:subclass('Bomb')
 
 function Bomb:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner)
-    self.projectile = Projectile:new(gamestate, owner, x, y)
+    self.projectile = Projectile:new(gamestate, owner, x, y, 10, gamestate.art.bomb)
     self:setCollider(self.projectile.collider)
     self.tint = 1
     table.insert(self.projectile.onHitWall_cb, function(...)
@@ -21,14 +21,6 @@ function Bomb:update()
 end
 function Bomb:draw()
     self.projectile:draw(self)
-
-    local x,y = self.collider:getPosition()
-    local w,h = self.gamestate.art.bomb:getDimensions()
-    love.graphics.draw(self.gamestate.art.bomb,
-    x, y,
-        nil,
-        nil, nil,
-        w/2, h/2)
 end
 
 

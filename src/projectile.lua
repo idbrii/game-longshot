@@ -8,10 +8,11 @@ local Projectile = class('Projectile')
 
 Projectile.collision_class = 'Building'
 
-function Projectile:initialize(gamestate, owner, x, y, radius)
+function Projectile:initialize(gamestate, owner, x, y, radius, image)
     self.gamestate = gamestate
     --~ print("Projectile:", "creating at", x, y)
     self.owner = owner
+    self.sprite = image
     self.radius = radius or 10
     self.collider = gamestate.world:newCircleCollider(x, y, self.radius)
     self.collider:setRestitution(0.1)
@@ -40,11 +41,12 @@ function Projectile:draw()
         return v * self.tint
     end)
     love.graphics.setColor(unpack(tinted))
-    --~ local style = 'line'
-    --~ if self.has_stabilized then
-    --~     style = 'fill'
-    --~ end
-    --~ love.graphics.circle(style, cx, cy, self.radius)
+    local w,h = self.sprite:getDimensions()
+    love.graphics.draw(self.sprite,
+        cx,cy,
+        nil,
+        0.5, 0.5,
+        w/2, h/2)
 end
 
 function Projectile:_checkForGround()

@@ -18,7 +18,7 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
             launch_params.direction = -1
         end
     end
-    self.projectile = Projectile:new(gamestate, owner, x, y, 32)
+    self.projectile = Projectile:new(gamestate, owner, x, y, 32, gamestate.art.balls.barracks)
     --~ table.insert(self.projectile.onHitWall_cb, function(...)
     --~     self:onHitWall(...)
     --~ end)
@@ -60,14 +60,18 @@ function Barracks:update(dt)
 end
 function Barracks:draw()
     Entity.draw(self)
-    self.projectile:draw()
-    local cx,cy = self.collider:getPosition()
-    local r, g, b = self.owner:getColour()
-    self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
-    self.cooldown:draw()
-    love.graphics.setColor(self.owner:getColour())
-    love.graphics.draw(self.gamestate.art.barracks,
+    if not self.projectile.has_stabilized then
+        self.projectile:draw()
+    else
+        love.graphics.setColor(self.owner:getColour())
+        local cx,cy = self.collider:getPosition()
+        local r, g, b = self.owner:getColour()
+        self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
+        self.cooldown:draw()
+        love.graphics.setColor(self.owner:getColour())
+        love.graphics.draw(self.gamestate.art.barracks,
             cx-self.radius * self.direction, cy-self.radius, 0, self.direction, 1)
+    end
 end
 
 function Barracks:die()

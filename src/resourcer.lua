@@ -16,7 +16,7 @@ local MAX_RESOURCER_TICK = 30
 local MAX_TICK_IN_GENERATIONS = 60
 function Resourcer:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner)
-    self.projectile = Projectile:new(gamestate, owner, x, y, 32)
+    self.projectile = Projectile:new(gamestate, owner, x, y, 32, gamestate.art.balls.resourcer)
     table.insert(self.projectile.onHitWall_cb, function(...)
         self:deploy(...)
     end)
@@ -43,13 +43,17 @@ function Resourcer:update(dt)
 end
 function Resourcer:draw()
     Entity.draw(self)
-    self.projectile:draw()
-    self.cooldown:draw()
-    local cx,cy = self.collider:getPosition()
-    local r, g, b = self.owner:getColour()
-    self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
-    love.graphics.setColor(self.owner:getColour())
-    love.graphics.draw(self.gamestate.art.resourcer, cx-self.radius, cy-self.radius)
+    if not self.projectile.has_stabilized then
+        self.projectile:draw()
+    else
+        love.graphics.setColor(self.owner:getColour())
+        self.cooldown:draw()
+        local cx,cy = self.collider:getPosition()
+        local r, g, b = self.owner:getColour()
+        self.damagable:drawHpBar(8, cx - self.radius, cy - 40, self.radius * 2, r, g, b)
+        love.graphics.setColor(self.owner:getColour())
+        love.graphics.draw(self.gamestate.art.resourcer, cx-self.radius, cy-self.radius)
+    end
 end
 function Resourcer:die()
     Entity.die(self)

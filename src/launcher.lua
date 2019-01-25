@@ -20,13 +20,12 @@ function Launcher:initialize(gamestate, owner, x, y)
     Entity.initialize(self, gamestate, owner)
     self.damagable = Damagable:new(1000, utils.bind1(self.die, self))
     self.owner:addLauncher(self)
-    self.projectile = Projectile:new(gamestate, owner, x, y, 30)
+    self.projectile = Projectile:new(gamestate, owner, x, y, 30, gamestate.art.balls.launcher)
     table.insert(self.projectile.onHitWall_cb, function(...)
         self:onHitWall(...)
     end)
     self:setCollider(self.projectile.collider)
     self.collider:applyLinearImpulse(500, 500)
-    self.projectile.tint = 0.1
     self.radius = self.projectile.radius
     self.cooldown = CoolDown:new(self.projectile.collider, -self.radius, self.radius+5, self.radius * 2)
     self.can_fire = true
@@ -39,25 +38,28 @@ function Launcher:update(dt, gamestate)
 end
 function Launcher:draw()
     Entity.draw(self)
-    self.projectile:draw()
-    
-    local x,y = self.collider:getPosition()
-    local w,h = self.gamestate.art.launcher:getDimensions()
-    love.graphics.draw(self.gamestate.art.launcher, x - w/2, y - h/2)
+    if not self.projectile.has_stabilized then
+        self.projectile:draw()
+    else
+        love.graphics.setColor(self.owner:getColour())
+        local x,y = self.collider:getPosition()
+        local w,h = self.gamestate.art.launcher:getDimensions()
+        love.graphics.draw(self.gamestate.art.launcher, x - w/2, y - h/2)
 
-    local r = 0
-    if self.aim_dir then
-        r = lume.angle(0, 0, self.aim_dir.x, self.aim_dir.y) + math.pi/2
+        local r = 0
+        if self.aim_dir then
+            r = lume.angle(0, 0, self.aim_dir.x, self.aim_dir.y) + math.pi/2
+        end
+
+        w,h = self.gamestate.art.launcher_arm:getDimensions()
+        love.graphics.draw(self.gamestate.art.launcher_arm, x, y,
+            r,
+            1, 1,
+            w/2, h/2)
+
+        self.damagable:drawHpBar(8, x - self.radius, y - 40, self.radius * 2, self.owner:getColour())
+        self.cooldown:draw()
     end
-
-    w,h = self.gamestate.art.launcher_arm:getDimensions()
-    love.graphics.draw(self.gamestate.art.launcher_arm, x, y,
-        r,
-        1, 1,
-        w/2, h/2)
-
-    self.damagable:drawHpBar(8, x - self.radius, y - 40, self.radius * 2, self.owner:getColour())
-    self.cooldown:draw()
 end
 
 function Launcher:poseArm(aim_dir)
