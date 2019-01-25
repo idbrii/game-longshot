@@ -224,7 +224,7 @@ function Player:_fire()
         --~ end
         local SelectedProjectile = k_projectile_id_to_class[self.selected_projectile_id]
         launch:fire(SelectedProjectile)
-        local dot = self.aim_dir:dot(Vec(0,1))
+        local dot = self.aim_dir:dot(Vec(1,0))
         local launch_params = {
             direction = dot > 0 and 1 or -1,
             techEffect = self.tech.selectedEffect,
