@@ -73,7 +73,6 @@ function love.load()
 
     -- Prepare physics world
     --~ love.physics.setMeter(32)
-    --~ gamestate.world = love.physics.newWorld(0, 0)
     gamestate.world = wf.newWorld(0, 0, true)
     gamestate.world:setGravity(0, 512)
     local nonblock_collision_classes = {
@@ -129,9 +128,7 @@ function love.load()
     -- Print versions
     print("ESCAPE TO QUIT")
 
-    --~ gamestate.map:box2d_init(gamestate.world)
-
-    -- If we want to change grid size, we'll need to get the numbers.
+    -- DEBUG: If we want to change grid size, we'll need to get the numbers.
     --~ love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
     --~ print((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
 
@@ -163,7 +160,7 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
-    -- hot reload code
+    -- DEBUG: hot reload code (doesn't work?)
     --~ require("rxi.lurker").update()
 
     Sound.update(dt)
@@ -174,18 +171,6 @@ function love.update(dt)
     for _, ent in ipairs(gamestate.entities) do
         ent:update(dt, gamestate)
     end
-
-    -- Move map
-    local kd = love.keyboard.isDown
-    local l  = kd("left")  or kd("a")
-    local r  = kd("right") or kd("d")
-    local u  = kd("up")    or kd("w")
-    local d  = kd("down")  or kd("s")
-
-    --~ tx = l and tx - 128 * dt or tx
-    --~ tx = r and tx + 128 * dt or tx
-    --~ ty = u and ty - 128 * dt or ty
-    --~ ty = d and ty + 128 * dt or ty
 end
 
 function love.draw()
@@ -236,7 +221,7 @@ function love.draw()
         love.graphics.print(mode[1] ..' '.. mode[2], 10,10)
     end
 
-    -- For testing winner
+    -- DEBUG: For testing winner
     --~ gamestate.winner = gamestate.players[1]
 
     if gamestate.winner then
