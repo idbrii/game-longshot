@@ -109,7 +109,7 @@ function Projectile:_checkForBlock(me_x,me_y, check_x,check_y)
 end
 
 function Projectile:onHitWall(collision_data)
-    if self.techEffect.activateOnImpact then
+    if not self.techEffect.activateOnImpact then
         return
     end
     local pos = Vec(self.collider:getPosition())
