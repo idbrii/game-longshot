@@ -5,6 +5,7 @@ local moremath = require('moremath')
 local pl_table = require('pl.tablex')
 local pretty = require("pl.pretty")
 local tuning = require('tuning')
+local Tech = require("tech")
 
 -- A thing that might be launched out of a Launcher.
 local Projectile = class('Projectile')
@@ -130,7 +131,7 @@ function Projectile:onHitWall(collision_data)
     local pos = Vec(self.collider:getPosition())
     local x,y = collision_data.collider:getPosition()
     local hit_ground = y > pos.y and self:_checkForGround()
-    if self.techEffect.activateOnImpact then
+    if self.techEffect == Tech.Effects.Basic then
         if self.isDeployable then
             if hit_ground then
                 self:wallActivation(collision_data)
@@ -138,7 +139,7 @@ function Projectile:onHitWall(collision_data)
         else
             self:wallActivation(collision_data)
         end
-    else
+    elseif self.techEffect == Tech.Effects.Bouncy then
         if self:isMotionless(tuning.projectile.minSpeed) then
             if self.isDeployable then
                 if hit_ground then
@@ -148,6 +149,10 @@ function Projectile:onHitWall(collision_data)
                 self:wallActivation(collision_data)
             end
         end
+    elseif self.techEffect == Tech.Effects.Sticky then
+        self:wallActivation(collision_data)
+    else
+        print("WARNING: unknonwn tech effect", self.techEffect)
     end
 end
 
