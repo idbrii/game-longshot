@@ -56,7 +56,14 @@ end
 
 function Barracks:spawnSoldier()
     local cx,cy = self.collider:getPosition()
-    Soldier:new(self.gamestate, self.owner, cx - self.radius * self.direction * -1.5, cy, self.direction)
+    local spawn_x,spawn_y = cx - self.radius * self.direction * -1.5, cy
+    local has_block = self.projectile:_checkForBlock(cx,cy, spawn_x,spawn_y)
+    if has_block then
+        -- we take damage for the soldier we couldn't spawn
+        self.damagable:takeDamage(tuning.damage_dealer.soldier)
+    else
+        Soldier:new(self.gamestate, self.owner, spawn_x, spawn_y, self.direction)
+    end
     self.cooldown:set(self:spawnInterval(), function()
         self:spawnSoldier()
     end)
@@ -80,8 +87,8 @@ function Barracks:draw()
         local isVertical = (round(self.attachmentAngle) - self.attachmentAngle) == 0
         love.graphics.draw(self.gamestate.art.barracks,
             cx, cy, self.attachmentAngle,
-                isVertical and self.direction or  1,
-                isVertical and 1 or self.direction,
+            isVertical and self.direction or  1,
+            isVertical and 1 or self.direction,
             self.radius, self.radius)
     end
 end
