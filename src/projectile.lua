@@ -2,6 +2,7 @@ local M = require("moses.moses")
 local Vec = require('hump.vector')
 local class = require("astray.MiddleClass")
 local pl_table = require('pl.tablex')
+local pretty = require("pl.pretty")
 
 -- A thing that might be launched out of a Launcher.
 local Projectile = class('Projectile')
@@ -32,6 +33,9 @@ function Projectile:update()
     if self.collider:enter(wall) then
         local collision_data = self.collider:getEnterCollisionData(wall)
         self:onHitWall(collision_data)
+    elseif self.collider:enter(Projectile.collision_class) then
+        local collision_data = self.collider:getEnterCollisionData(Projectile.collision_class)
+        self:onHitBuilding(collision_data)
     end
 end
 
@@ -77,6 +81,16 @@ function Projectile:onHitWall(collision_data)
 
     for i,listener in ipairs(self.onHitWall_cb) do
         listener(self, collision_data)
+    end
+end
+
+function Projectile.onHitBuilding(collision_data)
+    local target = collision_data.collider:getObject()
+    if target.damagable then
+        target.damagable:takeDamage(10)
+    else
+        print("Why doesn't this thing have a damagable?", target)
+        --~ pretty.dump(target)
     end
 end
 

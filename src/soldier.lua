@@ -106,7 +106,7 @@ function Soldier:attack(other)
         other.damagable:takeDamage(self.attackDamage)
     else
         print("Why doesn't this thing have a damagable?", other)
-        pretty.dumps(other)
+        --~ pretty.dump(other)
     end
 end
 
