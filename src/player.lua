@@ -213,9 +213,9 @@ end
 function Player:_fire()
     local launch = self:_getLauncher()
     if launch then
-        launch:fire()
         local start = _getLaunchStart(launch, self.aim_dir)
         local SelectedProjectile = k_projectile_id_to_class[self.selected_projectile_id]
+        launch:fire(SelectedProjectile)
         local dot = self.aim_dir:dot(Vec(0,1))
         local launch_params = {
             direction = dot > 0 and 1 or -1,

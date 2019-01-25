@@ -6,6 +6,8 @@ local Entity = require('entity')
 
 local Bomb = Entity:subclass('Bomb')
 
+Bomb.launchCoolDown = 0.75
+
 function Bomb:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner, 'bomb')
     self.projectile = Projectile:new(gamestate, owner, x, y, 10, gamestate.art.bomb)

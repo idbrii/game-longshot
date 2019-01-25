@@ -8,6 +8,8 @@ local Entity = require('entity')
 local CoolDown = require('cooldown')
 local Barracks = Entity:subclass('Barracks')
 
+Barracks.launchCoolDown = 6
+
 function Barracks:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner, 'barracks')
     launch_params = launch_params or {}

@@ -11,9 +11,7 @@ local tuning = require('tuning')
 local utils = require("pl.utils")
 
 local Launcher = Entity:subclass('Launcher')
-
-local k_launch_interval = 2
-
+Launcher.launchCoolDown = 10
 function Launcher.load()
 end
 
@@ -76,9 +74,9 @@ function Launcher:parkArm()
     self.aim_dir = nil
 end
 
-function Launcher:fire()
+function Launcher:fire(projectileClass)
     self.can_fire = false
-    self.cooldown:set(k_launch_interval, function()
+    self.cooldown:set(projectileClass.launchCoolDown, function()
         self.can_fire = true
     end)
 end
