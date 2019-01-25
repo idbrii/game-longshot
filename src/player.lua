@@ -267,6 +267,7 @@ function Player:draw()
 
         -- Launcher selection
         local centre = Vec(launch.collider:getPosition())
+        love.graphics.setLineWidth(1)
         love.graphics.circle('line', centre.x, centre.y, launch.radius * 1.3)
 
         -- Launcher power
@@ -276,6 +277,7 @@ function Player:draw()
             love.graphics.setColor(unpack(tinted))
             local start = _getLaunchStart(launch, self.aim_dir)
             local target = start + self.aim_dir * (k_launch_offset + 50 * intensity)
+            love.graphics.setLineWidth(5)
             love.graphics.line(start.x, start.y, target.x, target.y)
         end
     end
