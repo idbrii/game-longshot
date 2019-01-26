@@ -15,6 +15,7 @@ copy /Y src\neverdev.lua src\devcheck.lua
 %USERPROFILE%\scoop\shims\7z.exe a -y -tzip -x!.git -x!cscope.* -x!*tags -x!*.swp %build_dir%\Longshot.love .
 copy /b %love_dir%\love.exe+%build_dir%\Longshot.love %build_dir%\Longshot.exe
 copy %love_dir%\*.dll %build_dir%\.
+copy README.md %build_dir%\.
 
 del %build_dir%\Longshot.love
 
