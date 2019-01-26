@@ -78,11 +78,11 @@ function Projectile:update(dt)
         end
     elseif self.collider:enter(Projectile.collision_class) then
         local collision_data = self.collider:getEnterCollisionData(Projectile.collision_class)
-        local other_ent = collision_data.collider:getObject()
+        local other_ent = collision_data.collider and collision_data.collider:getObject() or nil
         if self.entity.type_name == 'bomb' then
             -- Need to special case bomb because it starts outside of launcher collision.
             self:onHitBuilding(collision_data)
-        elseif not self.has_stabilized and other_ent.projectile and not other_ent.projectile.has_stabilized then
+        elseif not self.has_stabilized and other_ent and other_ent.projectile and not other_ent.projectile.has_stabilized then
             -- two in-flight projectiles
             self:onHitBuilding(collision_data)
         elseif not self.source_launcher_hit then
