@@ -295,6 +295,9 @@ end
 function love.mousepressed(x, y, button)
     gamestate.show_titlecard = false
 
+    -- confine mouse to window
+    love.mouse.setGrabbed(true)
+
     if not gamestate.config.has_cheats then
         return
     end
