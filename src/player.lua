@@ -55,25 +55,27 @@ function Player:initialize(gamestate, index)
     self.selected_projectile_id = k_projectile_id.bomb
     self.selected_building_instance = nil
 
-    if self:_isMouseUser() then
-        self.getAim = function(this)
-            local launch = self:_getLauncher()
-            local pos = Vec()
-            if launch then
-                pos = Vec(launch.collider:getPosition())
-            end
-            local dir = Vec(love.mouse.getPosition()) - pos
-            return dir:normalizeInplace()
-        end
-    else
-        assert(self.index == k_gamepad_player_id)
-        self.getAim = function(this)
-            local x,y = this.input:get('aim')
-            return Vec(x,y)
-        end
-    end
-
     self.input = baton.new(self:_defineInput())
+end
+
+function Player:getAim()
+    -- Only allow one user to query the mouse so one mouse doesn't control two
+    -- keyboard player's aim.
+    if self.input:getActiveDevice() == 'kbm' and self:_isMouseUser() then
+        local launch = self:_getLauncher()
+        local pos = Vec()
+        if launch then
+            pos = Vec(launch.collider:getPosition())
+        end
+        local dir = Vec(love.mouse.getPosition()) - pos
+        return dir:normalizeInplace()
+    elseif self.input:getActiveDevice() == 'joy' then
+        local x,y = self.input:get('aim')
+        return Vec(x,y)
+    else
+        -- no active device
+        return Vec()
+    end
 end
 
 function Player:_isMouseUser()
