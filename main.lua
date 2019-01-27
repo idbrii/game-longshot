@@ -155,6 +155,10 @@ function love.joystickadded(joystick)
     Player.joystickAdded(gamestate, joystick)
 end
 
+function love.joystickpressed(key)
+    gamestate.show_titlecard = false
+end
+
 function love.keypressed(key)
     gamestate.show_titlecard = false
 
