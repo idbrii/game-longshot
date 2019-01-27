@@ -42,14 +42,6 @@ local k_projectile_id_to_class = {
 
 
 
-local function snapToDeadzone(input)
-    local deadzone = 0.2
-    if math.abs(input) < deadzone then
-        return 0
-    end
-    return input
-end
-
 function Player:initialize(gamestate, index)
     table.insert(gamestate.entities, self)
     self.index = index
@@ -77,8 +69,6 @@ function Player:initialize(gamestate, index)
         assert(self.index == k_gamepad_player_id)
         self.getAim = function(this)
             local x,y = this.input:get('aim')
-            x = snapToDeadzone(x)
-            y = snapToDeadzone(y)
             return Vec(x,y)
         end
     end
@@ -163,6 +153,7 @@ function Player:_defineGamepadInput()
         pairs = {
             aim = {'aim_left', 'aim_right', 'aim_up', 'aim_down'}
         },
+        deadzone = 0.25,
         joystick = love.joystick.getJoysticks()[joystick_id],
     }
 
