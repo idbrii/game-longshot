@@ -5,6 +5,7 @@ local M = require("moses.moses")
 local Resourcer = require('resourcer')
 local Tech = require('tech')
 local Vec = require('hump.vector')
+local baton = require "baton.baton"
 local class = require('astray.MiddleClass')
 local colorizer = require('colorizer')
 local lume = require('rxi.lume')
@@ -18,7 +19,6 @@ local Player = class('Player')
 
 local k_mouse_player_id = 1
 local k_gamepad_player_id = 2
-local current_gamepad_player_id = nil
 
 local k_launch_offset = 50
 local k_launch_minimum_held_seconds = 0.3
@@ -54,7 +54,6 @@ function Player:initialize(gamestate, index)
     table.insert(gamestate.entities, self)
     self.index = index
     self.tech = Tech:new(self)
-    self.input_prefix = string.format('p%i_', index)
     self.launchers = {}
     self.selected_launcher_idx = nil
     self.gamestate = gamestate
@@ -77,77 +76,104 @@ function Player:initialize(gamestate, index)
     else
         assert(self.index == k_gamepad_player_id)
         self.getAim = function(this)
-            if self.index == current_gamepad_player_id then
-                local x = self.gamestate.input.joysticks[1]:getGamepadAxis('leftx')
-                local y = self.gamestate.input.joysticks[1]:getGamepadAxis('lefty')
-                x = snapToDeadzone(x)
-                y = snapToDeadzone(y)
-                return Vec(x,y)
-            else 
-                return Vec()
-            end
+            local x,y = this.input:get('aim')
+            x = snapToDeadzone(x)
+            y = snapToDeadzone(y)
+            return Vec(x,y)
         end
     end
+
+    self.input = baton.new(self:_defineInput())
 end
 
 function Player:_isMouseUser()
     return self.index == k_mouse_player_id
 end
 
-function Player.defineKeyboardInput(gamestate)
-    local inp = gamestate.input
-    inp:bind('space', 'p1_fire')
-    inp:bind('mouse1','p1_fire')
-    inp:bind('w',     'p1_cycle_projectile_prev')
-    inp:bind('a',     'p1_left')
-    inp:bind('s',     'p1_cycle_projectile_next')
-    inp:bind('d',     'p1_right')
-    inp:bind('q',     'p1_cycle_launcher_left')
-    inp:bind('e',     'p1_cycle_launcher_right')
-    inp:bind('mouse2','p1_cycle_launcher_right')
-    inp:bind('1',     'p1_mod_normal')
-    inp:bind('2',     'p1_mod_bouncy')
-    inp:bind('3',     'p1_mod_boosty')
-    inp:bind('4',     'p1_mod_sticky')
-
-    inp:bind('rctrl', 'p2_fire')
-    inp:bind('up',    'p2_cycle_projectile_prev')
-    inp:bind('left',  'p2_left')
-    inp:bind('down',  'p2_cycle_projectile_next')
-    inp:bind('right', 'p2_right')
-    inp:bind('[',     'p2_cycle_launcher_left')
-    inp:bind(']',     'p2_cycle_launcher_right')
-    inp:bind('7',     'p2_mod_normal')
-    inp:bind('8',     'p2_mod_bouncy')
-    inp:bind('9',     'p2_mod_boosty')
-    inp:bind('0',     'p2_mod_sticky')
+function Player.joystickAdded(gamestate, joystick)
+    print('joystickAdded', joystick)
+    -- TODO: bind a joystick if we don't have one.
+end
+    
+function Player:_defineInput()
+    local input = moretable.append_recursive(self:_defineGamepadInput(), self:_defineKeyboardInput())
+    return input
 end
 
-function Player.defineGamepadInput(gamestate)
-    current_gamepad_player_id = k_gamepad_player_id
+function Player:_defineKeyboardInput()
+    if self.index == 1 then
+        return {
+            controls = {
+                fire = { 'key:space', 'mouse:1' },
+                cycle_projectile_prev = { 'key:w' },
+                left = { 'key:a' },
+                cycle_projectile_next = { 'key:s' },
+                right = { 'key:d' },
+                cycle_launcher_left = { 'key:q' },
+                cycle_launcher_right = { 'key:e', 'mouse:2' },
+                mod_normal = { 'key:1' },
+                mod_bouncy = { 'key:2' },
+                mod_boosty = { 'key:3' },
+                mod_sticky = { 'key:4' },
+            }
+        }
 
-    local inp = gamestate.input
-    local gamepad_player = string.format('p%i', k_gamepad_player_id)
-    inp:bind('r1',      gamepad_player ..'_fire')
-    inp:bind('l1',      gamepad_player ..'_cycle_launcher_right')
-    inp:bind('dpup',    gamepad_player ..'_cycle_projectile_prev')
-    inp:bind('dpdown',  gamepad_player ..'_cycle_projectile_next')
-    inp:bind('dpleft',  gamepad_player ..'_cycle_launcher_left')
-    inp:bind('dpright', gamepad_player ..'_cycle_launcher_right')
-    inp:bind('fdown',   gamepad_player ..'_mod_normal')
-    inp:bind('fleft',   gamepad_player ..'_mod_bouncy')
-    inp:bind('fup',     gamepad_player ..'_mod_boosty')
-    inp:bind('fright',  gamepad_player ..'_mod_sticky')
+    else
+        return {
+            controls = {
+                fire = { 'key:rctrl' },
+                cycle_projectile_prev = { 'key:up' },
+                left = { 'key:left' },
+                cycle_projectile_next = { 'key:down' },
+                right = { 'key:right' },
+                cycle_launcher_left = { 'key:[' },
+                cycle_launcher_right = { 'key:]' },
+                mod_normal = { 'key:7' },
+                mod_bouncy = { 'key:8' },
+                mod_boosty = { 'key:9' },
+                mod_sticky = { 'key:0' },
+            }
+        }
+    end
+end
+
+function Player:_defineGamepadInput()
+    local joystick_id
+    if self.index == k_gamepad_player_id then
+        joystick_id = 1
+    else
+        joystick_id = 2
+    end
+    return {
+        controls = {
+            fire = { 'button:rightshoulder' },
+            aim_left = {'axis:leftx-'},
+            aim_right = {'axis:leftx+'},
+            aim_up = {'axis:lefty-'},
+            aim_down = {'axis:lefty+'},
+            cycle_launcher_right = { 'button:leftshoulder', 'button:dpright' },
+            cycle_projectile_prev = { 'button:dpup' },
+            cycle_projectile_next = { 'button:dpdown' },
+            cycle_launcher_left = { 'button:dpleft' },
+            mod_normal = { 'button:a' },
+            mod_bouncy = { 'button:x' },
+            mod_boosty = { 'button:y' },
+            mod_sticky = { 'button:b' },
+        },
+        pairs = {
+            aim = {'aim_left', 'aim_right', 'aim_up', 'aim_down'}
+        },
+        joystick = love.joystick.getJoysticks()[joystick_id],
+    }
+
 end
 
 function Player:_isPressed(cmd)
-    local player_cmd = self.input_prefix .. cmd
-    return self.gamestate.input:pressed(player_cmd)
+    return self.input:pressed(cmd)
 end
 
 function Player:_isHeld(cmd)
-    local player_cmd = self.input_prefix .. cmd
-    return self.gamestate.input:held(player_cmd)
+    return self.input:down(cmd)
 end
 
 local function _rotateAim(dt, aim, direction)
@@ -157,6 +183,7 @@ local function _rotateAim(dt, aim, direction)
 end
 
 function Player:update(dt, gamestate)
+    self.input:update()
     local aim = self:getAim()
     if moremath.isApproxZero(aim.x) and moremath.isApproxZero(aim.x) then
         aim = self.aim_dir

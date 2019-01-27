@@ -21,7 +21,7 @@ local moretable = require('moretable')
 local KillVolume = require('killvolume')
 local gridgen = require("gridgen")
 local wf = require("windfield")
-local Input = require('boipushy.Input')
+local baton = require "baton.baton"
 local Resourcer = require("resourcer")
 local Barracks = require("barracks")
 local ClaimsManager = require("claims_manager")
@@ -33,7 +33,7 @@ local k_default_blend = 6
 
 local gamestate = {
     -- grid: true if tile is solid. false if empty.
-    -- input: boipushy input
+    -- input: menu input
     -- map: tiles
     -- world: windfield physics world
     -- entities: objects in the world
@@ -56,11 +56,12 @@ function love.load()
     -- Don't show title card for developers.
     gamestate.show_titlecard = not gamestate.config.has_cheats
 
-    gamestate.input = Input()
-    gamestate.input:bind('escape', love.event.quit)
-    gamestate.input:bind('backspace', function()
-        should_draw_physics = not should_draw_physics
-    end)
+    gamestate.menu_input = baton.new {
+        controls = {
+            quit = {'key:escape'},
+            draw_physics = {'key:backspace'},
+        },
+    }
 
     gamestate.entities = {}
     gamestate.addEntity = function(state, ent)
@@ -143,8 +144,6 @@ function love.load()
         Player(gamestate, 2),
     }
 
-    Player.defineKeyboardInput(gamestate)
-
     local starts = {}
     starts.p1, starts.p2 = gamestate.map:buildStartPoints(gamestate.grid)
     Launcher:new(gamestate, gamestate.players[1], starts.p1.x,starts.p1.y, {techEffect = Tech.Effects.Basic})
@@ -153,7 +152,7 @@ function love.load()
 end
 
 function love.joystickadded(joystick)
-    Player.defineGamepadInput(gamestate)
+    Player.joystickAdded(gamestate, joystick)
 end
 
 function love.keypressed(key)
@@ -177,6 +176,14 @@ end
 function love.update(dt)
     -- DEBUG: hot reload code (doesn't work?)
     --~ require("rxi.lurker").update()
+
+    gamestate.menu_input:update()
+
+    if gamestate.menu_input:pressed('quit') then
+        love.event.quit()
+    elseif gamestate.menu_input:pressed('draw_physics') then
+        should_draw_physics = not should_draw_physics
+    end
 
     Sound.update(dt)
 
