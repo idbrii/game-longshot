@@ -3,6 +3,8 @@ local class = require("astray.MiddleClass")
 local tuning = require('tuning')
 local Entity = class('Entity')
 
+local next_id = 0
+
 function Entity:initialize(gamestate, owner, type_name)
     self.gamestate = gamestate
     self.gamestate:addEntity(self)
@@ -11,6 +13,8 @@ function Entity:initialize(gamestate, owner, type_name)
     self.onupdate_cb = {}
     self.ondraw_cb = {}
     self.is_dead = false
+    self.id = next_id
+    next_id = next_id + 1
 end
 
 function Entity:setCollider(collider)
