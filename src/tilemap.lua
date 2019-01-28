@@ -1,3 +1,4 @@
+local Damagable = require "damagable"
 local KillVolume = require('killvolume')
 local Vec = require('hump.vector')
 local autotile = require("autotile.autotile")
@@ -15,10 +16,6 @@ function TileMap:initialize(gamestate, floor_image, autotile_image, tile_size, w
     self.world_height = world_height
     self.tile_size = tile_size
     self.colliders = {}
-    local size = self.tile_size
-    local bottom = (self.world_height + 1) * size
-    -- Seems like physics is clamped to screen size.
-    self.kill_floor = KillVolume:new(gamestate, 0, bottom, (self.world_width + 1) * size, size)
 end
 
 function TileMap:_foreachTile(fn)
@@ -52,6 +49,7 @@ function TileMap:registerCollision(world, mob_collision_classes)
     local ignore_classes = pl_table.copy(mob_collision_classes)
     table.insert(ignore_classes, 'Block')
     world:addCollisionClass('Ghost', {ignores = ignore_classes})
+    world:addCollisionClass(KillVolume.collision_class, {ignores={'Block', 'Ghost'}})
 
     local size = self.tile_size
     self:_foreachTile(function(x,y)
@@ -60,6 +58,13 @@ function TileMap:registerCollision(world, mob_collision_classes)
         c:setCollisionClass('Block')
         self.colliders[x][y] = c
     end)
+
+    local bottom = (self.gamestate.config.world_height + 1) * size
+    -- Seems like physics is clamped to screen size.
+    local victims = pl_table.copy(Damagable.collision_classes)
+    table.insert(victims, 'SoldiersP1')
+    table.insert(victims, 'SoldiersP2')
+    self.kill_floor = KillVolume:new(self.gamestate, 0, bottom, (self.gamestate.config.world_width + 1) * size, size, victims)
 end
 
 function TileMap:refresh(grid)

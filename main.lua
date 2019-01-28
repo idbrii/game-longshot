@@ -87,7 +87,6 @@ function love.load()
     gamestate.world:setGravity(0, 512)
     gamestate.world:addCollisionClass('SoldiersP1',               {ignores={'SoldiersP1'}})
     gamestate.world:addCollisionClass('SoldiersP2',               {ignores={'SoldiersP2'}})
-    gamestate.world:addCollisionClass(KillVolume.collision_class)
     gamestate.world:addCollisionClass(Projectile.collision_class)
 
     gamestate.plates = {}
