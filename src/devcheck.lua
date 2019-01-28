@@ -1,12 +1,12 @@
+-- Fake version of devcheck.lua
 local devcheck = {}
 
 function devcheck.getUser()
-    return os.getenv('USERNAME') or os.getenv('USER') or 'generic'
+    return ''
 end
 
 function devcheck.isDev()
-    local user = devcheck.getUser()
-    return user == 'David' or user == 'dbriscoe' or user == 'ruy'
+    return false
 end
 
 return devcheck
