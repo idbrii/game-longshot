@@ -54,7 +54,7 @@ function Soldier:initialize(gamestate, owner, x, y, direction, techEffect)
     self.owner = owner
     self.direction = direction
     self.collider = gamestate.world:newCircleCollider(x, y, 10)
-    self.collider:setObject(self)
+    self:setCollider(self.collider)
     self.collider:setRestitution(0.1)
     self.collider:setCollisionClass("SoldiersP" .. self.owner.index)
     self.state = states.falling

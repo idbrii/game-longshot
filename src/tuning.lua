@@ -24,6 +24,7 @@ local tuning = {
       resourcer = 0.5,
       barracks = 0.5,
       bomb = 0.25,
+      soldier = 0.61,
     },
     size = {
         bomb = {
