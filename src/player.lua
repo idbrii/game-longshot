@@ -12,6 +12,7 @@ local lume = require('rxi.lume')
 local moremath = require('moremath')
 local moretable = require('moretable')
 local pl_table = require('pl.tablex')
+local push = require('push.push')
 local wf = require('windfield')
 
 
@@ -67,7 +68,7 @@ function Player:getAim()
         if launch then
             pos = Vec(launch.collider:getPosition())
         end
-        local dir = Vec(love.mouse.getPosition()) - pos
+        local dir = Vec(push:toGame(love.mouse.getPosition())) - pos
         return dir:normalizeInplace()
     elseif self.input:getActiveDevice() == 'joy' then
         local x,y = self.input:get('aim')
@@ -288,7 +289,7 @@ end
 function Player:draw()
     local launch = self:_getLauncher()
     if launch then
-        local screen_w, screen_h = love.graphics.getWidth(), love.graphics.getHeight()
+        local screen_w, screen_h = push:getDimensions()
 
         local pad = 25
         local bottom = screen_h - pad

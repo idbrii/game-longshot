@@ -8,12 +8,14 @@ love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?
 
 io.stdout:setvbuf("no")
 local devcheck = require "devcheck"
+local push = require('push.push')
 local Bomb = require('bomb')
 local Damagable = require("damagable")
 local TileMap = require("tilemap")
 local pl_table = require('pl.tablex')
 local Vec = require('hump.vector')
 local Sound = require('sound')
+local tuning = require('tuning')
 local Vfx = require('vfx')
 local Player = require('player')
 local Projectile = require('projectile')
@@ -43,6 +45,7 @@ gamestate.config = {
     world_width = 50,
     world_height = 28,
     tile_size = 32,
+    bottom_ui_height = 50,
     foreground_blend_index = k_default_blend,
     has_cheats = devcheck.isDev(),
 }
@@ -52,6 +55,32 @@ local should_draw_physics = false
 
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest', 16)
+
+    local game_width, game_height = (gamestate.config.world_width+1) * gamestate.config.tile_size, ((gamestate.config.world_height+1) * gamestate.config.tile_size) + gamestate.config.bottom_ui_height
+    local window_width, window_height = love.window.getDesktopDimensions()
+    local push_cfg = {
+        fullscreen = tuning.window.fullscreen,
+        resizable = false, -- doesn't seem to work
+        canvas = true,
+        pixelperfect = true,
+    }
+    if not tuning.window.fullscreen then
+        -- Scale only makes sense in not fullscreen.
+        local scale = tuning.window.scale
+        if scale then
+            window_width, window_height = window_width * scale, window_height * scale
+        end
+        -- For some reason pixelperfect produces black window except in
+        -- fullscreen.
+        push_cfg.pixelperfect = false
+    end
+    push:setupScreen(game_width, game_height, window_width, window_height, push_cfg)
+
+    if tuning.window.position then
+        -- push stomps some window values, so after setupScreen, we can set
+        -- position.
+        love.window.setPosition(unpack(tuning.window.position))
+    end
 
     -- Don't show title card for developers.
     gamestate.show_titlecard = not gamestate.config.has_cheats
@@ -133,10 +162,6 @@ function love.load()
     -- Print versions
     print("ESCAPE TO QUIT")
 
-    -- DEBUG: If we want to change grid size, we'll need to get the numbers.
-    --~ love.window.setMode((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
-    --~ print((gamestate.config.world_width+1) * gamestate.config.tile_size, (gamestate.config.world_height+1) * gamestate.config.tile_size)
-
     love.graphics.setPointSize(5)
     gamestate.players = {
         Player(gamestate, 1),
@@ -199,7 +224,9 @@ function love.update(dt)
 end
 
 function love.draw()
-    local screen_w, screen_h = love.graphics.getWidth(), love.graphics.getHeight()
+    push:start()
+
+    local screen_w, screen_h = push:getDimensions()
 
     local blendmodes = {
         { 'alpha', 'alphamultiply' },
@@ -246,7 +273,7 @@ function love.draw()
 
     love.graphics.setColor(1,1,1)
     local sprite = gamestate.plates.ui_bg
-    love.graphics.draw(sprite, 0, screen_h-50)
+    love.graphics.draw(sprite, 0, screen_h - gamestate.config.bottom_ui_height)
 
     -- Draw entities
     love.graphics.setColor(1,1,1)
@@ -289,6 +316,7 @@ function love.draw()
     if gamestate.debug_draw_fn then
         gamestate.debug_draw_fn()
     end
+    push:finish()
 end
 
 function love.mousepressed(x, y, button)
@@ -329,5 +357,5 @@ function love.mousepressed(x, y, button)
 end
 
 function love.resize(w, h)
-    --~ gamestate.map:resize(w, h)
+    push:resize(w, h)
 end

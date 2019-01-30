@@ -1,4 +1,5 @@
 local class = require("astray.MiddleClass")
+local push = require('push.push')
 
 local Tech = class("Tech")
 
@@ -69,9 +70,9 @@ function Tech:drawResourceUI()
     local height = 20
     local padding = 5
     local gutter = 64 + padding * 2
-    local screenWidth = love.graphics.getWidth()
+    local screenWidth,screenHeight = push:getDimensions()
     local width = screenWidth / 2 - padding - gutter
-    local top = love.graphics.getHeight() - padding - height
+    local top = screenHeight - padding - height
     local left = self.owner.index == 1 and gutter or (screenWidth / 2 + padding)
     local r, g, b = self.owner:getColour()
 

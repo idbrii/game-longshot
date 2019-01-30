@@ -1,4 +1,11 @@
+local devcheck = require('devcheck')
+
 local tuning = {
+    window = {
+        fullscreen = true,
+        position = nil, -- {x,y, display} default is centred on main
+        scale = nil, -- [0,1]
+    },
     health = {
         launcher = 1000,
         resourcer = 1000,
@@ -43,4 +50,20 @@ local tuning = {
         boostForce = 200
     }
 }
+
+local user = devcheck.getUser()
+if user == 'David' then
+    tuning.window.fullscreen = true
+    tuning.window.position = { 0,0, 1 }
+    tuning.window.scale = 0.5
+elseif user == 'dbriscoe' then
+    --~ tuning.window.fullscreen = false
+    --~ tuning.window.position = { 0,0, 2 }
+    --~ tuning.window.scale = 0.5
+elseif user == 'ruy' then
+    tuning.window.fullscreen = false
+    tuning.window.position = { 2000,0, 1 }
+    tuning.window.scale = 0.5
+end
+
 return tuning
