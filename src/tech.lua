@@ -1,5 +1,5 @@
 local class = require("astray.MiddleClass")
-local push = require('push.push')
+local screener = require('screener')
 
 local Tech = class("Tech")
 
@@ -70,7 +70,7 @@ function Tech:drawResourceUI()
     local height = 20
     local padding = 5
     local gutter = 64 + padding * 2
-    local screenWidth,screenHeight = push:getDimensions()
+    local screenWidth,screenHeight = screener.getDimensions()
     local width = screenWidth / 2 - padding - gutter
     local top = screenHeight - padding - height
     local left = self.owner.index == 1 and gutter or (screenWidth / 2 + padding)

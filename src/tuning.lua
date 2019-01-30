@@ -51,6 +51,7 @@ local tuning = {
     }
 }
 
+-- Devs can set local preferences here.
 local user = devcheck.getUser()
 if user == 'David' then
     tuning.window.fullscreen = true
