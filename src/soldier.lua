@@ -53,7 +53,7 @@ function Soldier:initialize(gamestate, owner, x, y, direction, techEffect)
     self.damagable = Damagable:new(tuning.health.soldier, utils.bind1(self.die, self))
     self.owner = owner
     self.direction = direction
-    self.collider = gamestate.world:newCircleCollider(x, y, 10)
+    self.collider = gamestate.world:newCircleCollider(x, y, tuning.size.radius.soldier)
     self:setCollider(self.collider)
     self.collider:setRestitution(0.1)
     self.collider:setCollisionClass("SoldiersP" .. self.owner.index)

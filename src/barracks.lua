@@ -22,7 +22,7 @@ function Barracks:initialize(gamestate, owner, x, y, launch_params)
         end
     end
     self.techEffect = launch_params.techEffect
-    self.projectile = Projectile:new(self, owner, x, y, 32, gamestate.art.balls.barracks, launch_params.techEffect, true)
+    self.projectile = Projectile:new(self, owner, x, y, tuning.size.radius.barracks, gamestate.art.balls.barracks, launch_params.techEffect, true)
     self.projectile.triggerdeath_cb = function()
         self:die()
     end

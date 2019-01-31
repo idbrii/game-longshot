@@ -8,10 +8,6 @@ local Damagable = require("damagable")
 local Entity = require('entity')
 local CoolDown = require('cooldown')
 
-local images = {
-    deployed=love.graphics.newImage("assets/sprites/resourcer/deployed.png"),
-}
-
 local Resourcer = Entity:subclass('Resourcer')
 Resourcer.launchCoolDown = tuning.cool_downs.resourcer
 local MAX_RESOURCER_TICK = 30
@@ -19,7 +15,7 @@ local MAX_TICK_IN_GENERATIONS = 60
 function Resourcer:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner, 'resourcer')
     self.techEffect = launch_params.techEffect
-    self.projectile = Projectile:new(self, owner, x, y, 32, gamestate.art.balls.resourcer, launch_params.techEffect, true)
+    self.projectile = Projectile:new(self, owner, x, y, tuning.size.radius.resourcer, gamestate.art.balls.resourcer, launch_params.techEffect, true)
     self.projectile.triggerdeath_cb = function()
         self:die()
     end

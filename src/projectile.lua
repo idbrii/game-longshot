@@ -31,6 +31,9 @@ function Projectile:initialize(entity, owner, x, y, radius, image, techEffect, i
     self.triggerdeath_cb = nil
 end
 
+function Projectile.makePreview()
+end
+
 function Projectile:_markAsInMotion()
     self.has_stabilized = false
     self.seconds_unstable = 0

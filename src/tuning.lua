@@ -37,6 +37,13 @@ local tuning = {
         bomb = {
             blast_radius = 50,
         },
+        radius = {
+            launcher = 30,
+            resourcer = 32,
+            barracks = 32,
+            bomb = 10,
+            soldier = 10,
+        },
     },
     timer = {
         projectile = {
