@@ -2,6 +2,7 @@ local Barracks = require('barracks')
 local Bomb = require('bomb')
 local Launcher = require('launcher')
 local M = require("moses.moses")
+local PreviewProjectile = require "previewprojectile"
 local Resourcer = require('resourcer')
 local Tech = require('tech')
 local Vec = require('hump.vector')
@@ -24,8 +25,9 @@ local k_gamepad_player_id = 2
 local k_launch_offset = 50
 local k_launch_minimum_intensity = 0.1
 local k_launch_minimum_held_seconds = 0.3
-local k_launch_maximum_held_seconds = 2
+local k_launch_maximum_held_seconds = 8
 local k_launch_default_power = 500
+local k_launch_preview_period = 0.25
 
 local k_projectile_id_to_name = {
     'launcher',
@@ -56,6 +58,8 @@ function Player:initialize(gamestate, index)
     self.launch_power_per_second = k_launch_default_power
     self.selected_projectile_id = k_projectile_id.bomb
     self.selected_building_instance = nil
+    self.active_previews = {}
+    self.time_to_next_preview = 0
 
     self.input = baton.new(self:_defineInput())
 end
@@ -194,6 +198,12 @@ function Player:update(dt, gamestate)
     elseif  self:_isHeld('fire') and launch and launch.can_fire then
         self.launch_held_seconds = self.launch_held_seconds + dt
         self.launch_held_seconds = lume.clamp(self.launch_held_seconds, 0, k_launch_maximum_held_seconds)
+
+        self.time_to_next_preview = self.time_to_next_preview - dt
+        if self.time_to_next_preview < 0 and self.launch_held_seconds > k_launch_minimum_held_seconds then
+            self:_firePreview()
+            self.time_to_next_preview = k_launch_preview_period
+        end
     elseif self:_isPressed('fire') then
         self.launch_held_seconds = 0
     elseif self.launch_held_seconds > k_launch_minimum_held_seconds then
@@ -239,6 +249,30 @@ function Player:_calcLaunchPower()
 end
 
 function Player:_fire()
+    for i,preview in ipairs(self.active_previews) do
+        if not preview.is_dead then
+            preview:die()
+        end
+    end
+    pl_table.clear(self.active_previews)
+
+    local SelectedProjectile = k_projectile_id_to_class[self.selected_projectile_id]
+    local projectile = self:_launch(SelectedProjectile, {})
+    if projectile then
+        self.selected_building_instance = projectile
+        self.selected_building_type_id = self.selected_projectile_id
+    end
+end
+
+function Player:_firePreview()
+    local launch_params = {
+        projectile_type = k_projectile_id_to_name[self.selected_projectile_id],
+    }
+    local projectile = self:_launch(PreviewProjectile, launch_params)
+    table.insert(self.active_previews, projectile)
+end
+
+function Player:_launch(SelectedProjectile, launch_params)
     local launch = self:_getLauncher()
     if launch then
         local start = _getLaunchStart(launch, self.aim_dir)
@@ -246,18 +280,15 @@ function Player:_fire()
         --~ self.gamestate.debug_draw_fn = function()
         --~     love.graphics.circle('fill', start.x, start.y, 10)
         --~ end
-        local SelectedProjectile = k_projectile_id_to_class[self.selected_projectile_id]
         launch:fire(SelectedProjectile)
         local dot = self.aim_dir:dot(Vec(1,0))
-        local launch_params = {}
         launch_params.direction = dot > 0 and 1 or -1
         launch_params.techEffect = self.tech.selectedEffect
         local projectile = SelectedProjectile:new(self.gamestate, self, start.x, start.y, launch_params)
         local power = self:_calcLaunchPower()
         local impulse = self.aim_dir * power
         projectile.collider:applyLinearImpulse(impulse:unpack())
-        self.selected_building_instance = projectile
-        self.selected_building_type_id = self.selected_projectile_id
+        return projectile
     end
 end
 
@@ -312,19 +343,6 @@ function Player:draw()
             nil,
             0.5, 0.5,
             w/2, h/2)
-
-
-        -- Launcher power
-        if self.launch_held_seconds > k_launch_minimum_held_seconds then
-            local power,intensity = self:_calcLaunchPower()
-            local tinted = {255, power, 0}
-            love.graphics.setColor(unpack(tinted))
-            local to_edge_of_barrel = self.aim_dir * 13
-            local start = _getLaunchStart(launch, self.aim_dir) + to_edge_of_barrel
-            local target = start + self.aim_dir * 50 * intensity
-            love.graphics.setLineWidth(5)
-            love.graphics.line(start.x, start.y, target.x, target.y)
-        end
     end
 
     local selected_building
