@@ -57,7 +57,7 @@ function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest', 16)
 
     local game_width, game_height = (gamestate.config.world_width+1) * gamestate.config.tile_size, ((gamestate.config.world_height+1) * gamestate.config.tile_size) + gamestate.config.bottom_ui_height
-    screener.setupScreen(game_width, game_height, tuning.window)
+    screener.setupScreen(game_width, game_height, tuning.window_cfg)
 
     -- Don't show title card for developers.
     gamestate.show_titlecard = not gamestate.config.has_cheats

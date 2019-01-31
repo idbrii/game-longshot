@@ -1,7 +1,7 @@
 local devcheck = require('devcheck')
 
 local tuning = {
-    window = {
+    window_cfg = {
         fullscreen = true,
         position = nil, -- {x,y, display} default is centred on main
         scale = nil, -- [0,1]
@@ -54,17 +54,17 @@ local tuning = {
 -- Devs can set local preferences here.
 local user = devcheck.getUser()
 if user == 'David' then
-    tuning.window.fullscreen = true
-    tuning.window.position = { 0,0, 1 }
-    tuning.window.scale = 0.5
+    tuning.window_cfg.fullscreen = true
+    tuning.window_cfg.position = { 0,0, 1 }
+    tuning.window_cfg.scale = 0.5
 elseif user == 'dbriscoe' then
-    --~ tuning.window.fullscreen = false
-    --~ tuning.window.position = { 0,0, 2 }
-    --~ tuning.window.scale = 0.5
+    --~ tuning.window_cfg.fullscreen = false
+    --~ tuning.window_cfg.position = { 0,0, 2 }
+    --~ tuning.window_cfg.scale = 0.5
 elseif user == 'ruy' then
-    tuning.window.fullscreen = false
-    tuning.window.position = { 2000,0, 1 }
-    tuning.window.scale = 0.5
+    tuning.window_cfg.fullscreen = false
+    tuning.window_cfg.position = { 2000,0, 1 }
+    tuning.window_cfg.scale = 0.5
 end
 
 return tuning
