@@ -45,7 +45,13 @@ function Projectile:boost()
     self.collider:applyLinearImpulse(vec.x, vec.y)
 end
 function Projectile:update(dt)
-    if not self.has_stabilized then
+    if self.has_stabilized then
+        -- PERF: Can reduce frequency of support checks.
+        if not self:_checkForGround() then
+            self.has_stabilized = false
+            self.collider:setType('dynamic')
+        end
+    else
         self.seconds_unstable = self.seconds_unstable + dt
         if self:isMotionless() then
             self.seconds_motionless = self.seconds_motionless + dt
