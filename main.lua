@@ -299,7 +299,8 @@ function love.draw()
 end
 
 
-function love.mousepressed(x, y, button)
+function love.mousepressed(_, _, button)
+    local x,y = screener.getMousePosition()
     gamestate.show_titlecard = false
 
     -- confine mouse to window
