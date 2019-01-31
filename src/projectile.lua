@@ -134,6 +134,7 @@ function Projectile:_checkForGround()
     local offset_down = 5 + self.radius
     local y_check = y + offset_down
     return self:_checkForBlock(x,y, x - pad, y_check)
+        or self:_checkForBlock(x,y, x,       y_check)
         or self:_checkForBlock(x,y, x + pad, y_check)
 end
 
