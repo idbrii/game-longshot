@@ -26,6 +26,7 @@ function Projectile:initialize(entity, owner, x, y, radius, image, techEffect, i
     self.collider:setCollisionClass(Projectile.collision_class)
     self:_markAsInMotion()
     self.tint = 1
+    self.can_cause_damage = true
     self.onWallActivate_cb = {}
     self.onHitBuilding_cb = {}
     self.triggerdeath_cb = nil
@@ -206,12 +207,14 @@ function Projectile:onHitBuilding(collision_data)
         return
     end
 
-    local target = collision_data.collider:getObject()
-    if target and target.damagable then
-        target.damagable:takeDamage(tuning.damage_dealer.launcher)
-    else
-        print("Why doesn't this thing have a damagable?", target)
-        --~ pretty.dump(target)
+    if self.can_cause_damage then
+        local target = collision_data.collider:getObject()
+        if target and target.damagable then
+            target.damagable:takeDamage(tuning.damage_dealer.launcher)
+        else
+            print("Why doesn't this thing have a damagable?", target)
+            --~ pretty.dump(target)
+        end
     end
 
     for i,listener in ipairs(self.onHitBuilding_cb) do

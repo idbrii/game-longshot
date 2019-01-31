@@ -22,6 +22,7 @@ local k_mouse_player_id = 1
 local k_gamepad_player_id = 2
 
 local k_launch_offset = 50
+local k_launch_minimum_intensity = 0.1
 local k_launch_minimum_held_seconds = 0.3
 local k_launch_maximum_held_seconds = 2
 local k_launch_default_power = 500
@@ -232,7 +233,7 @@ end
 
 function Player:_calcLaunchPower()
     local sec = self.launch_held_seconds - k_launch_minimum_held_seconds
-    local intensity = sec / (k_launch_maximum_held_seconds - k_launch_minimum_held_seconds)
+    local intensity = k_launch_minimum_intensity + sec / (k_launch_maximum_held_seconds - k_launch_minimum_held_seconds)
     local pow = intensity * self.launch_power_per_second
     return pow, intensity
 end
@@ -248,10 +249,9 @@ function Player:_fire()
         local SelectedProjectile = k_projectile_id_to_class[self.selected_projectile_id]
         launch:fire(SelectedProjectile)
         local dot = self.aim_dir:dot(Vec(1,0))
-        local launch_params = {
-            direction = dot > 0 and 1 or -1,
-            techEffect = self.tech.selectedEffect,
-        }
+        local launch_params = {}
+        launch_params.direction = dot > 0 and 1 or -1
+        launch_params.techEffect = self.tech.selectedEffect
         local projectile = SelectedProjectile:new(self.gamestate, self, start.x, start.y, launch_params)
         local power = self:_calcLaunchPower()
         local impulse = self.aim_dir * power
@@ -301,7 +301,7 @@ function Player:draw()
             draw_x = screen_w - pad
         end
 
-        -- Current projectile
+        -- Current projectile selector
         love.graphics.setColor(self:getColour())
         
         local selected = k_projectile_id_to_name[self.selected_projectile_id]
