@@ -103,18 +103,21 @@ function love.load()
     gamestate.plates.winner = love.graphics.newImage("assets/textures/winner.png")
 
     gamestate.art = {
-        bomb = love.graphics.newImage("assets/textures/bomb.png"),
         resourcer = love.graphics.newImage("assets/sprites/resourcer/deployed.png"),
         barracks = love.graphics.newImage("assets/sprites/barracks/deployed.png"),
         launcher = love.graphics.newImage("assets/sprites/launcher/deployed.png"),
         launcher_arm = love.graphics.newImage("assets/sprites/launcher/aimer.png"),
         balls =
         {
+            bomb = love.graphics.newImage("assets/textures/bomb.png"),
             resourcer = love.graphics.newImage("assets/sprites/resourcer/ball.png"),
             barracks = love.graphics.newImage("assets/sprites/barracks/ball.png"),
             launcher = love.graphics.newImage("assets/sprites/launcher/ball.png"),
         },
     }
+
+    -- same art for both
+    gamestate.art.bomb = gamestate.art.balls.bomb
 
     gamestate.grid = gridgen.generate_grid(gamestate.config.world_width, gamestate.config.world_height)
     gamestate.map = TileMap:new(
