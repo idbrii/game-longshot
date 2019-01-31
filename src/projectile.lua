@@ -24,11 +24,15 @@ function Projectile:initialize(entity, owner, x, y, radius, image, techEffect, i
     self.isDeployable = isDeployable
     self.collider:setRestitution(techEffect.restitution)
     self.collider:setCollisionClass(Projectile.collision_class)
-    self.has_stabilized = false
+    self:_markAsInMotion()
     self.tint = 1
     self.onWallActivate_cb = {}
     self.onHitBuilding_cb = {}
     self.triggerdeath_cb = nil
+end
+
+function Projectile:_markAsInMotion()
+    self.has_stabilized = false
     self.seconds_unstable = 0
     self.seconds_motionless = 0
 end
@@ -48,7 +52,7 @@ function Projectile:update(dt)
     if self.has_stabilized then
         -- PERF: Can reduce frequency of support checks.
         if not self:_checkForGround() then
-            self.has_stabilized = false
+            self:_markAsInMotion()
             self.collider:setType('dynamic')
         end
     else
