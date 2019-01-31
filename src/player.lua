@@ -23,11 +23,11 @@ local k_mouse_player_id = 1
 local k_gamepad_player_id = 2
 
 local k_launch_offset = 50
-local k_launch_minimum_intensity = 0.1
+local k_launch_minimum_intensity = 0.2
 local k_launch_minimum_held_seconds = 0.3
 local k_launch_maximum_held_seconds = 8
 local k_launch_default_power = 500
-local k_launch_preview_period = 0.25
+local k_launch_preview_period = 0.45
 
 local k_projectile_id_to_name = {
     'launcher',
