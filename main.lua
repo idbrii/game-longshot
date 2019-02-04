@@ -64,9 +64,10 @@ function love.load()
 
     gamestate.menu_input = baton.new {
         controls = {
-            quit = {'key:escape'},
+            quit = {'key:escape', 'button:back'},
             draw_physics = {'key:backspace'},
         },
+        joystick = love.joystick.getJoysticks()[1],
     }
 
     gamestate.entities = {}
