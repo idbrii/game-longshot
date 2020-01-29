@@ -69,3 +69,8 @@ sudo apt-get install love
 ```bash
 love .
 ```
+
+# Music Credits
+
+* [Space Arp F Chords.wav](https://freesound.org/people/esistnichtsoernst/sounds/473996/) by [esistnichtsoernst](https://freesound.org/people/esistnichtsoernst/) | License: Creative Commons 0
+* [Dramatic Uprising Pulse Ambience](https://freesound.org/people/PatrickLieberkind/sounds/395388/) by [PatrickLieberkind](https://freesound.org/people/PatrickLieberkind/) | License: Attribution
