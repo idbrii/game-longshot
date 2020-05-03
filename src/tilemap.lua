@@ -1,10 +1,8 @@
 local Damagable = require "damagable"
 local KillVolume = require('killvolume')
-local Vec = require('hump.vector')
 local autotile = require("autotile.autotile")
 local class = require("astray.MiddleClass")
 local pl_table = require('pl.tablex')
-local wf = require("windfield")
 
 local TileMap = class("TileMap")
 

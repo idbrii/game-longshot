@@ -20,7 +20,6 @@ local Vfx = require('vfx')
 local Player = require('player')
 local Projectile = require('projectile')
 local moretable = require('moretable')
-local KillVolume = require('killvolume')
 local gridgen = require("gridgen")
 local wf = require("windfield")
 local baton = require "baton.baton"

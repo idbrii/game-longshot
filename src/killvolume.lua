@@ -1,8 +1,5 @@
 local M = require('moses.moses')
-local autotile = require("autotile.autotile")
 local class = require("astray.MiddleClass")
-local pl_table = require('pl.tablex')
-local wf = require("windfield")
 
 local KillVolume = class("KillVolume")
 

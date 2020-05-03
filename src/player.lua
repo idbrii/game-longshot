@@ -1,7 +1,6 @@
 local Barracks = require('barracks')
 local Bomb = require('bomb')
 local Launcher = require('launcher')
-local M = require("moses.moses")
 local PreviewProjectile = require "previewprojectile"
 local Resourcer = require('resourcer')
 local Tech = require('tech')
@@ -14,7 +13,6 @@ local moremath = require('moremath')
 local moretable = require('moretable')
 local pl_table = require('pl.tablex')
 local screener = require "screener"
-local wf = require('windfield')
 
 
 local Player = class('Player')
