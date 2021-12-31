@@ -68,7 +68,7 @@ elseif user == 'dbriscoe' then
     --~ tuning.window_cfg.fullscreen = false
     --~ tuning.window_cfg.position = { 0,0, 2 }
     --~ tuning.window_cfg.scale = 0.85
-elseif user == 'ruy' then
+elseif user == 'clara' then
     tuning.window_cfg.fullscreen = false
     tuning.window_cfg.position = { 0,0, 2 }
     tuning.window_cfg.scale = 0.85

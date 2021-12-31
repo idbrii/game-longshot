@@ -15,7 +15,7 @@ end
 
 function devcheck.isDev()
     local user = devcheck.getUser()
-    return devcheck.isDebug() and (user == 'David' or user == 'dbriscoe' or user == 'ruy')
+    return devcheck.isDebug() and (user == 'dbriscoe')
 end
 
 return devcheck

@@ -92,7 +92,7 @@ end
 function ClaimsManager:declaimResourcer(resourcer)
     local claims = self.resourcerClaims[resourcer]
     if claims == nil then
-        print('TODO(ruy): is it okay that this is null?')
+        print('TODO(clara): is it okay that this is null?')
         return
     end
     for i, claim in ipairs(claims) do
