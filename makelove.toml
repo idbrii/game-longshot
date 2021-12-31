@@ -1,0 +1,55 @@
+# let &l:makeprg='makelove macos win32 win64' | AsyncMake
+
+#~ name = "" # makelove gets the name from conf.lua.
+default_targets = [
+    "lovejs",
+    "win64",
+]
+build_directory = "build"
+
+love_files = [
+    "::git-ls-tree::",
+    "-*/.*",
+]
+
+[hooks]
+prebuild = [
+    "python3 buildhooks.py --to-prod",
+]
+postbuild = [
+    # {build_directory} and {version} will be replaced
+    "python3 buildhooks.py --to-dev",
+
+    #~ # lovejs testing. disable butler before using!
+    #~ "unzip {build_directory}/lovejs/{name}-lovejs.zip -d {build_directory}/lovejs",
+    #~ "start http://127.0.0.1:8000",
+    #~ "python -m http.server 8000 --bind 127.0.0.1 --directory {build_directory}/lovejs/{name}",
+
+]
+
+[butler]
+#~ itchapp = "idbrii/longshot"
+#~ publish_love = true
+
+# This specifies the files to be included in the zip archives generated for windows builds.
+# The key is the relative (to the game directory) source path
+# and the value is the destination path relative to the archive root.
+# You may specify files or directories
+[archive_files]
+"README.md" = "README.md"
+"license_libs.md" = "license_libs.md"
+"license_assets.md" = "license_assets.md"
+# ".itch.toml" = ".itch.toml"
+
+
+[lovejs]
+#~ title = ""  # used on the resulting web page, or fallback to window title from conf.lua or project name.
+memory = "20000000"  # starting memory of the webpage (default is 20 MB)
+
+
+[win64]
+artifacts = [
+    # Keep directory around for testing the build.
+    "directory",
+    "archive",
+]
