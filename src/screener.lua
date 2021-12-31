@@ -53,4 +53,8 @@ function screener.resize(...)
     push:resize(...)
 end
 
+function screener.toggleFullscreen()
+    push:switchFullscreen()
+end
+
 return screener

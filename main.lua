@@ -60,6 +60,7 @@ function love.load()
     gamestate.menu_input = baton.new {
         controls = {
             quit = {'key:escape'},
+            fullscreen = {'key:return'}, -- and alt
             draw_physics = {'key:backspace'},
         },
     }
@@ -181,6 +182,10 @@ function love.update(dt)
 
     if gamestate.menu_input:pressed('quit') then
         love.event.quit()
+    elseif gamestate.menu_input:pressed('fullscreen') and love.keyboard.isDown('ralt', 'lalt') then
+        print("Toggling fullscreen")
+        screener.toggleFullscreen()
+        love.resize(love.graphics.getDimensions())
     elseif gamestate.menu_input:pressed('draw_physics') then
         should_draw_physics = not should_draw_physics
     end
