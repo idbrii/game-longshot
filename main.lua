@@ -155,8 +155,13 @@ function love.joystickadded(joystick)
     Player.joystickAdded(gamestate, joystick)
 end
 
+local min_time_to_display_winner = 3
 function love.joystickpressed(key)
     gamestate.show_titlecard = false
+
+    if gamestate.winner_duration and gamestate.winner_duration > min_time_to_display_winner then
+        love.event.quit('restart')
+    end
 end
 
 function love.keypressed(key)
@@ -164,6 +169,10 @@ function love.keypressed(key)
 
     if not gamestate.config.has_cheats then
         return
+    end
+
+    if gamestate.winner_duration and gamestate.winner_duration > min_time_to_display_winner then
+        love.event.quit('restart')
     end
 
     if key == 'b' then
@@ -178,6 +187,14 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
+    if gamestate.winner then
+        if gamestate.winner_duration then
+            gamestate.winner_duration = gamestate.winner_duration + dt
+        else
+            gamestate.winner_duration = 0
+        end
+    end
+
     gamestate.menu_input:update()
 
     if gamestate.menu_input:pressed('quit') then
