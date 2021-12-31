@@ -1,10 +1,6 @@
 -- Not sure best way to organize code. For now, main in project root, all code
 -- in src, libraries in src/lib/
 love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?/init.lua")
--- Monkey patch graphics to auto batch sprites.
--- TODO(dbriscoe): Maybe using out-of-date love api, but autobatch fails on
--- setBufferSize.
---~ require("rxi.autobatch")
 
 io.stdout:setvbuf("no")
 local devcheck = require "devcheck"
@@ -181,9 +177,6 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
-    -- DEBUG: hot reload code (doesn't work?)
-    --~ require("rxi.lurker").update()
-
     gamestate.menu_input:update()
 
     if gamestate.menu_input:pressed('quit') then
