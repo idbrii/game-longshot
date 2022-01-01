@@ -11,6 +11,16 @@
 * License: Attribution
 
 
+## Font
+
+### Humble Free Futile
+
+[Humble Fonts Free](https://somepx.itch.io/humble-fonts-free)
+
+[Eeve Somepx](https://twitter.com/somepx)
+Common Sense License (CSL)
+
+
 ## Data
 
 ### gamecontrollerdb.txt

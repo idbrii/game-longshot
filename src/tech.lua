@@ -5,7 +5,7 @@ local Tech = class("Tech")
 
 local MAX_RESOURCES = 4000/2
 
-Tech.font = love.graphics.newFont("assets/pixelart/font/humblefree/futile.ttf", 22)
+Tech.font = love.graphics.newFont("assets/pixelart/font/humblefree/futile.ttf", 19)
 
 Tech.Effects = {
     Basic = {
