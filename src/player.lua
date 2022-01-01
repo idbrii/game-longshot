@@ -86,9 +86,21 @@ function Player:_isMouseUser()
     return self.index == k_mouse_player_id
 end
 
-function Player.joystickAdded(gamestate, joystick)
-    print('joystickAdded', joystick)
-    -- TODO: bind a joystick if we don't have one.
+function Player:isUsingGamepad(joystick)
+    return self.input.joystick == joystick
+end
+function Player:on_gamepadadded(joystick)
+    if joystick:isGamepad() and not self.input.config.joystick then
+        local parts = lume.split(joystick:getGamepadMappingString(), ',')
+        local name = parts[2]
+        if not name or name:len() < 3 then
+            name = joystick:getName()
+        end
+        local index = joystick:getConnectedIndex()
+        print(string.format("Changed player %d gamepad to #%d '%s'.", self.index, index, name))
+        self.input.config.joystick = joystick
+        return true
+    end
 end
     
 function Player:_defineInput()
@@ -134,6 +146,9 @@ function Player:_defineKeyboardInput()
 end
 
 function Player:_defineGamepadInput()
+    local gamepads = lume.filter(love.joystick.getJoysticks(), function(v)
+        return v:isGamepad()
+    end)
     local joystick_id
     if self.index == k_gamepad_player_id then
         joystick_id = 1
@@ -160,7 +175,7 @@ function Player:_defineGamepadInput()
             aim = {'aim_left', 'aim_right', 'aim_up', 'aim_down'}
         },
         deadzone = 0.25,
-        joystick = love.joystick.getJoysticks()[joystick_id],
+        joystick = gamepads[joystick_id],
     }
 
 end

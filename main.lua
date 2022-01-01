@@ -153,8 +153,18 @@ function love.load()
     gamestate.map:refresh(gamestate.grid)
 end
 
-function love.joystickadded(joystick)
-    Player.joystickAdded(gamestate, joystick)
+function love.gamepadpressed(joystick)
+    for _,player in ipairs(gamestate.players) do
+        if player:isUsingGamepad(joystick) then
+            return
+        end
+    end
+    for _,player in ipairs(gamestate.players) do
+        local consumed = player:on_gamepadadded(joystick)
+        if consumed then
+            break
+        end
+    end
 end
 
 local min_time_to_display_winner = 3
