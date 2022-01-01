@@ -179,36 +179,8 @@ function love.joystickpressed(key)
     end
 end
 
-local font_index = 1
-local font_size = 22
 function love.keypressed(key)
     gamestate.show_titlecard = false
-
-    local fonts = {
-        "assets/pixelart/font/humblefree/equipment.ttf",
-        "assets/pixelart/font/humblefree/futile.ttf",
-        "assets/pixelart/font/humblefree/matchup.ttf",
-        "assets/pixelart/font/humblegold/hope.ttf",
-        "assets/pixelart/font/humblegold/ruler.ttf",
-        "assets/pixelart/font/kenpixel/blocks.ttf",
-        "assets/pixelart/font/kenpixel/future.ttf",
-        "assets/pixelart/font/kenpixel/high.ttf",
-        "assets/pixelart/font/kenpixel/kenpixel.ttf",
-        "assets/pixelart/font/kenpixel/mini.ttf",
-    }
-    if key == 'n' then
-        font_index = moretable.circular_index_number(#fonts, font_index+1)
-        Tech.font = love.graphics.newFont(fonts[font_index], font_size)
-        print(fonts[font_index], font_size)
-    elseif key == 'j' then
-        font_size = font_size + 1
-        Tech.font = love.graphics.newFont(fonts[font_index], font_size)
-        print(fonts[font_index], font_size)
-    elseif key == 'k' then
-        font_size = font_size - 1
-        Tech.font = love.graphics.newFont(fonts[font_index], font_size)
-        print(fonts[font_index], font_size)
-    end
 
     if not gamestate.config.has_cheats then
         return
