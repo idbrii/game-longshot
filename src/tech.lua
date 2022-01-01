@@ -5,6 +5,8 @@ local Tech = class("Tech")
 
 local MAX_RESOURCES = 4000/2
 
+Tech.font = love.graphics.newFont("assets/pixelart/font/humblefree/futile.ttf", 22)
+
 Tech.Effects = {
     Basic = {
         name="Basic",
@@ -97,13 +99,13 @@ function Tech:drawResourceUI()
         local key_hint = level.key[self.owner.index]
         if self.selectedEffect == level then
             love.graphics.setColor(0, 0.5, 0.5)
-            key_hint = 'selected'
+            key_hint = 'X'
         end
-        local textWidth = 75
         local markerX = left + (level.resourceCost / MAX_RESOURCES) * width
         local markerY = top - 20
         love.graphics.line(markerX, markerY, markerX, top + height)
-        love.graphics.print(level.name .. " (" .. key_hint .. ")",  markerX + padding, markerY)
+        local str = level.name .. " (" .. key_hint .. ")"
+        love.graphics.printf(str, self.font, markerX + padding, markerY, 2000)
 
     end
 
