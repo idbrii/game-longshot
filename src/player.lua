@@ -369,7 +369,23 @@ function Player:draw()
         love.graphics.circle('line', centre.x, centre.y, selected_building.projectile.radius * 2.1)
     end
 
-    self.tech:drawResourceUI()
+    -- Create map from binding name to button name.
+    local pattern = 'button:'
+    if self.input:getActiveDevice() == 'kbm' then
+        pattern = 'key:'
+    end
+    pattern = ('%s(.*)'):format(pattern)
+    local input_mapping = {}
+    for key,mappings in pairs(self.input.config.controls) do
+        for _,input in ipairs(mappings) do
+            local match = input:match(pattern)
+            if match then
+                input_mapping[key] = match:upper()
+            end
+        end
+    end
+
+    self.tech:drawResourceUI(input_mapping)
 end
 
 function Player:addLauncher(launcher)

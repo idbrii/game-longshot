@@ -10,27 +10,27 @@ Tech.font = love.graphics.newFont("assets/pixelart/font/humblefree/futile.ttf", 
 Tech.Effects = {
     Basic = {
         name="Basic",
-        key= {'1', '7'},
         resourceCost = 0,
         restitution = 0.2,
+        input_name = "mod_normal",
     },
     Bouncy = {
         name="Bouncy",
-        key= {'2', '8'},
         resourceCost = 700/2,
         restitution = 0.6,
+        input_name = "mod_bouncy",
     },
     Boosty = {
         name="Boosty",
-        key= {'3', '9'},
         resourceCost = 1500/2,
         restitution = 0.1,
+        input_name = "mod_boosty",
     },
     Sticky = {
         name="Sticky",
-        key= {'4', '0'},
         resourceCost = 2500/2,
         restitution = 0.1,
+        input_name = "mod_sticky",
     }
 }
 
@@ -68,7 +68,7 @@ function Tech:deductResource(amount)
     self.resources = self.resources - amount
 end
 
-function Tech:drawResourceUI()
+function Tech:drawResourceUI(input_mapping)
     local height = 20
     local padding = 5
     local gutter = 64 + padding * 2
@@ -96,15 +96,16 @@ function Tech:drawResourceUI()
         if level.resourceCost < self.resources then
             love.graphics.setColor(0, 0, 0)
         end
-        local key_hint = level.key[self.owner.index]
+        local key_hint = input_mapping[level.input_name]
+        key_hint = " (" .. key_hint .. ")"
         if self.selectedEffect == level then
             love.graphics.setColor(0, 0.5, 0.5)
-            key_hint = 'X'
+            key_hint = ''
         end
         local markerX = left + (level.resourceCost / MAX_RESOURCES) * width
         local markerY = top - 20
         love.graphics.line(markerX, markerY, markerX, top + height)
-        local str = level.name .. " (" .. key_hint .. ")"
+        local str = level.name .. key_hint
         love.graphics.printf(str, self.font, markerX + padding, markerY, 2000)
 
     end
