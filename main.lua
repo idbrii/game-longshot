@@ -51,6 +51,8 @@ local should_draw_physics = false
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest', 16)
 
+    love.joystick.loadGamepadMappings("assets/gamepad/gamecontrollerdb.txt")
+
     local game_width, game_height = (gamestate.config.world_width+1) * gamestate.config.tile_size, ((gamestate.config.world_height+1) * gamestate.config.tile_size) + gamestate.config.bottom_ui_height
     screener.setupScreen(game_width, game_height, tuning.window_cfg)
 
