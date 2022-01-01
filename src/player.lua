@@ -18,7 +18,6 @@ local screener = require "screener"
 local Player = class('Player')
 
 local k_mouse_player_id = 1
-local k_gamepad_player_id = 2
 
 local k_launch_offset = 50
 local k_launch_minimum_intensity = 0.2
@@ -82,14 +81,18 @@ function Player:getAim()
     end
 end
 
+-- Only one player can use the mouse.
 function Player:_isMouseUser()
     return self.index == k_mouse_player_id
 end
 
 function Player:isUsingGamepad(joystick)
-    return self.input.joystick == joystick
+    return self.input.config.joystick == joystick
 end
-function Player:on_gamepadadded(joystick)
+function Player:hasGamepad()
+    return self.input.config.joystick ~= nil
+end
+function Player:tryAssignGamepad(joystick)
     if joystick:isGamepad() and not self.input.config.joystick then
         local parts = lume.split(joystick:getGamepadMappingString(), ',')
         local name = parts[2]
@@ -146,15 +149,6 @@ function Player:_defineKeyboardInput()
 end
 
 function Player:_defineGamepadInput()
-    local gamepads = lume.filter(love.joystick.getJoysticks(), function(v)
-        return v:isGamepad()
-    end)
-    local joystick_id
-    if self.index == k_gamepad_player_id then
-        joystick_id = 1
-    else
-        joystick_id = 2
-    end
     return {
         controls = {
             fire = { 'button:rightshoulder' },
@@ -175,7 +169,9 @@ function Player:_defineGamepadInput()
             aim = {'aim_left', 'aim_right', 'aim_up', 'aim_down'}
         },
         deadzone = 0.25,
-        joystick = gamepads[joystick_id],
+        -- Don't set a joystick. Use tryAssignGamepad to ensure only ones that
+        -- received button presses are set.
+        joystick = nil,
     }
 
 end

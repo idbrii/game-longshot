@@ -159,8 +159,11 @@ function love.gamepadpressed(joystick)
             return
         end
     end
-    for _,player in ipairs(gamestate.players) do
-        local consumed = player:on_gamepadadded(joystick)
+    -- reverse iterate to give priority to non mouse user.
+    for i in ipairs(gamestate.players) do
+        local rev_i = #gamestate.players - i + 1
+        local player = gamestate.players[rev_i]
+        local consumed = player:tryAssignGamepad(joystick)
         if consumed then
             break
         end
