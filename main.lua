@@ -2,6 +2,15 @@
 -- in src, libraries in src/lib/
 love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?/init.lua")
 
+
+local is_web = love.system.getOS() == 'Web'
+if is_web
+    then
+    -- HACK: audio is breaking the web build. Probably static vs dynamic.
+    -- Disable sound for now.
+    love.audio = nil
+end
+
 io.stdout:setvbuf("no")
 local devcheck = require "devcheck"
 local Bomb = require('bomb')
