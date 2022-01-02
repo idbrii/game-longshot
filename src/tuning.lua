@@ -59,19 +59,13 @@ local tuning = {
 }
 
 -- Devs can set local preferences here.
-local user = devcheck.getUser()
-if user == 'David' then
-    tuning.window_cfg.fullscreen = true
-    tuning.window_cfg.position = { 0,0, 1 }
-    tuning.window_cfg.scale = 0.5
-elseif user == 'dbriscoe' then
-    tuning.window_cfg.fullscreen = false
-    tuning.window_cfg.position = { 0,0, 2 }
-    tuning.window_cfg.scale = 0.8
-elseif user == 'clara' then
-    tuning.window_cfg.fullscreen = false
-    tuning.window_cfg.position = { 0,0, 2 }
-    tuning.window_cfg.scale = 0.85
+if devcheck.isDebug() then
+    local user = devcheck.getUser()
+    if user == 'dbriscoe' then
+        tuning.window_cfg.fullscreen = false
+        tuning.window_cfg.position = { 0,0, 2 }
+        tuning.window_cfg.scale = 0.8
+    end
 end
 
 return tuning

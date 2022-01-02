@@ -6,7 +6,7 @@ function love.conf(t)
     t.console      = true       -- Attach a console (boolean, Windows only)
     t.window.title = 'Longshot' -- The window title (string)
     local user = devcheck.getUser()
-    if user == 'dbriscoe' then
+    if devcheck.isDebug() and user == 'dbriscoe' then
         -- disable music (and all sounds)
         t.modules.audio = false
     end
