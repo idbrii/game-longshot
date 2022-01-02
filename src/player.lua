@@ -105,6 +105,48 @@ function Player:tryAssignGamepad(joystick)
         return true
     end
 end
+
+function Player:getPrettyInput()
+    local pretty_input = {
+        fire = "Fire",
+        cycle_launcher_left = "Cycle Launcher Left",
+        cycle_launcher_right = "Cycle Launcher Right",
+        cycle_projectile_next = "Cycle Projectile Next",
+        cycle_projectile_prev = "Cycle Projectile Previous",
+        mod_boosty = "Boosty Tech",
+        mod_bouncy = "Bouncy Tech",
+        mod_normal = "Normal Tech",
+        mod_sticky = "Sticky Tech",
+        left = "Aim Left",
+        right = "Aim Right",
+        aim_left = "Aim Left",
+        aim_right = "Aim Right",
+        aim_up = "Aim Up",
+        aim_down = "Aim Down",
+        aim = "Aim",
+    }
+    local name_remap = {
+        button = {
+            leftshoulder = "Left Shoulder",
+            rightshoulder = "Right Shoulder",
+            dpdown = "D-pad down",
+            dpleft = "D-pad left",
+            dpright = "D-pad right",
+            dpup = "D-pad up",
+        },
+        axis = {
+            left = "Left Stick",
+            right = "Right Stick",
+            triggerleft = "Left Trigger",
+            triggerright = "Right Trigger",
+        },
+    }
+    local str = ""
+    for key,val in pairs(self.input:getActiveControls(name_remap)) do
+        str = ("%s\n%s: %s"):format(str, pretty_input[key], val)
+    end
+    return str
+end
     
 function Player:_defineInput()
     local input = moretable.append_recursive(self:_defineGamepadInput(), self:_defineKeyboardInput())

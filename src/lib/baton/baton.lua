@@ -268,7 +268,29 @@ end
 
 -- Returns the primary controls for the active input device. Strips off the
 -- "button:" prefix and excludes alternate mappings for the same input.
-function Player:getActiveControls()
+--
+-- Use name_remap to change names from GamepadAxis/GamepadButton/KeyConstant to
+-- your own names (especially since many overlap). axis names don't include x
+-- or y or the direction (where applicable).
+-- Example:
+--
+--  local name_remap = {
+--      button = {
+--          leftshoulder = "Left Shoulder",
+--          rightshoulder = "Right Shoulder",
+--          dpdown = "D-pad down",
+--          dpleft = "D-pad left",
+--          dpright = "D-pad right",
+--          dpup = "D-pad up",
+--      },
+--      axis = {
+--          left = "Left Stick",
+--          right = "Right Stick",
+--          triggerleft = "Left Trigger",
+--          triggerright = "Right Trigger",
+--      },
+--  }
+function Player:getActiveControls(name_remap)
 	local src_func
 	if self._activeDevice == 'kbm' then
 		src_func = sourceFunction.keyboardMouse
@@ -285,9 +307,32 @@ function Player:getActiveControls()
 		for _, source in ipairs(control.sources) do
 			local type, value = parseSource(source)
 			if src_func[type] then
-				active_controls[name] = value
+				active_controls[name] = name_remap and name_remap[type] and name_remap[type][value] or value
 				break
 			end
+		end
+	end
+	for name, pair in pairs(self._pairs) do
+		-- TODO: test with triggerleft.
+		local prev_prefix
+		for _, control in ipairs(pair.controls) do
+			local source = active_controls[control]
+			if source then
+				local axis_prefix = source:match('(.+)[xy][%+%-]') -- Similar to parseAxis.
+				prev_prefix = prev_prefix or axis_prefix
+				if axis_prefix ~= prev_prefix then
+					prev_prefix = nil
+					break
+				end
+			end
+		end
+		if prev_prefix then
+			-- Found a pair with all controls on the same input, so clear out
+			-- individual axes.
+			for _, control in ipairs(pair.controls) do
+				active_controls[control] = nil
+			end
+			active_controls[name] = prev_prefix
 		end
 	end
 	return active_controls

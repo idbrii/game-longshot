@@ -10,48 +10,51 @@ bombs (terraform/defence), or more launchers. Tech tree lets you make them
 bouncy, boosty, sticky.
 
 ## Controls
-See also player.lua: defineKeyboardInput and defineGamepadInput.
+See also player.lua: Player:getPrettyInput()
+
+### Gamepad
+
+* Fire: Right Shoulder
+* Aim: left
+* Cycle Launcher Left: D-pad left
+* Cycle Launcher Right: Left Shoulder
+* Cycle Projectile Next: D-pad down
+* Cycle Projectile Previous: D-pad up
+* Normal Tech: a
+* Sticky Tech: b
+* Bouncy Tech: x
+* Boosty Tech: y
 
 ### Player 1
-aim with mouse
 
-* space - fire
-* w     - cycle_projectile_prev
-* a     - cycle_projectile_next
-* s     - down
-* d     - right
-* q     - cycle_launcher_left
-* e     - cycle_launcher_right
-* 1     - mod_normal
-* 2     - mod_bouncy
-* 3     - mod_boosty
-* 4     - mod_sticky
+* Fire: space
+* Aim: mouse
+* Aim Left: a
+* Aim Right: d
+* Cycle Launcher Left: q
+* Cycle Launcher Right: e
+* Cycle Projectile Next: s
+* Cycle Projectile Previous: w
+* Normal Tech: 1
+* Bouncy Tech: 2
+* Boosty Tech: 3
+* Sticky Tech: 4
+
 
 ### Player 2
-* rctrl - fire
-* up    - cycle_projectile_prev
-* down  - cycle_projectile_next
-* left  - left
-* right - right
-* [     - cycle_launcher_left
-* ]     - cycle_launcher_right
-* 7     - mod_normal
-* 8     - mod_bouncy
-* 9     - mod_boosty
-* 0     - mod_sticky
 
-or gamepad:
+* Fire: rctrl
+* Aim Left: left
+* Aim Right: right
+* Cycle Launcher Left: [
+* Cycle Launcher Right: ]
+* Cycle Projectile Next: down
+* Cycle Projectile Previous: up
+* Sticky Tech: 0
+* Normal Tech: 7
+* Bouncy Tech: 8
+* Boosty Tech: 9
 
-* r1      - fire
-* l1      - cycle_launcher_right
-* dpup    - cycle_projectile_prev
-* dpdown  - cycle_projectile_next
-* dpleft  - cycle_launcher_left
-* dpright - cycle_launcher_right
-* fdown   - mod_normal
-* fleft   - mod_bouncy
-* fup     - mod_boosty
-* fright  - mod_sticky
 
 ## Running
 
