@@ -25,7 +25,7 @@ See also player.lua: Player:getPrettyInput()
 * Bouncy Tech: x
 * Boosty Tech: y
 
-### Player 1
+### Keyboard - Player 1
 
 * Fire: space
 * Aim: mouse
@@ -41,7 +41,7 @@ See also player.lua: Player:getPrettyInput()
 * Sticky Tech: 4
 
 
-### Player 2
+### Keyboard - Player 2
 
 * Fire: rctrl
 * Aim Left: left
