@@ -266,6 +266,33 @@ function Player:getActiveDevice()
 	return self._activeDevice
 end
 
+-- Returns the primary controls for the active input device. Strips off the
+-- "button:" prefix and excludes alternate mappings for the same input.
+function Player:getActiveControls()
+	local src_func
+	if self._activeDevice == 'kbm' then
+		src_func = sourceFunction.keyboardMouse
+	elseif self._activeDevice == 'joy' then
+		src_func = sourceFunction.joystick
+	end
+
+	if not src_func then
+		return
+	end
+
+	local active_controls = {}
+	for name, control in pairs(self._controls) do
+		for _, source in ipairs(control.sources) do
+			local type, value = parseSource(source)
+			if src_func[type] then
+				active_controls[name] = value
+				break
+			end
+		end
+	end
+	return active_controls
+end
+
 function baton.new(config)
 	local player = setmetatable({}, Player)
 	player:_init(config)
