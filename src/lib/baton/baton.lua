@@ -270,8 +270,10 @@ end
 -- "button:" prefix and excludes alternate mappings for the same input.
 --
 -- Use name_remap to change names from GamepadAxis/GamepadButton/KeyConstant to
--- your own names (especially since many overlap). axis names don't include x
--- or y or the direction (where applicable).
+-- your own names (especially since many overlap).
+--
+-- Pairs will be returned instead of their individual inputs and don't include
+-- x, y, or the direction (where applicable).
 -- Example:
 --
 --  local name_remap = {
@@ -286,8 +288,8 @@ end
 --      axis = {
 --          left = "Left Stick",
 --          right = "Right Stick",
---          triggerleft = "Left Trigger",
---          triggerright = "Right Trigger",
+--          ["triggerleft+"] = "Left Trigger",
+--          ["triggerright+"] = "Right Trigger",
 --      },
 --  }
 function Player:getActiveControls(name_remap)
@@ -313,7 +315,6 @@ function Player:getActiveControls(name_remap)
 		end
 	end
 	for name, pair in pairs(self._pairs) do
-		-- TODO: test with triggerleft.
 		local prev_prefix
 		for _, control in ipairs(pair.controls) do
 			local source = active_controls[control]
@@ -332,7 +333,8 @@ function Player:getActiveControls(name_remap)
 			for _, control in ipairs(pair.controls) do
 				active_controls[control] = nil
 			end
-			active_controls[name] = prev_prefix
+			local type = "axis"
+			active_controls[name] = name_remap and name_remap[type] and name_remap[type][prev_prefix] or prev_prefix
 		end
 	end
 	return active_controls
