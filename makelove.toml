@@ -28,8 +28,8 @@ postbuild = [
 ]
 
 [butler]
-#~ itchapp = "idbrii/longshot"
-#~ publish_love = true
+itchapp = "idbrii/longshot"
+publish_love = true
 
 # This specifies the files to be included in the zip archives generated for windows builds.
 # The key is the relative (to the game directory) source path
