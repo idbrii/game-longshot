@@ -94,8 +94,9 @@ function Player:hasGamepad()
 end
 function Player:tryAssignGamepad(joystick)
     if joystick:isGamepad() and not self.input.config.joystick then
-        local parts = lume.split(joystick:getGamepadMappingString(), ',')
-        local name = parts[2]
+        local mapping = joystick:getGamepadMappingString()
+        local parts = mapping and lume.split(mapping, ',')
+        local name = parts and parts[2]
         if not name or name:len() < 3 then
             name = joystick:getName()
         end
