@@ -316,12 +316,14 @@ function Player:getActiveControls(name_fn)
 		return
 	end
 
-	local active_controls = {}
+	local active_sources = {}
+	local renamed_controls = {}
 	for name, control in pairs(self._controls) do
 		for _, source in ipairs(control.sources) do
 			local type, value = parseSource(source)
 			if src_func[type] then
-				active_controls[name] = name_fn(type, value)
+				active_sources[name] = source
+				renamed_controls[name] = name_fn(type, value)
 				break
 			end
 		end
@@ -329,9 +331,9 @@ function Player:getActiveControls(name_fn)
 	for name, pair in pairs(self._pairs) do
 		local prev_prefix
 		for _, control in ipairs(pair.controls) do
-			local source = active_controls[control]
+			local source = active_sources[control]
 			if source then
-				local axis_prefix = source:match('(.+)[xy][%+%-]') -- Similar to parseAxis.
+				local axis_prefix = source:match(':(.+)[xy][%+%-]') -- Similar to parseAxis.
 				prev_prefix = prev_prefix or axis_prefix
 				if axis_prefix ~= prev_prefix then
 					prev_prefix = nil
@@ -343,12 +345,12 @@ function Player:getActiveControls(name_fn)
 			-- Found a pair with all controls on the same input, so clear out
 			-- individual axes.
 			for _, control in ipairs(pair.controls) do
-				active_controls[control] = nil
+				renamed_controls[control] = nil
 			end
-			active_controls[name] = name_fn("axis", prev_prefix)
+			renamed_controls[name] = name_fn("axis", prev_prefix)
 		end
 	end
-	return active_controls
+	return renamed_controls
 end
 
 function baton.new(config)
