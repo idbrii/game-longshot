@@ -15,15 +15,15 @@ See also player.lua: Player:getPrettyInput()
 ### Gamepad
 
 * Fire: Right Shoulder
-* Aim: left
+* Aim: Left Stick
 * Cycle Launcher Left: D-pad left
 * Cycle Launcher Right: Left Shoulder
 * Cycle Projectile Next: D-pad down
 * Cycle Projectile Previous: D-pad up
-* Normal Tech: a
-* Sticky Tech: b
-* Bouncy Tech: x
-* Boosty Tech: y
+* Normal Tech: A
+* Sticky Tech: B
+* Bouncy Tech: X
+* Boosty Tech: Y
 
 ### Keyboard - Player 1
 
