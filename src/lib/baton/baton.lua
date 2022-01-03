@@ -274,25 +274,37 @@ end
 --
 -- Pairs will be returned instead of their individual inputs and don't include
 -- x, y, or the direction (where applicable).
--- Example:
 --
---  local name_remap = {
---      button = {
---          leftshoulder = "Left Shoulder",
---          rightshoulder = "Right Shoulder",
---          dpdown = "D-pad down",
---          dpleft = "D-pad left",
---          dpright = "D-pad right",
---          dpup = "D-pad up",
---      },
---      axis = {
---          left = "Left Stick",
---          right = "Right Stick",
---          ["triggerleft+"] = "Left Trigger",
---          ["triggerright+"] = "Right Trigger",
---      },
---  }
-function Player:getActiveControls(name_remap)
+-- Get pretty names for most inputs:
+--   player:getActiveControls(function(type, value)
+--   	local name_remap = {
+--   		button = {
+--   			leftshoulder = "Left Shoulder",
+--   			rightshoulder = "Right Shoulder",
+--   			dpdown = "D-pad down",
+--   			dpleft = "D-pad left",
+--   			dpright = "D-pad right",
+--   			dpup = "D-pad up",
+--   		},
+--   		axis = {
+--   			left = "Left Stick",
+--   			right = "Right Stick",
+--   			["triggerleft+"] = "Left Trigger",
+--   			["triggerright+"] = "Right Trigger",
+--   		},
+--   	}
+--   	return name_remap[type][value] or value
+--   end)
+-- Get filenames for inputs:
+--	 player:getActiveControls(function(type, value)
+--	 	value = value:match('(%l+)[%+%-]?')
+--	 	return ("assets/textures/gamepad/%s_%s.png"):format(type, value)
+--	 end)
+local function default_name(type, value)
+	return {type, value}
+end
+function Player:getActiveControls(name_fn)
+	name_fn = name_fn or default_name
 	local src_func
 	if self._activeDevice == 'kbm' then
 		src_func = sourceFunction.keyboardMouse
@@ -309,7 +321,7 @@ function Player:getActiveControls(name_remap)
 		for _, source in ipairs(control.sources) do
 			local type, value = parseSource(source)
 			if src_func[type] then
-				active_controls[name] = name_remap and name_remap[type] and name_remap[type][value] or value
+				active_controls[name] = name_fn(type, value)
 				break
 			end
 		end
@@ -333,8 +345,7 @@ function Player:getActiveControls(name_remap)
 			for _, control in ipairs(pair.controls) do
 				active_controls[control] = nil
 			end
-			local type = "axis"
-			active_controls[name] = name_remap and name_remap[type] and name_remap[type][prev_prefix] or prev_prefix
+			active_controls[name] = name_fn("axis", prev_prefix)
 		end
 	end
 	return active_controls

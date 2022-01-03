@@ -106,6 +106,27 @@ function Player:tryAssignGamepad(joystick)
     end
 end
 
+local function input_name_remap(type, value)
+	local name_remap = {
+		button = {
+            leftshoulder = "Left Shoulder",
+            rightshoulder = "Right Shoulder",
+            leftstick = "Left Stick Click",
+            rightstick = "Right Stick Click",
+            dpdown = "D-pad down",
+            dpleft = "D-pad left",
+            dpright = "D-pad right",
+            dpup = "D-pad up",
+		},
+		axis = {
+			left = "Left Stick",
+			right = "Right Stick",
+			["triggerleft+"] = "Left Trigger",
+			["triggerright+"] = "Right Trigger",
+		},
+	}
+	return name_remap[type][value] or value:upper()
+end
 function Player:getPrettyInput()
     local pretty_input = {
         fire = "Fire",
@@ -125,29 +146,13 @@ function Player:getPrettyInput()
         aim_down = "Aim Down",
         aim = "Aim",
     }
-    local name_remap = {
-        button = {
-            leftshoulder = "Left Shoulder",
-            rightshoulder = "Right Shoulder",
-            dpdown = "D-pad down",
-            dpleft = "D-pad left",
-            dpright = "D-pad right",
-            dpup = "D-pad up",
-        },
-        axis = {
-            left = "Left Stick",
-            right = "Right Stick",
-            triggerleft = "Left Trigger",
-            triggerright = "Right Trigger",
-        },
-    }
     local str = ""
-    for key,val in pairs(self.input:getActiveControls(name_remap)) do
+    for key,val in pairs(self.input:getActiveControls(input_name_remap)) do
         str = ("%s\n%s: %s"):format(str, pretty_input[key], val)
     end
     return str
 end
-    
+
 function Player:_defineInput()
     local input = moretable.append_recursive(self:_defineGamepadInput(), self:_defineKeyboardInput())
     return input
@@ -208,7 +213,7 @@ function Player:_defineGamepadInput()
             mod_sticky = { 'button:b' },
         },
         pairs = {
-            aim = {'aim_left', 'aim_right', 'aim_up', 'aim_down'}
+            aim = {'aim_left', 'aim_right', 'aim_up', 'aim_down'},
         },
         deadzone = 0.25,
         -- Don't set a joystick. Use tryAssignGamepad to ensure only ones that
@@ -385,7 +390,7 @@ function Player:draw()
 
         -- Current projectile selector
         love.graphics.setColor(self:getColour())
-        
+
         local selected = k_projectile_id_to_name[self.selected_projectile_id]
         local sprite = self.gamestate.art[selected]
         local w,h = sprite:getDimensions()
