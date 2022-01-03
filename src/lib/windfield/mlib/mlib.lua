@@ -1,18 +1,23 @@
 --[[ License
 	A math library made in Lua
-	copyright (C) 2014 Davis Claiborne
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-	You should have received a copy of the GNU General Public License along
-	with this program; if not, write to the Free Software Foundation, Inc.,
-	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-	Contact me at davisclaib@gmail.com
+
+	Copyright (c) 2015 Davis Claiborne
+
+    This software is provided 'as-is', without any express or implied
+    warranty. In no event will the authors be held liable for any damages
+    arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not
+       claim that you wrote the original software. If you use this software
+       in a product, an acknowledgement in the product documentation would be
+       appreciated but is not required.
+    2. Altered source versions must be plainly marked as such, and must not be
+       misrepresented as being the original software.
+    3. This notice may not be removed or altered from any source distribution.
 ]]
 
 -- Local Utility Functions ---------------------- {{{
@@ -140,6 +145,25 @@ end
 local function scalePoint( x, y, scale, ox, oy )
     ox, oy = ox or 0, oy or 0
     return ( x - ox ) * scale + ox, ( y - oy ) * scale + oy
+end
+
+local function polarToCartesian( radius, theta, offsetRadius, offsetTheta )
+    local ox, oy = 0, 0
+    if offsetRadius and offsetTheta then
+        ox, oy = polarToCartesian( offsetRadius, offsetTheta )
+    end
+    local x = radius * math.cos( theta )
+    local y = radius * math.sin( theta )
+    return x + ox, y + oy
+end
+
+local function cartesianToPolar( x, y, ox, oy )
+    x, y = x - ( ox or 0 ), y - ( oy or 0 )
+    local theta = math.atan2( y, x )
+    -- Convert to absolute angle
+    theta = theta > 0 and theta or theta + 2 * math.pi
+    local radius = math.sqrt( x ^ 2 + y ^ 2 )
+    return radius, theta
 end
 -- }}}
 
@@ -1053,14 +1077,17 @@ local function getDispersion( ... )
 	return getVariationRatio( ... ), getRange( ... ), getStandardDeviation( ... )
 end -- }}}
 
+
 return {
-	_VERSION = 'MLib 0.10.0',
+	_VERSION = 'MLib 0.11.0',
 	_DESCRIPTION = 'A math and shape-intersection detection library for Lua',
 	_URL = 'https://github.com/davisdude/mlib',
-    point = {
-        rotate = rotatePoint,
-        scale = scalePoint,
-    },
+	point = {
+		rotate = rotatePoint,
+		scale = scalePoint,
+		polarToCartesian = polarToCartesian,
+		cartesianToPolar = cartesianToPolar,
+	},
 	line = {
 		getLength = getLength,
 		getMidpoint = getMidpoint,
@@ -1077,19 +1104,19 @@ return {
 		getCircleIntersection = getCircleLineIntersection,
 		getPolygonIntersection = getPolygonLineIntersection,
 		getLineIntersection = getLineLineIntersection,
-    },
-    segment = {
-        checkPoint = checkSegmentPoint,
+	},
+	segment = {
+		checkPoint = checkSegmentPoint,
 		getPerpendicularBisector = getPerpendicularBisector,
-        getIntersection = getSegmentSegmentIntersection,
+		getIntersection = getSegmentSegmentIntersection,
 
-        -- Aliases
-        getCircleIntersection = getCircleSegmentIntersection,
-        getPolygonIntersection = getPolygonSegmentIntersection,
-        getLineIntersection = getLineSegmentIntersection,
-        getSegmentIntersection = getSegmentSegmentIntersection,
-        isSegmentCompletelyInsideCircle = isSegmentCompletelyInsideCircle,
-        isSegmentCompletelyInsidePolygon = isSegmentCompletelyInsidePolygon,
+		-- Aliases
+		getCircleIntersection = getCircleSegmentIntersection,
+		getPolygonIntersection = getPolygonSegmentIntersection,
+		getLineIntersection = getLineSegmentIntersection,
+		getSegmentIntersection = getSegmentSegmentIntersection,
+		isSegmentCompletelyInsideCircle = isSegmentCompletelyInsideCircle,
+		isSegmentCompletelyInsidePolygon = isSegmentCompletelyInsidePolygon,
 	},
 	math = {
 		getRoot = getRoot,
