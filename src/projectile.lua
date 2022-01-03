@@ -55,7 +55,9 @@ end
 function Projectile:update(dt)
     if self.has_stabilized then
         -- PERF: Can reduce frequency of support checks.
-        if not self:_checkForGround() then
+        if self.techEffect ~= Tech.Effects.Sticky
+            and not self:_checkForGround()
+            then
             self:_markAsInMotion()
             self.collider:setType('dynamic')
         end
