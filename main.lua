@@ -195,7 +195,10 @@ function love.keypressed(key)
         return
     end
 
-    if gamestate.winner_duration and gamestate.winner_duration > min_time_to_display_winner then
+    if gamestate.winner_duration
+        and gamestate.winner_duration > min_time_to_display_winner
+        and (key:len() > 1 or key == 'space') -- letter/number keys to avoid special keys like trying to take a screenshot
+        then
         love.event.quit('restart')
     end
 
