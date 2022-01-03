@@ -23,6 +23,7 @@ local Sound = require('sound')
 local tuning = require('tuning')
 local Vfx = require('vfx')
 local Player = require('player')
+local PreviewProjectile = require "previewprojectile"
 local Projectile = require('projectile')
 local moretable = require('moretable')
 local gridgen = require("gridgen")
@@ -137,6 +138,18 @@ function love.load()
         )
     gamestate.map:registerCollision(gamestate.world, Damagable.collision_classes)
     gamestate.world:addCollisionClass(Sensor.collision_class, {ignores={'Block', 'Ghost'}})
+    local ghost_ignore = {
+        -- everything but Block
+        ignores = {
+            PreviewProjectile.collision_class,
+            Projectile.collision_class,
+            Sensor.collision_class,
+            "Ghost",
+            "SoldiersP1",
+            "SoldiersP2",
+        },
+    }
+    gamestate.world:addCollisionClass(PreviewProjectile.collision_class, ghost_ignore)
     gamestate.map:fixupGrid(gamestate.grid)
 
     ClaimsManager:new(gamestate)

@@ -7,6 +7,7 @@ local tuning = require('tuning')
 local PreviewProjectile = Entity:subclass('PreviewProjectile')
 
 PreviewProjectile.launchCoolDown = 0
+PreviewProjectile.collision_class = 'Preview'
 
 function PreviewProjectile:initialize(gamestate, owner, x, y, launch_params)
     Entity.initialize(self, gamestate, owner, launch_params.projectile_type)
@@ -22,6 +23,7 @@ function PreviewProjectile:initialize(gamestate, owner, x, y, launch_params)
     table.insert(self.projectile.onHitBuilding_cb, function(...)
         self:die()
     end)
+    self.projectile.collider:setCollisionClass(PreviewProjectile.collision_class)
     self:setCollider(self.projectile.collider)
     self.projectile.tint = 0.25
 end
