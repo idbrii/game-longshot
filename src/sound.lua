@@ -13,8 +13,8 @@ function Sound.load()
     if not love.audio then
         return
     end
-    Sound.music_danger = {sound = love.sound.newSoundData('assets/audio/song_danger.mp3')}
-    Sound.music_focus = {sound = love.sound.newSoundData('assets/audio/song_focus.mp3')}
+    Sound.music_danger = {sound = love.sound.newSoundData('assets/audio/song_focus.mp3')}
+    Sound.music_focus = {sound = love.sound.newSoundData('assets/audio/song_danger.mp3')}
     makeSound("music_danger")
     makeSound("music_focus")
 
